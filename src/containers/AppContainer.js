@@ -5,10 +5,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import store from '../store/index';
 
-const AppContainer = ({ isLoaded, setIsLoaded }) => {
+const AppContainer = () => {
   return (
     <Provider store={store}>
-        <App isLoaded={isLoaded} />
+        <App
+          isLoaded={isLoaded}
+          setIsLoaded={setIsLoaded}
+        />
     </Provider>
   );
 };
