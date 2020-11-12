@@ -1,3 +1,4 @@
+# provided when expo init
 node_modules/**/*
 .expo/*
 npm-debug.*
@@ -8,6 +9,9 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+
+# customized ignoring paths (Rice coco)
+environment.js
 
 # macOS
 .DS_Store
