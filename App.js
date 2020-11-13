@@ -28,7 +28,7 @@ const App = () => {
           <Loading />
           :
           <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
+            <Stack.Navigator initialRouteName="PreferredPartner">
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
               <Stack.Screen name="MainMap" component={MainMapScreen} />

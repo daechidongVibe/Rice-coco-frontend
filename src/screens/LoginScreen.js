@@ -7,22 +7,23 @@ import axios from '../config/axiosConfig'
 
 const Login = ({ navigation }) => {
   const handleLoginButtonClick = async () => {
-    const { googleEmail } = await auth();
+    const { email } = await auth();
 
     const { data } = await axios.post('users/login', {
-      email: 'coin466@naver.com',
+      email,
     });
 
-    const { result } = data;
+    const { result } = data; // 아예 유저 정보가 없는 경우
     if (result === 'no member information') {
       return navigation.navigate('UserRegister');
     }
 
     const { user } = data;
-    if (!user.preferredPartner) {
+    if (!user.preferredPartner) { // 유저 정보는 있지만 선호하는 친구를 아직 설정하지 않은 경우 (처음 접속하여 회원가입한 경우)
       return navigation.navigate('PreferredPartner');
     }
 
+    // 유저 정보도 있고 선호하는 친구도 설정한 경우
     navigation.navigate('MainMap');
   };
 
