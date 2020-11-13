@@ -1,41 +1,59 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, ImageBackground } from 'react-native';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
+import asyncStorage from '@react-native-async-storage/async-storage';
 
 import auth from '../utils/auth';
-import axios from '../config/axiosConfig'
+import axios from '../config/axiosConfig';
+import { setUserInfo } from '../actions';
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, onLogin }) => {
   const handleLoginButtonClick = async () => {
-    const { googleEmail } = await auth();
+    try {
+      const { googleEmail } = await auth();
+      const { data } = await axios.post('users/login', {
+        email: 'coin466@naver.com',
+      });
+      const { result } = data;
 
-    const { data } = await axios.post('users/login', {
-      email: 'coin466@naver.com',
-    });
+      if (result === 'no member information') {
+        return navigation.navigate('UserRegister');
+      }
 
-    const { result } = data;
-    if (result === 'no member information') {
-      return navigation.navigate('UserRegister');
+      const { user, token } = data;
+
+      await asyncStorage.setItem('token', token);
+      onLogin(user);
+
+      if (!user.preferredPartner) {
+        return navigation.navigate('PreferredPartner');
+      }
+
+      navigation.navigate('MainMap');
+    } catch (error) {
+      console.warn(error);
     }
-
-    const { user } = data;
-    if (!user.preferredPartner) {
-      return navigation.navigate('PreferredPartner');
-    }
-
-    navigation.navigate('MainMap');
   };
 
   return (
     <Background>
       <ImageBackground
-      source={require('../../assets/images/ricecoco_splash.png')}
-      style={{width: '100%', height: '100%', position: 'absolute', bottom: 100}}
+        source={require('../../assets/images/ricecoco_splash.png')}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          bottom: 100,
+        }}
       >
         <LoginButton onPress={handleLoginButtonClick}>
           <ButtonText>로그인</ButtonText>
         </LoginButton>
-        <Button title="회원가입 (내 정보 등록)" onPress={() => navigation.navigate('UserRegister')} />
+        <Button
+          title="회원가입 (내 정보 등록)"
+          onPress={() => navigation.navigate('UserRegister')}
+        />
       </ImageBackground>
     </Background>
   );
@@ -43,7 +61,8 @@ const Login = ({ navigation }) => {
 
 const Background = styled.View`
   background-color: #ff914d;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
 `;
 
 const LoginButton = styled.TouchableOpacity`
@@ -60,4 +79,10 @@ const ButtonText = styled.Text`
   color: black;
 `;
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  onLogin(user) {
+    dispatch(setUserInfo(user));
+  },
+});
+
+export default connect(null, mapDispatchToProps)(Login);
