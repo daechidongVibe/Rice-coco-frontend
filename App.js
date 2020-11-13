@@ -1,4 +1,3 @@
-
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import Loading from './src/components/Loading';
@@ -10,7 +9,9 @@ import UserRegisterScreen from './src/screens/UserRegisterScreen';
 import PreferredPartnerScreen from './src/screens/PreferredPartnerScreen';
 import MainMapScreen from './src/screens/MainMapScreen';
 
+
 const Stack = createStackNavigator();
+
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(true);
@@ -30,8 +31,8 @@ const App = () => {
           <NavigationContainer>
             <StatusBar style="auto" />
             <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
               <Stack.Screen name="MainMap" component={MainMapScreen} />
               <Stack.Screen name="UserRegister" component={UserRegisterScreen} />
             </Stack.Navigator>
