@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import Loading from './src/components/Loading';
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,7 +28,6 @@ const App = () => {
           <Loading />
           :
           <NavigationContainer>
-            <StatusBar style="auto" />
             <Stack.Navigator initialRouteName="Login">
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
