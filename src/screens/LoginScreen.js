@@ -1,42 +1,59 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, ImageBackground } from 'react-native';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
+import asyncStorage from '@react-native-async-storage/async-storage';
 
 import auth from '../utils/auth';
-import axios from '../config/axiosConfig'
+import axios from '../config/axiosConfig';
+import { setUserInfo } from '../actions';
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, onLogin }) => {
   const handleLoginButtonClick = async () => {
-    const { email } = await auth();
+    try {
+      const { googleEmail } = await auth();
+      const { data } = await axios.post('users/login', {
+        email: 'coin466@naver.com',
+      });
+      const { result } = data;
 
-    const { data } = await axios.post('users/login', {
-      email,
-    });
+      if (result === 'no member information') {
+        return navigation.navigate('UserRegister');
+      }
 
-    const { result } = data; // 아예 유저 정보가 없는 경우
-    if (result === 'no member information') {
-      return navigation.navigate('UserRegister');
+      const { user, token } = data;
+
+      await asyncStorage.setItem('token', token);
+      onLogin(user);
+
+      if (!user.preferredPartner) {
+        return navigation.navigate('PreferredPartner');
+      }
+
+      navigation.navigate('MainMap');
+    } catch (error) {
+      console.warn(error);
     }
-
-    const { user } = data;
-    if (!user.preferredPartner) { // 유저 정보는 있지만 선호하는 친구를 아직 설정하지 않은 경우 (처음 접속하여 회원가입한 경우)
-      return navigation.navigate('PreferredPartner');
-    }
-
-    // 유저 정보도 있고 선호하는 친구도 설정한 경우
-    navigation.navigate('MainMap');
   };
 
   return (
     <Background>
       <ImageBackground
-      source={require('../../assets/images/ricecoco_splash.png')}
-      style={{width: '100%', height: '100%', position: 'absolute', bottom: 100}}
+        source={require('../../assets/images/ricecoco_splash.png')}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          bottom: 100,
+        }}
       >
         <LoginButton onPress={handleLoginButtonClick}>
           <ButtonText>로그인</ButtonText>
         </LoginButton>
-        <Button title="회원가입 (내 정보 등록)" onPress={() => navigation.navigate('UserRegister')} />
+        <Button
+          title="회원가입 (내 정보 등록)"
+          onPress={() => navigation.navigate('UserRegister')}
+        />
       </ImageBackground>
     </Background>
   );
@@ -44,7 +61,8 @@ const Login = ({ navigation }) => {
 
 const Background = styled.View`
   background-color: #ff914d;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
 `;
 
 const LoginButton = styled.TouchableOpacity`
@@ -61,4 +79,10 @@ const ButtonText = styled.Text`
   color: black;
 `;
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  onLogin(user) {
+    dispatch(setUserInfo(user));
+  },
+});
+
+export default connect(null, mapDispatchToProps)(Login);

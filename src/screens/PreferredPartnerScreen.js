@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
+import { connect } from 'react-redux';
 import { Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import NavigationBar from '../components/NavigationBar';
 import styled from 'styled-components';
 import Svg, { Polygon } from 'react-native-svg';
 
-const PreferredPartnerInfo = ({ navigation }) => {
+import NavigationBar from '../components/NavigationBar';
+
+const PreferredPartnerScreen = ({ navigation, userId }) => {
   const [genderInput, setGenderInput] = useState('');
   const [ageInput, setAgeInput] = useState('');
   const [occupationInput, setOccupationInput] = useState('');
@@ -13,11 +15,11 @@ const PreferredPartnerInfo = ({ navigation }) => {
   const [clickedAgeInput, setClickedAgeInput] = useState(false);
   const [clickedOccupationInput, setClickedOccupationInput] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const userInfo = {
-      genderInput,
-      ageInput,
-      occupationInput
+      gender: genderInput,
+      birthYear: ageInput,
+      occupation: occupationInput
     };
 
     setGenderInput('');
@@ -25,6 +27,13 @@ const PreferredPartnerInfo = ({ navigation }) => {
     setOccupationInput('');
 
     console.log(userInfo);
+
+    await axios.put(
+      `/users/${userId}/preferred-partner`,
+      {
+        userInfo
+      }
+    );
   };
 
   return (
@@ -198,4 +207,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PreferredPartnerInfo;
+const mapStateToProps = ({ user: { userId } }) => {
+  return {
+    userId
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(PreferredPartnerScreen);
