@@ -1,6 +1,5 @@
 import React from 'react';
 import { ImageBackground } from 'react-native';
-import styled from 'styled-components';
 
 const Loading = () => {
   return (
