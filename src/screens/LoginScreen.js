@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-native';
+import { Button, ImageBackground } from 'react-native';
 import styled from 'styled-components';
 
 import auth from '../utils/auth';
@@ -27,29 +27,37 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <>
-      <StyledLogin>
+    <Background>
+      <ImageBackground
+      source={require('../../assets/images/ricecoco_splash.png')}
+      style={{width: '100%', height: '100%', position: 'absolute', bottom: 100}}
+      >
         <LoginButton onPress={handleLoginButtonClick}>
             <ButtonText>로그인</ButtonText>
         </LoginButton>
-      </StyledLogin>
-      <Button title="회원가입 (내 정보 등록)" onPress={() => navigation.navigate('UserRegister')} />
-    </>
+        <Button title="회원가입 (내 정보 등록)" onPress={() => navigation.navigate('UserRegister')} />
+      </ImageBackground>
+    </Background>
   );
 };
 
-const StyledLogin = styled.View`
+const Background = styled.View`
+  background-color: #ff914d;
+  width: 100%; height: 100%;
 `;
 
 const LoginButton = styled.TouchableOpacity`
-  background-color: brown;
-  color: white;
+  background-color: white;
   padding: 10px;
   border-radius: 5px;
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-25px);
 `;
 
 const ButtonText = styled.Text`
-  color: white;
+  color: black;
 `;
 
 export default Login;

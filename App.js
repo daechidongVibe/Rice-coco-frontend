@@ -28,7 +28,6 @@ const App = () => {
           <Loading />
           :
           <NavigationContainer>
-            <StatusBar style="auto" />
             <Stack.Navigator initialRouteName="Login">
               <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />

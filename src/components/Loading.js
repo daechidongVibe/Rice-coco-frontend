@@ -1,21 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { ImageBackground } from 'react-native';
+import styled from 'styled-components';
 
 const Loading = () => {
   return (
     <ImageBackground
       source={require('../../assets/images/ricecoco_splash.png')}
-      style={styles.image}
-    >
-    </ImageBackground>
+      style={{ width: '100%', height: '100%' }}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-});
 
 export default Loading;
