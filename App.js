@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import Loading from './src/components/Loading';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -8,35 +7,23 @@ import UserRegisterScreen from './src/screens/UserRegisterScreen';
 import PreferredPartnerScreen from './src/screens/PreferredPartnerScreen';
 import MainMapScreen from './src/screens/MainMapScreen';
 
-
 const Stack = createStackNavigator();
 
-
 const App = () => {
-  const [isLoaded, setIsLoaded] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoaded(false);
-    }, 3000);
-  }, []);
-
   return (
     <>
       {
-        isLoaded ?
-          <Loading />
-          :
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
-              <Stack.Screen name="MainMap" component={MainMapScreen} />
-              <Stack.Screen name="UserRegister" component={UserRegisterScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName='Login'>
+            <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name='PreferredPartner' component={PreferredPartnerScreen} />
+            <Stack.Screen name='MainMap' component={MainMapScreen} />
+            <Stack.Screen name='UserRegister' component={UserRegisterScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
       }
     </>
   );
-}
+};
+
 export default App;
