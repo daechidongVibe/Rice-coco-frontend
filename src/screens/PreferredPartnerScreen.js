@@ -277,11 +277,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({ user: { userId } }) => {
+const mapStateToProps = ({ user: { _id } }) => {
   return {
-    userId
+    userId: _id
   };
-}
+};
 
 export default connect(
   mapStateToProps,
