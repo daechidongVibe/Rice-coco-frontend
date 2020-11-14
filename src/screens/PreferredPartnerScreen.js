@@ -17,35 +17,31 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
   const [clickedOccupationInput, setClickedOccupationInput] = useState(false);
 
   const handleSubmit = async () => {
-    const userInfo = {
+    const preferredPartner = {
       gender: genderInput,
       birthYear: ageInput,
-      occupation: occupationInput
+      occupation: occupationInput,
     };
 
     setGenderInput('');
     setAgeInput('');
     setOccupationInput('');
 
-    console.log(userInfo);
-
     try {
-      const { result, errMessage } = await axios.put(
+      const { data: { result, errMessage }} = await axios.put(
         `/users/${userId}/preferred-partner`,
-        {
-          userInfo
-        }
+        preferredPartner
       );
 
       if (result === 'ok') {
-        console.log('선호 친구 정보 업데이트 성공!')
+        console.log('선호 친구 정보 업데이트 성공!');
         navigation.navigate('MainMap');
         return;
       }
 
       if (result === 'failure') {
         alert('서버 에러..유저 정보 업데이트에 실패했습니다!');
-        console.log('왜 알러트 안떠..')
+        console.log('왜 알러트 안떠..');
         console.log(errMessage);
       }
     } catch (err) {
@@ -53,9 +49,9 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
     }
   };
 
-  function checkClickedInput () {
+  function checkClickedInput() {
     if (clickedGenderInput) {
-      return 'genderInput'
+      return 'genderInput';
     }
 
     if (clickedAgeInput) {
@@ -63,66 +59,53 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
     }
 
     if (clickedOccupationInput) {
-      return 'occupationInput'
+      return 'occupationInput';
     }
   }
 
   const mentMap = {
     genderInput: '성별을 입력해주세요!',
     ageInput: '나이를 입력해주세요!',
-    occupationInput: '직업을 입력해주세요!'
+    occupationInput: '직업을 입력해주세요!',
   };
 
-  const isReadyToSubmit =
-    genderInput &&
-    ageInput &&
-    occupationInput;
+  const isReadyToSubmit = genderInput && ageInput && occupationInput;
 
   return (
     <>
-      <Header>
-        내가 좋아하는 친구는?
-      </Header>
-      <InputDescription>
-        {mentMap[checkClickedInput()]}
-      </InputDescription>
+      <Header>내가 좋아하는 친구는?</Header>
+      <InputDescription>{mentMap[checkClickedInput()]}</InputDescription>
 
-      { clickedGenderInput &&
+      {clickedGenderInput && (
         <TextInput
           value={genderInput}
           maxLength={5}
-          onChangeText={(text) => setGenderInput(text)}
+          onChangeText={text => setGenderInput(text)}
           autoFocus
         />
-      }
+      )}
 
-      { clickedAgeInput &&
+      {clickedAgeInput && (
         <TextInput
           value={ageInput}
           maxLength={5}
-          onChangeText={(text) => setAgeInput(text)}
+          onChangeText={text => setAgeInput(text)}
           autoFocus
         />
-      }
+      )}
 
-      { clickedOccupationInput &&
+      {clickedOccupationInput && (
         <TextInput
           value={occupationInput}
           maxLength={5}
-          onChangeText={(text) => setOccupationInput(text)}
+          onChangeText={text => setOccupationInput(text)}
           autoFocus
         />
-      }
+      )}
 
-      <CircularForm>
-      </CircularForm>
+      <CircularForm></CircularForm>
 
-      <Svg
-        height="300"
-        width="350"
-        viewBox="0 0 100 100"
-        style={styles.svg}
-      >
+      <Svg height="300" width="350" viewBox="0 0 100 100" style={styles.svg}>
         <Polygon
           points="50 0, 50 50, 6 78, 0 43, 17 12"
           stroke="black"
@@ -136,7 +119,7 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
         <Polygon
           points="50 0, 83 12, 100 43, 94 78, 50 50"
           stroke="black"
-          onPress={(e) => {
+          onPress={e => {
             setClickedGenderInput(false);
             setClickedAgeInput(true);
             setClickedOccupationInput(false);
@@ -146,7 +129,7 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
         <Polygon
           points="50 50, 94 78, 70 100, 30 100, 6 78"
           stroke="black"
-          onPress={(e) => {
+          onPress={e => {
             setClickedGenderInput(false);
             setClickedAgeInput(false);
             setClickedOccupationInput(true);
@@ -166,22 +149,12 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
         }}
         style={!isReadyToSubmit && styles.disabled}
       >
-        <Text
-          style={
-            !isReadyToSubmit ?
-            styles.disabled :
-            styles.text
-          }
-        >
-          {
-            !isReadyToSubmit ?
-            'disabled!' :
-            '친구찾기!'
-          }
+        <Text style={!isReadyToSubmit ? styles.disabled : styles.text}>
+          {!isReadyToSubmit ? 'disabled!' : '친구찾기!'}
         </Text>
       </CircularSubmitButton>
 
-      <NavigationBar/>
+      <NavigationBar />
     </>
   );
 };
@@ -240,7 +213,6 @@ const CircularForm = styled.TouchableOpacity`
   position: absolute;
   top: 228px;
   left: 25px;
-
 `;
 
 const CircularSubmitButton = styled.TouchableHighlight`
@@ -263,18 +235,18 @@ const styles = StyleSheet.create({
   svg: {
     marginVertical: 20,
     position: 'relative',
-    top: 10
+    top: 10,
   },
   disabled: {
     backgroundColor: 'black',
-    color: 'white'
+    color: 'white',
   },
   text: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
-  }
+  },
 });
 
 const mapStateToProps = ({ user: { _id } }) => {
@@ -283,7 +255,4 @@ const mapStateToProps = ({ user: { _id } }) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  null
-)(PreferredPartnerScreen);
+export default connect(mapStateToProps, null)(PreferredPartnerScreen);
