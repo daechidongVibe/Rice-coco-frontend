@@ -5,24 +5,41 @@ import styled from 'styled-components';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
 import auth from '../utils/auth';
-import axios from '../config/axiosConfig';
+import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 
 const Login = ({ navigation, onLogin }) => {
+  useEffect(() => {
+    (async () => {
+      const token = await asyncStorage.getItem('token');
+
+      if (!token) return;
+
+      const {
+        data: { user },
+      } = await configuredAxios.post('users/login');
+
+      onLogin(user);
+
+      if (!user.preferredPartner) {
+        return navigation.navigate('PreferredPartner');
+      }
+
+      navigation.navigate('MainMap');
+    })();
+  }, []);
+
   const handleLoginButtonClick = async () => {
     try {
-      const { googleEmail } = await auth();
-      const { data } = await axios.post('users/login', {
-        email: 'coin466@naver.com',
-      });
+      const { email } = await auth();
+      const { data } = await configuredAxios.post('users/login', { email });
       const { result } = data;
 
       if (result === 'no member information') {
-        return navigation.navigate('UserRegister');
+        return navigation.navigate('UserRegister', { email });
       }
 
       const { user, token } = data;
-
       await asyncStorage.setItem('token', token);
       onLogin(user);
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, Button } from 'react-native';
 import { useEffect } from 'react';
+import configuredAxios from '../config/axiosConfig';
 
 const PreferredPartnerInfo = ({ navigation }) => {
   return (

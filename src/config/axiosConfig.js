@@ -1,13 +1,22 @@
 import axios from 'axios';
 import getEnvVars from '../../environment';
+import asyncStorage from '@react-native-async-storage/async-storage';
 
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
-// 우리만의 axios instance 생성
-const axiosInstance = axios.create({
-// baseUrl 설정된 인스턴스 설정
-  baseURL: REACT_NATIVE_ANDROID_SERVER_URL
+const defaultOptions = {
+  baseURL: REACT_NATIVE_ANDROID_SERVER_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+}
+const axiosInstance = axios.create(defaultOptions);
+
+axiosInstance.interceptors.request.use(async function (config) {
+  const token = await asyncStorage.getItem('token');
+  config.headers.Authorization =  token;
+
+  return config;
 });
-// 기본적으로 우리 토큰 넣어줘서 보내줌
-axiosInstance.defaults.headers.common['Authorization'] = 'AUTH TOKEN FROM INSTANCE';
+
 
 export default axiosInstance;
