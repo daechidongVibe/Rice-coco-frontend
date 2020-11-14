@@ -4,26 +4,28 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
-import auth from '../utils/auth';
 import axios from '../config/axiosConfig';
+import auth from '../utils/auth';
 import { setUserInfo } from '../actions';
 
 const Login = ({ navigation, onLogin }) => {
   const handleLoginButtonClick = async () => {
     try {
-      const { googleEmail } = await auth();
-      const { data } = await axios.post('users/login', {
-        email: 'coin466@naver.com',
-      });
-      const { result } = data;
+      const { email } = await auth();
 
-      if (result === 'no member information') {
+      const { data } = await axios.post(
+        'users/login',
+        { email }
+      );
+
+      if (data.result === 'no member information') {
         return navigation.navigate('UserRegister');
       }
 
       const { user, token } = data;
 
       await asyncStorage.setItem('token', token);
+      // user는 왜 리덕스에 꽂는 것..?
       onLogin(user);
 
       if (!user.preferredPartner) {
