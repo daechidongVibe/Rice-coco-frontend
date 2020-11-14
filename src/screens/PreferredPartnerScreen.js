@@ -1,16 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import Svg, { Polygon } from 'react-native-svg';
+import { Picker } from '@react-native-picker/picker';
 
 import axios from '../config/axiosConfig';
 import NavigationBar from '../components/NavigationBar';
+import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PreferredPartnerScreen = ({ navigation, userId }) => {
-  const [genderInput, setGenderInput] = useState('');
-  const [ageInput, setAgeInput] = useState('');
-  const [occupationInput, setOccupationInput] = useState('');
+  const [genderInput, setGenderInput] = useState('남자');
+  const [ageInput, setAgeInput] = useState('20대');
+  const [occupationInput, setOccupationInput] = useState('프로그래머');
 
   const [clickedGenderInput, setClickedGenderInput] = useState(true);
   const [clickedAgeInput, setClickedAgeInput] = useState(false);
@@ -28,7 +31,7 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
     setOccupationInput('');
 
     try {
-      const { data: { result, errMessage }} = await axios.put(
+      const { data: { result, updatedUser, errMessage }} = await axios.put(
         `/users/${userId}/preferred-partner`,
         preferredPartner
       );
@@ -41,7 +44,6 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
 
       if (result === 'failure') {
         alert('서버 에러..유저 정보 업데이트에 실패했습니다!');
-        console.log('왜 알러트 안떠..');
         console.log(errMessage);
       }
     } catch (err) {
@@ -77,30 +79,53 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
       <InputDescription>{mentMap[checkClickedInput()]}</InputDescription>
 
       {clickedGenderInput && (
-        <TextInput
-          value={genderInput}
-          maxLength={5}
-          onChangeText={text => setGenderInput(text)}
-          autoFocus
-        />
+        <Picker
+          selectedValue={genderInput}
+          style={{ marginVertical: 1, height: 50 }}
+          onValueChange={(itemValue) =>
+            setGenderInput(itemValue)
+          }
+          itemStyle={{ color: 'red' }}
+        >
+          {
+            MY_INFO_OPTIONS.gender.map(gen => {
+              return <Picker.Item label={gen} value={gen} />
+            })
+          }
+        </Picker>
       )}
 
       {clickedAgeInput && (
-        <TextInput
-          value={ageInput}
-          maxLength={5}
-          onChangeText={text => setAgeInput(text)}
-          autoFocus
-        />
+        <Picker
+          selectedValue={ageInput}
+          style={{ marginVertical: 1, height: 50 }}
+          onValueChange={(itemValue) =>
+            setAgeInput(itemValue)
+          }
+          itemStyle={{ color: 'red' }}
+        >
+          <Picker.Item label="20대" value="20대" />
+          <Picker.Item label="30대" value="30대" />
+          <Picker.Item label="40대" value="40대" />
+          <Picker.Item label="50대" value="50대" />
+        </Picker>
       )}
 
       {clickedOccupationInput && (
-        <TextInput
-          value={occupationInput}
-          maxLength={5}
-          onChangeText={text => setOccupationInput(text)}
-          autoFocus
-        />
+        <Picker
+          selectedValue={occupationInput}
+          style={{ marginVertical: 1, height: 50 }}
+          onValueChange={(itemValue) =>
+            setOccupationInput(itemValue)
+          }
+          itemStyle={{ color: 'red' }}
+        >
+          {
+            MY_INFO_OPTIONS.occupation.map(occ => {
+              return <Picker.Item label={occ} value={occ} />;
+            })
+          }
+        </Picker>
       )}
 
       <CircularForm></CircularForm>
@@ -255,4 +280,7 @@ const mapStateToProps = ({ user: { _id } }) => {
   };
 };
 
-export default connect(mapStateToProps, null)(PreferredPartnerScreen);
+export default connect(
+  mapStateToProps,
+  null
+  )(PreferredPartnerScreen);

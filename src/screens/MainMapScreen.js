@@ -13,7 +13,7 @@ const MainMapScreen = ({ navigation }) => {
   return (
     <>
       <Text>메인 맵입니다..^O^/</Text>
-      <Button title="돌아가기" onPress={() => navigation.goBack()} />
+      <Button title="선호친구설정" onPress={() => navigation.navigate('PreferredPartner')} />
     </>
   );
 };
