@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
-  TextInput,
-  Button,
   TouchableWithoutFeedback,
   TouchableOpacity,
   Keyboard,
-  StyleSheet,
 } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -34,6 +30,7 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
 
     if (result === 'ok') {
       await asyncStorage.setItem('token', token);
+      // user는 왜 리덕스에 꽂는 것..?
       onLogin(user);
       navigation.navigate('PreferredPartner');
     }

@@ -32,15 +32,18 @@ const Login = ({ navigation, onLogin }) => {
   const handleLoginButtonClick = async () => {
     try {
       const { email } = await auth();
-      const { data } = await configuredAxios.post('users/login', { email });
-      const { result } = data;
+      const { data } = await configuredAxios.post(
+        'users/login',
+        { email }
+      );
 
-      if (result === 'no member information') {
+      if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
       }
 
       const { user, token } = data;
       await asyncStorage.setItem('token', token);
+      // user는 왜 리덕스에 꽂는 것..?
       onLogin(user);
 
       if (!user.preferredPartner) {
