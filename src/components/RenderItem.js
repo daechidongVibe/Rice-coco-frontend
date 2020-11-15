@@ -12,7 +12,7 @@ const RenderItem = ({ item, navigation }) => {
   }
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('RestaurantDetails', { restaurantId: item.place_id })}>
+    <TouchableOpacity onPress={() => navigation.navigate('RestaurantDetails', { restaurantId: item.id })}>
       <View>
         <Text>{item.name}</Text>
         <Rating imageSize={20} readonly startingValue={item.rating} />
