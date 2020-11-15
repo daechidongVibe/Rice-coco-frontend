@@ -33,7 +33,7 @@ const MainMapScreen = ({ location, setLocation, navigation }) => {
   console.log(meetingLists);
 
   const handleRestaurantSearchButton = () => {
-    navigation.navigate('restaurantSearchScreen');
+    navigation.navigate('Search');
   };
 
   useEffect(() => {
