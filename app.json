@@ -23,6 +23,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ricecoco-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.ricecoco.ricecoco",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDtbGTcIQFtFBMR7r_nox6LSmfWlvw5Q8w"
+        }
       }
     },
     "web": {

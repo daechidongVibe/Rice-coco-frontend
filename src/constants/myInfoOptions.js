@@ -1,5 +1,5 @@
 const MY_INFO_OPTIONS = {
-  gender: ['male', 'female'],
+  gender: ['남자', '여자'],
   occupation: [
     '개발',
     '경영-비즈니스',
