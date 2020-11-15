@@ -67,13 +67,13 @@ const Search = ({ navigation }) => {
       />
       <FlatList
         data={searchList}
-        renderItem={({ item }) => (
+        renderItem={({ restaurant }) => (
           <RenderItem
-            item={item}
+            item={restaurant}
             navigation={navigation}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={restaurant => restaurant.id}
       />
     </Container>
   );
