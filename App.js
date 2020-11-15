@@ -25,7 +25,7 @@ const App = () => {
           <Stack.Screen name='PreferredPartner' component={PreferredPartnerScreen} />
           <Stack.Screen name='MainMap' component={MainMapScreen} />
           <Stack.Screen name='UserRegister' component={UserRegisterScreen} />
-          <Stack.Screen name='search' component={SearchScreen} />
+          <Stack.Screen name='Search' component={SearchScreen} />
           <Stack.Screen name='RestaurantDetails' component={RestaurantDetailsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
