@@ -5,7 +5,12 @@ import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
 
-const RenderItem = ({ item, navigation, filteredMeetings, setSeletedMeeting }) => {
+const RenderItem = ({
+  item,
+  navigation,
+  filteredMeetings,
+  setSelectedMeeting,
+}) => {
   const openingHours = item.openingHours;
   let isOpen = '-';
 
@@ -26,6 +31,22 @@ const RenderItem = ({ item, navigation, filteredMeetings, setSeletedMeeting }) =
     return navigation.navigate('RestaurantDetails');
   };
 
+  const onHandlePress = () => {
+    const hasWaitingPartnerMeeting = filteredMeetings.find(
+      meeting => meeting.restaurant.restaurantId === item.restaurantId
+    );
+
+    setSelectedMeeting({
+      restaurantId: item.id,
+      restaurantName: item.name,
+      partnerNickname: hasWaitingPartnerMeeting
+        ? hasWaitingPartnerMeeting.partnerNickname
+        : '',
+    });
+
+    navigation.navigate('RestaurantDetails');
+  };
+
   return (
     <TouchableOpacity onPress={onHandlePress}>
       <View>
@@ -37,9 +58,11 @@ const RenderItem = ({ item, navigation, filteredMeetings, setSeletedMeeting }) =
   );
 };
 
-export default connect(state => ({
-  filteredMeetings: state.filteredMeeting,
-}), {
-  setSelectedMeeting,
-}
+export default connect(
+  state => ({
+    filteredMeetings: state.meetings.filteredMeetings,
+  }),
+  {
+    setSelectedMeeting,
+  }
 )(RenderItem);
