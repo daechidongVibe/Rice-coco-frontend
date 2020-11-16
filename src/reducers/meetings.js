@@ -14,7 +14,7 @@ export const meetings = (state = initialState, action) => {
     case types.SET_MEETINGS:
       return {
         ...state,
-        filteredMeetings: action.payload,
+        filteredMeetings: [...action.payload],
       };
     case types.SET_SELECTED_MEETING:
       return {
