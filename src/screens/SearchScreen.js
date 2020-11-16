@@ -73,7 +73,7 @@ const Search = ({ navigation }) => {
             searchWord={searchWord}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={restaurant => restaurant.id}
       />
     </Container>
   );
@@ -82,6 +82,7 @@ const Search = ({ navigation }) => {
 const Container = styled.View`
   flex: 1;
   padding: 10px;
+  padding-top: 40px;
   background-color: #ffffff;
   text-align: center;
 `;

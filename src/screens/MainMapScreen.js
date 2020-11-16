@@ -1,38 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-} from 'react-native';
-import { connect } from 'react-redux';
-import * as Location from 'expo-location';
-import styled from 'styled-components/native';
-import { updateLocation } from '../actions';
-import MapView, {
-  PROVIDER_GOOGLE,
-  Marker,
-  Circle,
-} from 'react-native-maps';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts } from 'expo-font';
+import { StyleSheet, Dimensions, Image } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import mockMeeting from '../../mockMeetings';
+import { LinearGradient } from 'expo-linear-gradient';
+import styled from 'styled-components/native';
+import * as Location from 'expo-location';
+import { connect } from 'react-redux';
+import { useFonts } from 'expo-font';
 
-const MainMapScreen = ({ location, setLocation, navigation }) => {
-  const [errorMsg, setErrorMsg] = useState(null);
+import RemainingTime from '../components/RemainingTime';
+import isLocationNear from '../utils/isLocationNear';
+import axiosInstance from '../config/axiosConfig';
+import mockMeeting from '../../mockMeetings';
+import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';
+
+const MainMapScreen = ({
+  meetings,
+  userLocation,
+  navigation,
+  setMeetings,
+  setUserLocation,
+  setSelectedMeeting,
+}) => {
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-  const { latitude, longitude } = location;
-  const [meetingLists, setMeetingLists] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const isMeetingExisted = !!meetings.length;
 
+  console.log(2398457239523748);
+  console.log(meetings);
   const handleRestaurantSearchButton = () => {
     navigation.navigate('Search');
+  };
+
+  const handleRestaurantClick = (
+    restaurantId,
+    restaurantName,
+    partnerNickname
+  ) => {
+    setSelectedMeeting({ restaurantId, restaurantName, partnerNickname });
+    navigation.navigate('RestaurantDetails');
   };
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestPermissionsAsync();
+
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
       }
@@ -41,12 +55,16 @@ const MainMapScreen = ({ location, setLocation, navigation }) => {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync({});
 
-      setLocation({ latitude, longitude });
+      setUserLocation({ latitude, longitude });
     })();
   }, []);
 
   useEffect(() => {
-    setMeetingLists(mockMeeting);
+    (async () => {
+      const { data } = await axiosInstance.get('/meetings');
+
+      setMeetings(mockMeeting);
+    })();
   }, []);
 
   return fontLoaded ? (
@@ -54,8 +72,8 @@ const MainMapScreen = ({ location, setLocation, navigation }) => {
       <Wrapper>
         <MapView
           initialRegion={{
-            latitude,
-            longitude,
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -65,74 +83,49 @@ const MainMapScreen = ({ location, setLocation, navigation }) => {
           showsMyLocationButton={true}
           showsUserLocation={true}
         >
-          <Marker coordinate={location} />
+          <Marker coordinate={userLocation} />
 
-          {meetingLists.map(meeting => {
-            const {
-              restaurant: { location, name },
-              userNickname,
-            } = meeting;
-            const { latitude, longitude } = location;
+          {isMeetingExisted &&
+            meetings.map(meeting => {
+              const {
+                restaurant: { restaurantId, name, location },
+                userNickname: partnerNickname,
+                expiredTime,
+              } = meeting;
+              const isMarkerInRange = isLocationNear(
+                location,
+                userLocation,
+                5000
+              );
 
-            return (
-              <Marker
-                key={meeting['_id']}
-                coordinate={{ latitude, longitude }}
-                title={'name'}
-                description={`userNickname`}
-              >
-                <Image
-                  source={require('../../assets/images/rice.png')}
-                  style={{
-                    width: 24,
-                    height: 26,
+              return (
+                <Marker
+                  key={meeting['_id']}
+                  title={name}
+                  description={`${partnerNickname} 대기중`}
+                  coordinate={location}
+                  onCalloutPress={() => {
+                    if (!isMarkerInRange) return;
+                    handleRestaurantClick(restaurantId, name, partnerNickname);
                   }}
-                  resizeMode="cover"
-                />
-              </Marker>
-            );
-          })}
-          <Marker
-            coordinate={{ latitude: 37.5051548, longitude: 127.0891086 }}
-            title={'부타이'}
-            description={'어른다람쥐가 대기중'}
-          >
-            <Image
-              source={require('../../assets/images/rice.png')}
-              style={{
-                width: 24,
-                height: 26,
-              }}
-              resizeMode="cover"
-            />
-          </Marker>
-          <Marker
-            coordinate={{ latitude: 37.5091548, longitude: 127.0811086 }}
-            title={'부타이'}
-            description={'어른다람쥐가 대기중'}
-          >
-            <Image
-              source={require('../../assets/images/rice.png')}
-              style={{
-                width: 24,
-                height: 26,
-              }}
-              resizeMode="cover"
-            />
-          </Marker>
-          {/* <MapView.Callout
-            title={true}
-            width={210}
-            onPress={() => {
-              props.navigation.navigate('PlaceDetail', {
-                placeTitle: marker.title,
-                placeId: marker.id,
-              });
-            }}
-          ></MapView.Callout> */}
+                >
+                  {isMarkerInRange && (
+                    <RemainingTime expiredTime={expiredTime} />
+                  )}
 
+                  <Image
+                    source={require('../../assets/images/rice.png')}
+                    style={{
+                      width: 24,
+                      height: 26,
+                    }}
+                    resizeMode="cover"
+                  />
+                </Marker>
+              );
+            })}
           <Circle
-            center={location}
+            center={userLocation}
             radius={5000}
             strokeColor="rgba(0, 0, 255, 0.1)"
             fillColor="rgba(0, 0, 255, 0.1)"
@@ -219,12 +212,19 @@ const RestaurantSearchButton = styled.TouchableOpacity`
 `;
 
 const mapStateToProps = state => ({
-  location: state.location,
+  userLocation: state.location,
+  meetings: state.meetings.filteredMeetings,
 });
 
 const mapDispatchToProps = dispatch => ({
-  setLocation(location) {
+  setUserLocation(location) {
     dispatch(updateLocation(location));
+  },
+  setMeetings(meetings) {
+    dispatch(setMeetings(meetings));
+  },
+  setSelectedMeeting(meeting) {
+    dispatch(setSelectedMeeting(meeting));
   },
 });
 
