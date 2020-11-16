@@ -9,3 +9,8 @@ export const updateLocation = location => ({
   type: types.UPDATE_LOCATION,
   payload: location,
 });
+
+export const setMeetings = meetings => ({
+  type: types.SET_MEETINGS,
+  payload: meetings,
+});

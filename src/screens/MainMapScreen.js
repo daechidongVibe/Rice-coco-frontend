@@ -12,15 +12,20 @@ import RemainingTime from '../components/RemainingTime';
 import isLocationNear from '../utils/isLocationNear';
 import axiosInstance from '../config/axiosConfig';
 import mockMeeting from '../../mockMeetings';
-import { updateLocation } from '../actions';
+import { updateLocation, setMeetings } from '../actions';
 
-const MainMapScreen = ({ userLocation, setUserLocation, navigation }) => {
+const MainMapScreen = ({
+  userLocation,
+  setUserLocation,
+  meetings,
+  setMeetings,
+  navigation,
+}) => {
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-  const [meetingLists, setMeetingLists] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
-  const isMeetingExisted = !!meetingLists.length;
+  const isMeetingExisted = !!meetings.length;
 
   const handleRestaurantSearchButton = () => {
     navigation.navigate('Search');
@@ -58,7 +63,7 @@ const MainMapScreen = ({ userLocation, setUserLocation, navigation }) => {
     (async () => {
       const { data } = await axiosInstance.get('/meetings');
 
-      setMeetingLists(mockMeeting);
+      setMeetings(mockMeeting);
     })();
   }, []);
 
@@ -81,7 +86,7 @@ const MainMapScreen = ({ userLocation, setUserLocation, navigation }) => {
           <Marker coordinate={userLocation} />
 
           {isMeetingExisted &&
-            meetingLists.map(meeting => {
+            meetings.map(meeting => {
               const {
                 restaurant: { location, name, restaurantId },
                 userNickname,
@@ -208,11 +213,15 @@ const RestaurantSearchButton = styled.TouchableOpacity`
 
 const mapStateToProps = state => ({
   userLocation: state.location,
+  meetings: state.meetings,
 });
 
 const mapDispatchToProps = dispatch => ({
   setUserLocation(location) {
     dispatch(updateLocation(location));
+  },
+  setMeetings(meetings) {
+    dispatch(setMeetings(meetings));
   },
 });
 
