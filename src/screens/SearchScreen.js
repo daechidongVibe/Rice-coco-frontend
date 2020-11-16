@@ -67,9 +67,9 @@ const Search = ({ navigation }) => {
       />
       <FlatList
         data={searchList}
-        renderItem={({ restaurant }) => (
+        renderItem={({ item }) => (
           <RenderItem
-            item={restaurant}
+            item={item}
             navigation={navigation}
           />
         )}
