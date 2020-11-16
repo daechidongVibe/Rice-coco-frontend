@@ -82,9 +82,9 @@ const Search = ({ navigation }) => {
 const Container = styled.View`
   flex: 1;
   padding: 10px;
+  padding-top: 40px;
   background-color: #ffffff;
   text-align: center;
-  marginBottom: 20px;
 `;
 
 export default Search;

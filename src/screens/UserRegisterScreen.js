@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import axios from 'axios';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
 import configuredAxios from '../config/axiosConfig';
@@ -40,7 +39,7 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
   const handleCreationButtonClick = async () => {
     const {
       data: { words: randomName },
-    } = await axios.get('https://nickname.hwanmoo.kr/?format=json&count=1');
+    } = await configuredAxios.get('https://nickname.hwanmoo.kr/?format=json&count=1');
 
     setNickname(randomName[0]);
   };
