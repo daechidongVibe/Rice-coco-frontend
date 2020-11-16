@@ -5,7 +5,10 @@ const initialState = {
   selectedMeeting: {
     restaurantId: '',
     restaurantName: '',
+    restaurantLocation: '',
     partnerNickname: '',
+    meetingId: '',
+    expiredTime: '',
   },
 };
 
@@ -19,7 +22,10 @@ export const meetings = (state = initialState, action) => {
     case types.SET_SELECTED_MEETING:
       return {
         ...state,
-        selectedMeeting: action.payload,
+        selectedMeeting: {
+          ...state.selectedMeeting,
+            ...action.payload,
+          },
       };
     default:
       return state;

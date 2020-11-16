@@ -12,14 +12,15 @@ import RemainingTime from '../components/RemainingTime';
 import isLocationNear from '../utils/isLocationNear';
 import axiosInstance from '../config/axiosConfig';
 import mockMeeting from '../../mockMeetings';
-import { updateLocation, setMeetings } from '../actions';
+import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';
 
 const MainMapScreen = ({
-  userLocation,
-  setUserLocation,
   meetings,
-  setMeetings,
+  userLocation,
   navigation,
+  setMeetings,
+  setUserLocation,
+  setSelectedMeeting,
 }) => {
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
@@ -32,15 +33,12 @@ const MainMapScreen = ({
   };
 
   const handleRestaurantClick = (
-    restaurantName,
     restaurantId,
-    userNickname
+    restaurantName,
+    partnerNickname
   ) => {
-    navigation.navigate('RestaurantDetails', {
-      restaurantName,
-      restaurantId,
-      userNickname,
-    });
+    setSelectedMeeting({ restaurantId, restaurantName, partnerNickname });
+    navigation.navigate('RestaurantDetails');
   };
 
   useEffect(() => {
@@ -54,7 +52,6 @@ const MainMapScreen = ({
       const {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync({});
-
       setUserLocation({ latitude, longitude });
     })();
   }, []);
@@ -62,7 +59,7 @@ const MainMapScreen = ({
   useEffect(() => {
     (async () => {
       const { data } = await axiosInstance.get('/meetings');
-
+      console.log('찬중찬중');
       setMeetings(mockMeeting);
     })();
   }, []);
@@ -88,8 +85,8 @@ const MainMapScreen = ({
           {isMeetingExisted &&
             meetings.map(meeting => {
               const {
-                restaurant: { location, name, restaurantId },
-                userNickname,
+                restaurant: { restaurantId, name, location },
+                userNickname: partnerNickname,
                 expiredTime,
               } = meeting;
               const isMarkerInRange = isLocationNear(
@@ -102,11 +99,11 @@ const MainMapScreen = ({
                 <Marker
                   key={meeting['_id']}
                   title={name}
-                  description={`${userNickname} 대기중`}
+                  description={`${partnerNickname} 대기중`}
                   coordinate={location}
                   onCalloutPress={() => {
                     if (!isMarkerInRange) return;
-                    handleRestaurantClick(name, restaurantId, userNickname);
+                    handleRestaurantClick(restaurantId, name, partnerNickname);
                   }}
                 >
                   {isMarkerInRange && (
@@ -213,7 +210,7 @@ const RestaurantSearchButton = styled.TouchableOpacity`
 
 const mapStateToProps = state => ({
   userLocation: state.location,
-  meetings: state.meetings,
+  meetings: state.meetings.filteredMeetings,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -222,6 +219,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setMeetings(meetings) {
     dispatch(setMeetings(meetings));
+  },
+  setSelectedMeeting(meeting) {
+    dispatch(setSelectedMeeting(meeting));
   },
 });
 
