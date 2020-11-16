@@ -37,8 +37,6 @@ const Login = ({ navigation, onLogin }) => {
         { email }
       );
 
-      console.log(data);
-
       if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
       }

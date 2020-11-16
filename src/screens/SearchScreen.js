@@ -42,7 +42,6 @@ const Search = ({ navigation }) => {
       );
 
       setSearchList(filteredDataList);
-      setSearchWord('');
     } catch (err) {
       console.log(err);
     }
@@ -71,6 +70,7 @@ const Search = ({ navigation }) => {
           <RenderItem
             item={item}
             navigation={navigation}
+            searchWord={searchWord}
           />
         )}
         keyExtractor={item => item.id}
@@ -84,7 +84,6 @@ const Container = styled.View`
   padding: 10px;
   background-color: #ffffff;
   text-align: center;
-  marginBottom: 20px;
 `;
 
 export default Search;

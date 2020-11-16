@@ -26,8 +26,6 @@ const MainMapScreen = ({ location, setLocation, navigation }) => {
   const { latitude, longitude } = location;
   const [meetingLists, setMeetingLists] = useState([]);
 
-  console.log(meetingLists);
-
   const handleRestaurantSearchButton = () => {
     navigation.navigate('Search');
   };
