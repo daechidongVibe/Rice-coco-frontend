@@ -24,6 +24,11 @@ export const user = (state = initialState, action) => {
         ...state,
         ...action.payload
       };
+    case types.SET_USER_PROMISE:
+      return {
+        ...state,
+        promise: action.promise
+      };
     default:
       return state;
   }
