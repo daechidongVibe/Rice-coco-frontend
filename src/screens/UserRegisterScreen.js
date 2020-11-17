@@ -28,7 +28,9 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
     })();
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.target.disabled = true;
+
     const userInfo = { nickname, gender, occupation, birthYear, email };
 
     const { data: { result, token, user } } = await configuredAxios.post(

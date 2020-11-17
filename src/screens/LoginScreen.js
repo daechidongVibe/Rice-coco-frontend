@@ -30,17 +30,17 @@ const Login = ({ navigation, onLogin }) => {
     })();
   }, []);
 
-  const handleLoginButtonClick = async (e) => {
-    console.log('로그인버튼 눌림!!');
-    e.target.disabled = true;
-
+  const handleLoginButtonClick = async () => {
     try {
       const { email } = await auth();
-      console.log('구글에서 authentication 성공 이후 받아온 구글 이메일 => ', email);
+
+      if (!email) return;
+
       const { data } = await configuredAxios.post(
         'users/login',
         { email }
       );
+
 
       if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
@@ -55,7 +55,7 @@ const Login = ({ navigation, onLogin }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MainMap');
+      navigation.navigate('MatchSuccess');
     } catch (error) {
       console.warn(error);
     }
