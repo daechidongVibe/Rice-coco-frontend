@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import SandGlass from '../components/Sandglass'
+import Loading from '../components/Loading'
 import { socket } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { setCurrentMeeting } from '../actions/index';
@@ -22,7 +22,7 @@ const MatchWaiting = ({
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
         console.log('새롭게 받아온 미팅 데이터', data);
         setMeetingDetails(data);
-      } catch(err) {
+      } catch (err) {
         console.error(err);
       }
     })();
@@ -45,14 +45,15 @@ const MatchWaiting = ({
   }, [currentMeeting]);
 
   const handleCancleButtonClick = () => {
-    socket.emit('disconnect', meetingId);
+    console.log('click');
+    socket.emit('leaveMeeting', meetingId);
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
       <Text>{leftTime}</Text>
-      <SandGlass />
+      <Loading />
       <Text>{meetingDetails.restaurantName}</Text>
       <CancleButton
         onPress={handleCancleButtonClick}
