@@ -82,8 +82,15 @@ const RestaurantDetails = ({
         userId
       }
     );
+      const meetingId = createdMeeting.data['createdMeeting']._id;
+      const expiredTime = createdMeeting.data['createdMeeting'].expiredTime;
 
-    // 성공적으로 생성되었다면 프로미스 감소 및 네비게이팅
+      // 성공적으로 생성되었다면 프로미스 감소 및 네비게이팅
+    setSelectedMeeting({
+      meetingId,
+      expiredTime
+    });
+
     if (createdMeeting) {
       // 프로미스 감소
       configuredAxios.put(
@@ -92,7 +99,6 @@ const RestaurantDetails = ({
           amount: -1
         }
       );
-
       navigation.navigate('MatchWaiting');
     }
 
@@ -106,8 +112,6 @@ const RestaurantDetails = ({
       `/meetings/${meetingId}/join`,
       { userId }
     );
-
-    console.log(updateResult);
 
     if (createdMeeting) {
       configuredAxios.put(
