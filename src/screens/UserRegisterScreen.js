@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import {
-  Text,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  Keyboard,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
 import configuredAxios from '../config/axiosConfig';
@@ -16,21 +11,32 @@ import { setUserInfo } from '../actions';
 
 const UserRegisterScreen = ({ route, navigation, onLogin }) => {
   const [nickname, setNickname] = useState('');
-  const [gender, setGender] = useState('');
-  const [occupation, setOccupation] = useState('');
-  const [birthYear, setBirthYear] = useState('');
+  const [gender, setGender] = useState('남자');
+  const [occupation, setOccupation] = useState('개발');
+  const [birthYear, setBirthYear] = useState('1970');
   const { email } = route.params;
+
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { words: randomName },
+      } = await configuredAxios.get(
+        'https://nickname.hwanmoo.kr/?format=json&count=1'
+      );
+
+      setNickname(randomName[0]);
+    })();
+  }, []);
 
   const handleSubmit = async () => {
     const userInfo = { nickname, gender, occupation, birthYear, email };
 
     const {
       data: { result, token, user },
-    } = await configuredAxios.post('users/signup', { userInfo });
+    } = await configuredAxios.post('users/signup', userInfo);
 
     if (result === 'ok') {
       await asyncStorage.setItem('token', token);
-      // user는 왜 리덕스에 꽂는 것..?
       onLogin(user);
       navigation.navigate('PreferredPartner');
     }
@@ -39,60 +45,61 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
   const handleCreationButtonClick = async () => {
     const {
       data: { words: randomName },
-    } = await configuredAxios.get('https://nickname.hwanmoo.kr/?format=json&count=1');
+    } = await configuredAxios.get(
+      'https://nickname.hwanmoo.kr/?format=json&count=1'
+    );
 
     setNickname(randomName[0]);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Wrapper>
-        <Title>내 정보 등록</Title>
-        <InputWrap>
-          <Text>닉네임</Text>
-          <StyledInput placeholder="nickname" value={nickname} />
-          <TouchableOpacity onPress={handleCreationButtonClick}>
-            <NameCreationButton>
-              <Text>이름 생성하기</Text>
-            </NameCreationButton>
-          </TouchableOpacity>
-          <Text>성별</Text>
-          <PickerInput
-            content={gender}
-            onChange={setGender}
-            contentOptions={MY_INFO_OPTIONS.gender}
-          />
-          <Text>직업군</Text>
-          <PickerInput
-            content={occupation}
-            onChange={setOccupation}
-            contentOptions={MY_INFO_OPTIONS.occupation}
-          />
-          <Text>태어난 년도</Text>
-          <PickerInput
-            content={birthYear}
-            onChange={setBirthYear}
-            contentOptions={MY_INFO_OPTIONS.birthYear}
-          />
-        </InputWrap>
-        <TouchableOpacity onPress={handleSubmit}>
-          <StyledSubmitButton>
-            <Text>내 정보 등록하기</Text>
-          </StyledSubmitButton>
-        </TouchableOpacity>
-      </Wrapper>
-    </TouchableWithoutFeedback>
+    <Wrapper>
+      <Title>내 정보 등록</Title>
+      <Text>닉네임</Text>
+      <NameInput
+        placeholder="nickname"
+        value={nickname}
+        editable={false}
+        selectTextOnFocus={false}
+      />
+      <NameCreationButton onPress={handleCreationButtonClick}>
+        <View>
+          <Text>이름 자동 생성하기</Text>
+        </View>
+      </NameCreationButton>
+      <Text>성별</Text>
+      <PickerInput
+        content={gender}
+        onChange={setGender}
+        contentOptions={MY_INFO_OPTIONS.gender}
+      />
+      <Text>직업군</Text>
+      <PickerInput
+        content={occupation}
+        onChange={setOccupation}
+        contentOptions={MY_INFO_OPTIONS.occupation}
+      />
+      <Text>태어난 년도</Text>
+      <PickerInput
+        content={birthYear}
+        onChange={setBirthYear}
+        contentOptions={MY_INFO_OPTIONS.birthYear}
+      />
+      <StyledSubmitButton onPress={handleSubmit}>
+        <View>
+          <Text>내 정보 등록하기</Text>
+        </View>
+      </StyledSubmitButton>
+    </Wrapper>
   );
 };
 
 const Wrapper = styled.View`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   height: 100%;
-  align-items: center;
-  border: 1px solid black;
-  padding: 100px 50px 100px 50px;
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const Title = styled.Text`
@@ -102,30 +109,29 @@ const Title = styled.Text`
   font-weight: bold;
 `;
 
-const InputWrap = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const StyledInput = styled.TextInput`
-  width: 300px;
-  height: 50px;
-  background-color: white;
-  margin-bottom: 10px;
+const NameInput = styled.TextInput`
   text-align: center;
-`;
-
-const NameCreationButton = styled.View`
-  padding: 10px;
-  width: 100%;
-  background-color: #ff914d;
+  padding-top: 10px;
+  padding-bottom: 10px;
   margin-bottom: 10px;
+  background-color: white;
 `;
 
-const StyledSubmitButton = styled.View`
-  padding: 10px;
+const NameCreationButton = styled.TouchableOpacity`
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
   background-color: #ff914d;
+`;
+
+const StyledSubmitButton = styled.TouchableOpacity`
+  display: flex;
+  align-items: center;
+  background-color: #ff914d;
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
 const mapDispatchToProps = dispatch => ({

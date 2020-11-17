@@ -21,7 +21,6 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName='Login'
-          // screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name='Login' component={LoginScreen} />
           <Stack.Screen name='PreferredPartner' component={PreferredPartnerScreen} />
