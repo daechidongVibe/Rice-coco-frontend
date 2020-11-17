@@ -9,7 +9,6 @@ import axios from '../config/axiosConfig';
 import NavigationBar from '../components/NavigationBar';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
-
 const PreferredPartnerScreen = ({ navigation, userId }) => {
   const [genderInput, setGenderInput] = useState('남자');
   const [ageInput, setAgeInput] = useState('20대');

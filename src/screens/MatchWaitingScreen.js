@@ -12,17 +12,15 @@ const MatchWaiting = ({
   userId,
   currentMeeting,
   setCurrentMeeting,
-  expiredTime,
-  meetingId
-}) => {
+  selectedMeeting: { meetingId, expiredTime } }) => {
   const [leftTime, setLeftTime] = useState('28:00');
   const [meetingDetails, setMeetingDetails] = useState({});
 
-  const mockMeetingId = '5fb3ab4e4abde7089a6cb0bc'
   useEffect(() => {
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        console.log('새롭게 받아온 미팅 데이터', data);
         setMeetingDetails(data);
       } catch (err) {
         console.error(err);
@@ -77,7 +75,7 @@ const Container = styled.View`
 `;
 
 const CancleButton = styled.Button`
-  background-color: #ffffff
+  background-color: #ffffff;
   margin: auto;
   width: 100%;
   padding: 10px;
@@ -88,11 +86,20 @@ const CancleButton = styled.Button`
   transform: translateX(-25px);
 `
 
-export default connect(state => ({
-  userId: state.user._id,
-  expiredTime: state.meetings.selectedMeeting.expiredTime,
-  meetingId: state.meetings.selectedMeeting.meetingId
-}), {
-  setCurrentMeeting
+const mapStateToProps = (
+  {
+    meetings: { selectedMeeting, currentMeeting }, user: { _id }
+  }) => {
+  return {
+    userId: _id,
+    currentMeeting,
+    selectedMeeting
+  };
 }
+
+export default connect(
+  mapStateToProps,
+  {
+    setCurrentMeeting
+  }
 )(MatchWaiting);

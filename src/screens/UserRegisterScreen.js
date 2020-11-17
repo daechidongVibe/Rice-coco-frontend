@@ -31,13 +31,16 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
   const handleSubmit = async () => {
     const userInfo = { nickname, gender, occupation, birthYear, email };
 
-    const {
-      data: { result, token, user },
-    } = await configuredAxios.post('users/signup', userInfo);
+    const { data: { result, token, user } } = await configuredAxios.post(
+      'users/signup',
+      userInfo
+    );
 
     if (result === 'ok') {
       await asyncStorage.setItem('token', token);
+
       onLogin(user);
+
       navigation.navigate('PreferredPartner');
     }
   };

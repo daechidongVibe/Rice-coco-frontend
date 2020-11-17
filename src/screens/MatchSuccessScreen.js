@@ -39,37 +39,37 @@ const MatchSuccessScreen = ({
       : setIsArrived(false);
   }, [userLocation]);
 
-  useEffect(() => {
-    let subscribeLocationMoved;
+  // useEffect(() => {
+  //   let subscribeLocationMoved;
 
-    (async () => {
-      subscribeLocationMoved = await Location.startLocationUpdatesAsync(
-        'trackLocation',
-        {
-          accuracy: Location.Accuracy.Highest,
-          timeInterval: 1000,
-          distanceInterval: 1,
-          howsBackgroundLocationIndicator: true,
-          foregroundService: {
-            notificationTitle: '342342',
-            notificationBody: 'asdasdashjksdasd',
-            notificationColor: '#EEE',
-          },
-        }
-      );
-      TaskManager.defineTask(
-        'trackLocation',
-        ({ data: { locations }, error }) => {
-          if (error) return;
-          const {
-            coords: { latitude, longitude },
-          } = locations[0];
-          setUserLocation({ latitude, longitude });
-        }
-      );
-    })();
-    return () => subscribeLocationMoved.remove();
-  }, []);
+  //   (async () => {
+  //     subscribeLocationMoved = await Location.startLocationUpdatesAsync(
+  //       'trackLocation',
+  //       {
+  //         accuracy: Location.Accuracy.Highest,
+  //         timeInterval: 1000,
+  //         distanceInterval: 1,
+  //         howsBackgroundLocationIndicator: true,
+  //         foregroundService: {
+  //           notificationTitle: '342342',
+  //           notificationBody: 'asdasdashjksdasd',
+  //           notificationColor: '#EEE',
+  //         },
+  //       }
+  //     );
+  //     TaskManager.defineTask(
+  //       'trackLocation',
+  //       ({ data: { locations }, error }) => {
+  //         if (error) return;
+  //         const {
+  //           coords: { latitude, longitude },
+  //         } = locations[0];
+  //         setUserLocation({ latitude, longitude });
+  //       }
+  //     );
+  //   })();
+  //   return () => subscribeLocationMoved.remove();
+  // }, []);
 
   useEffect(() => {
     (async () => {
@@ -149,7 +149,8 @@ const MatchSuccessScreen = ({
             </ArrivalText>
           </ArrivalButton>
         ) : (
-          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+          null
         )}
       </OverlayHeader>
       <OverlayFooter>
