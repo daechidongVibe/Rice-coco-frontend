@@ -11,7 +11,6 @@ const initialState = {
       longitude: 0
     },
     partnerNickname: '',
-    meetingId: '',
     expiredTime: '',
   },
   currentMeeting: {

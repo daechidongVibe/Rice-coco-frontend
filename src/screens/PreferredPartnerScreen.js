@@ -8,7 +8,6 @@ import { Picker } from '@react-native-picker/picker';
 import axios from '../config/axiosConfig';
 import NavigationBar from '../components/NavigationBar';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PreferredPartnerScreen = ({ navigation, userId }) => {
   const [genderInput, setGenderInput] = useState('남자');

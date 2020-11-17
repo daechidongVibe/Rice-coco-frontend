@@ -11,6 +11,7 @@ import { setUserInfo } from '../actions';
 const Login = ({ navigation, onLogin }) => {
   useEffect(() => {
     (async () => {
+      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
 
       if (!token) return;
@@ -29,15 +30,17 @@ const Login = ({ navigation, onLogin }) => {
     })();
   }, []);
 
-  const handleLoginButtonClick = async () => {
+  const handleLoginButtonClick = async (e) => {
+    console.log('로그인버튼 눌림!!');
+    e.target.disabled = true;
+
     try {
       const { email } = await auth();
-      console.log(email);
+      console.log('구글에서 authentication 성공 이후 받아온 구글 이메일 => ', email);
       const { data } = await configuredAxios.post(
         'users/login',
         { email }
       );
-
 
       if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
@@ -52,7 +55,7 @@ const Login = ({ navigation, onLogin }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MatchSuccess');
+      navigation.navigate('MainMap');
     } catch (error) {
       console.warn(error);
     }

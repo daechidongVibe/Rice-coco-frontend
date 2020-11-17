@@ -7,21 +7,24 @@ import { socket } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { setCurrentMeeting } from '../actions/index';
 
-const MatchWaiting = ({ navigation, userId, currentMeeting, setCurrentMeeting }) => {
+const MatchWaiting = ({
+  navigation,
+  userId,
+  currentMeeting,
+  setCurrentMeeting,
+  selectedMeeting: { meetingId, expiredTime } }) => {
   const [leftTime, setLeftTime] = useState('28:00');
   const [meetingDetails, setMeetingDetails] = useState({});
-
-  const meetingId = '5fb27cf65d219516a38d0e95';
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        console.log('새롭게 받아온 미팅 데이터', data);
         setMeetingDetails(data);
       } catch(err) {
         console.error(err);
       }
-
     })();
   }, []);
 
@@ -71,7 +74,7 @@ const Container = styled.View`
 `;
 
 const CancleButton = styled.Button`
-  background-color: #ffffff
+  background-color: #ffffff;
   margin: auto;
   width: 100%;
   padding: 10px;
@@ -82,12 +85,20 @@ const CancleButton = styled.Button`
   transform: translateX(-25px);
 `
 
-export default connect(state => ({
-  mockMeetings: state.meetings.filteredMeetings,
-  selectedMeeting: state.meetings.selectedMeeting,
-  userId: state.user._id,
-  currentMeeting: state.meetings.currentMeeting
-}), {
-  setCurrentMeeting
+const mapStateToProps = (
+  {
+    meetings: { selectedMeeting, currentMeeting }, user: { _id }
+  }) => {
+  return {
+    userId: _id,
+    currentMeeting,
+    selectedMeeting
+  };
 }
+
+export default connect(
+  mapStateToProps,
+  {
+    setCurrentMeeting
+  }
 )(MatchWaiting);

@@ -70,18 +70,28 @@ const RestaurantDetails = ({
 
   const renderItem = ({ item }) => <Image source={{ uri: item }} />;
 
-  const handlePressCreateButton = async () => {
+  const handlePressCreateButton = async (e) => {
+    e.target.disabled = true;
+
     // 먼저 미팅 생성이 성공적으로 이루어 질 것으로 가정하고 리덕스 스토어의 유저 프로미스 값(UI)을 업데이트 (optimitstic update)
     setPromiseAmount(userPromise - 1);
-
+    console.log(selectedMeeting, '<= 이 미팅을 생성할 것을 서버에 요청합니다..')
     // 미팅을 생성하고,
-    const createdMeeting = await configuredAxios.post(
+    const { data: { createdMeeting } } = await configuredAxios.post(
       '/meetings',
       {
         selectedMeeting,
         userId
       }
     );
+    console.log('생성된 미팅! => ', createdMeeting);
+
+    const { _id: meetingId, expiredTime } = createdMeeting;
+
+    setSelectedMeeting({
+      meetingId,
+      expiredTime
+    });
 
     // 성공적으로 생성되었다면 프로미스 감소 및 네비게이팅
     if (createdMeeting) {
@@ -99,7 +109,9 @@ const RestaurantDetails = ({
     // 생성되지 않았다면 do nothing..
   };
 
-  const handlePressJoinButton = async () => {
+  const handlePressJoinButton = async (e) => {
+    e.target.disabled = true;
+
     setPromiseAmount(userPromise - 1);
 
     const updateResult = await configuredAxios.put(
