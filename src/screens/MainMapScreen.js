@@ -28,8 +28,6 @@ const MainMapScreen = ({
   const [errorMsg, setErrorMsg] = useState(null);
   const isMeetingExisted = !!meetings.length;
 
-  console.log(2398457239523748);
-  console.log(meetings);
   const handleRestaurantSearchButton = () => {
     navigation.navigate('Search');
   };
@@ -112,7 +110,6 @@ const MainMapScreen = ({
                   {isMarkerInRange && (
                     <RemainingTime expiredTime={expiredTime} />
                   )}
-
                   <Image
                     source={require('../../assets/images/rice.png')}
                     style={{
