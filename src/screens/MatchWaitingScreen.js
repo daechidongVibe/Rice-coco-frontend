@@ -19,7 +19,7 @@ const MatchWaiting = ({ navigation, userId, currentMeeting, setCurrentMeeting })
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
         setMeetingDetails(data);
       } catch(err) {
-        console.log(123123);
+        console.error(err);
       }
 
     })();
@@ -29,15 +29,13 @@ const MatchWaiting = ({ navigation, userId, currentMeeting, setCurrentMeeting })
     socket.emit('join meeting', { meetingId, user: userId });
 
     socket.on('current meeting', data => {
-      console.log('socketRoom', data)
       setCurrentMeeting(data);
     });
-    
+
     return () => socket.off('current meeting');
   }, []);
 
   useEffect(() => {
-    console.log('current', currentMeeting);
     if (currentMeeting && currentMeeting.users.length === 2) {
       navigation.navigate('MatchSuccessScreen');
     }

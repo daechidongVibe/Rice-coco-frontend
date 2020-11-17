@@ -40,4 +40,3 @@ export const meetings = (state = initialState, action) => {
       return state;
   }
 };
-
