@@ -35,7 +35,8 @@ const MainMapScreen = ({
   const handleRestaurantClick = (
     restaurantId,
     restaurantName,
-    partnerNickname
+    partnerNickname,
+    meetingId
   ) => {
     setSelectedMeeting({ restaurantId, restaurantName, partnerNickname });
     navigation.navigate('RestaurantDetails');
@@ -58,8 +59,8 @@ const MainMapScreen = ({
 
   useEffect(() => {
     (async () => {
-      const { data } = await axiosInstance.get('/meetings');
-      console.log('찬중찬중');
+      // const { data } = await axiosInstance.get('/meetings');
+
       setMeetings(mockMeeting);
     })();
   }, []);

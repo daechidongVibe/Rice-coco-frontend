@@ -23,7 +23,7 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
 
   const handleSubmit = async () => {
     const userInfo = { nickname, gender, occupation, birthYear, email };
-    console.log(userInfo);
+
     const {
       data: { result, token, user },
     } = await configuredAxios.post('users/signup', { userInfo });

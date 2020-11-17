@@ -19,3 +19,8 @@ export const setSelectedMeeting = meeting => ({
   type: types.SET_SELECTED_MEETING,
   payload: meeting,
 });
+
+export const setCurrentMeeting = meeting => ({
+  type: types.SET_CURRENT_MEETING,
+  payload: meeting,
+});
