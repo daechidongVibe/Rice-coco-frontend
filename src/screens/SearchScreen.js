@@ -25,6 +25,7 @@ const Search = ({ navigation }) => {
       setPlaceHolder(SHOULD_ENTER_WORD);
       return;
     }
+
     Keyboard.dismiss();
     setIsSearching(true);
 
@@ -42,7 +43,6 @@ const Search = ({ navigation }) => {
       );
 
       setSearchList(filteredDataList);
-      setSearchWord('');
     } catch (err) {
       console.log(err);
     }
@@ -71,6 +71,7 @@ const Search = ({ navigation }) => {
           <RenderItem
             item={item}
             navigation={navigation}
+            searchWord={searchWord}
           />
         )}
         keyExtractor={restaurant => restaurant.id}

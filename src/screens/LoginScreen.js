@@ -52,7 +52,7 @@ const Login = ({ navigation, onLogin }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MainMap');
+      navigation.navigate('MatchSuccess');
     } catch (error) {
       console.warn(error);
     }

@@ -10,6 +10,7 @@ const defaultOptions = {
     'Content-Type': 'application/json',
   },
 };
+
 const axiosInstance = axios.create(defaultOptions);
 
 axiosInstance.interceptors.request.use(async config => {

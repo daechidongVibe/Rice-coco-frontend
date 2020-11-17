@@ -5,44 +5,52 @@ import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
 
-const RenderItem = ({ item, navigation, filteredMeetings, setSelectedMeeting }) => {
+const RenderItem = ({
+  item,
+  searchWord,
+  navigation,
+  filteredMeetings,
+  setSelectedMeeting,
+}) => {
   const openingHours = item.openingHours;
   let isOpen = '-';
 
   if (typeof openingHours === OBJECT) {
     isOpen = openingHours['open_now'] ? OPEN : CLOSE;
   }
- 
-  const onHandlePress = () => {
-    const hasWaitingPartnerMeeting = filteredMeetings.find(
+
+  const handlePressRestaurant = () => {
+    const hasCreatedMeeting = filteredMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.restaurantId
     );
 
     setSelectedMeeting({
       restaurantId: item.id,
       restaurantName: item.name,
-      partnerNickname: hasWaitingPartnerMeeting
-        ? hasWaitingPartnerMeeting.partnerNickname
-        : '',
+      partnerNickname: hasCreatedMeeting ?
+        hasCreatedMeeting.partnerNickname :
+        '',
     });
 
-    navigation.navigate('RestaurantDetails');
+    return navigation.navigate('RestaurantDetails', { searchWord });
   };
 
   return (
-    <TouchableOpacity onPress={onHandlePress}>
+    <TouchableOpacity onPress={handlePressRestaurant}>
       <View>
         <Text>{item.name}</Text>
-        <Rating imageSize={20} readonly startingValue={item.rating} />
+        <Rating imageSize={20} startingValue={item.rating} readonly />
         <Text>{isOpen}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default connect(state => ({
-  filteredMeetings: state.meetings.filteredMeetings,
-}), {
-  setSelectedMeeting,
-}
+export default connect(
+  state => ({
+    filteredMeetings: state.meetings.filteredMeetings,
+  }),
+  {
+    setSelectedMeeting,
+  }
 )(RenderItem);
