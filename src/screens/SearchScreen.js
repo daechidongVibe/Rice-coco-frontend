@@ -73,7 +73,7 @@ const Search = ({ navigation }) => {
             navigation={navigation}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={restaurant => restaurant.id}
       />
     </Container>
   );

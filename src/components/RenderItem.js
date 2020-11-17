@@ -17,6 +17,19 @@ const RenderItem = ({
   if (typeof openingHours === OBJECT) {
     isOpen = openingHours['open_now'] ? OPEN : CLOSE;
   }
+  const onHandlePress = () => {
+    const hasWattingPartnerMeeting = filteredMeetings.find(meeting => meeting.restaurant.restaurantId === item.restaurantId);
+
+    if (hasWattingPartnerMeeting) {
+      setSeletedMeeting({
+        restaurantId: item.id,
+        restaurantName: item.name,
+        partnerNickname: hasWattingPartnerMeeting.partnerNickname
+      });
+    }
+
+    return navigation.navigate('RestaurantDetails');
+  };
 
   const onHandlePress = () => {
     const hasWaitingPartnerMeeting = filteredMeetings.find(

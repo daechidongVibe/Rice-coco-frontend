@@ -32,10 +32,12 @@ const Login = ({ navigation, onLogin }) => {
   const handleLoginButtonClick = async () => {
     try {
       const { email } = await auth();
+      console.log(email);
       const { data } = await configuredAxios.post(
         'users/login',
         { email }
       );
+
 
       if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
