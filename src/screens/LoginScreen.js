@@ -25,7 +25,7 @@ const Login = ({ navigation, onLogin }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MatchSuccess');
+      navigation.navigate('MainMap');
     })();
   }, []);
 
