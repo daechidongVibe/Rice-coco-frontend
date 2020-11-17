@@ -72,7 +72,7 @@ const RestaurantDetails = ({
 
   const handlePressCreateButton = async () => {
     // 먼저 미팅 생성이 성공적으로 이루어 질 것으로 가정하고 리덕스 스토어의 유저 프로미스 값(UI)을 업데이트 (optimitstic update)
-    setPromiseAmount(promise - 1);
+    setPromiseAmount(userPromise - 1);
 
     // 미팅을 생성하고,
     const createdMeeting = await configuredAxios.post(
@@ -100,6 +100,8 @@ const RestaurantDetails = ({
   };
 
   const handlePressJoinButton = async () => {
+    setPromiseAmount(userPromise - 1);
+
     const updateResult = await configuredAxios.put(
       `/meetings/${meetingId}/join`,
       { userId }
@@ -107,7 +109,16 @@ const RestaurantDetails = ({
 
     console.log(updateResult);
 
-    // navigation.navigate('MatchSuccess');
+    if (createdMeeting) {
+      configuredAxios.put(
+        `/users/${userId}/promise`,
+        {
+          amount: -1
+        }
+      );
+
+      navigation.navigate('MatchSuccess');
+    }
   };
 
   return(
