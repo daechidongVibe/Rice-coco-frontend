@@ -30,12 +30,11 @@ const Login = ({ navigation, onLogin }) => {
     })();
   }, []);
 
-  const handleLoginButtonClick = async () => {
+  const handleLoginButtonClick = async (e) => {
+    e.target.disabled = true;
+
     try {
       const { email } = await auth();
-
-      if (!email) return;
-
       const { data } = await configuredAxios.post(
         'users/login',
         { email }

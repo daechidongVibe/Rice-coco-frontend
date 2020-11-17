@@ -5,5 +5,5 @@ const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
 
 export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
     transports: ['websocket'],
-    reconnectionAttempts: 15
+    reconnectionAttempts: 15,
 });
