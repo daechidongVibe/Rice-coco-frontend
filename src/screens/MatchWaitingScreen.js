@@ -2,26 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import SandGlass from '../components/Sandglass'
+import Loading from '../components/Loading'
 import { socket } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { setCurrentMeeting } from '../actions/index';
 
-const MatchWaiting = ({ navigation, userId, currentMeeting, setCurrentMeeting }) => {
+const MatchWaiting = ({
+  navigation,
+  userId,
+  currentMeeting,
+  setCurrentMeeting,
+  expiredTime,
+  meetingId
+}) => {
   const [leftTime, setLeftTime] = useState('28:00');
   const [meetingDetails, setMeetingDetails] = useState({});
 
-  const meetingId = '5fb27cf65d219516a38d0e95';
-
+  const mockMeetingId = '5fb3ab4e4abde7089a6cb0bc'
   useEffect(() => {
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
         setMeetingDetails(data);
-      } catch(err) {
+      } catch (err) {
         console.error(err);
       }
-
     })();
   }, []);
 
@@ -42,14 +47,15 @@ const MatchWaiting = ({ navigation, userId, currentMeeting, setCurrentMeeting })
   }, [currentMeeting]);
 
   const handleCancleButtonClick = () => {
-    socket.emit('disconnect', meetingId);
+    console.log('click');
+    socket.emit('leaveMeeting', meetingId);
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
       <Text>{leftTime}</Text>
-      <SandGlass />
+      <Loading />
       <Text>{meetingDetails.restaurantName}</Text>
       <CancleButton
         onPress={handleCancleButtonClick}
@@ -83,10 +89,9 @@ const CancleButton = styled.Button`
 `
 
 export default connect(state => ({
-  mockMeetings: state.meetings.filteredMeetings,
-  selectedMeeting: state.meetings.selectedMeeting,
   userId: state.user._id,
-  currentMeeting: state.meetings.currentMeeting
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  meetingId: state.meetings.selectedMeeting.meetingId
 }), {
   setCurrentMeeting
 }
