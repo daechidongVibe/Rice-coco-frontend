@@ -20,14 +20,9 @@ const RenderItem = ({
   }
 
   const handlePressRestaurant = () => {
-    console.log('전체 미팅..', filteredMeetings);
-    console.log('에서 이 아이디의 레스토랑이 있는지 확인..', item.restaurantId);
-
     const hasCreatedMeeting = filteredMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.restaurantId
     );
-
-    console.log('이미 만들어진 미팅 존재하나요???', hasCreatedMeeting);
 
     setSelectedMeeting({
       restaurantId: item.id,

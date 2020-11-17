@@ -11,7 +11,13 @@ const initialState = {
       longitude: 0
     },
     partnerNickname: '',
+    meetingId: '',
+    expiredTime: '',
   },
+  currentMeeting: {
+    meetingId : '',
+    users: [],
+  }
 };
 
 export const meetings = (state = initialState, action) => {
@@ -29,6 +35,11 @@ export const meetings = (state = initialState, action) => {
           ...action.payload
         },
       };
+    case types.SET_CURRENT_MEETING:
+      return {
+        ...state,
+        currentMeeting: action.payload
+      }
     default:
       return state;
   }

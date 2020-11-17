@@ -53,7 +53,6 @@ const MainMapScreen = ({
       const {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync({});
-
       setUserLocation({ latitude, longitude });
     })();
   }, []);
@@ -116,9 +115,9 @@ const MainMapScreen = ({
                     );
                   }}
                 >
-                  {/* {isMarkerInRange && (
+                  {isMarkerInRange && (
                     <RemainingTime expiredTime={expiredTime} />
-                  )} */}
+                  )}
 
                   <Image
                     source={require('../../assets/images/rice.png')}
