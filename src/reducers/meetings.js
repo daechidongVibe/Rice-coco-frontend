@@ -3,8 +3,13 @@ import * as types from '../constants/actionTypes';
 const initialState = {
   filteredMeetings: [],
   selectedMeeting: {
+    meetingId: '',
     restaurantId: '',
     restaurantName: '',
+    restaurantLocation: {
+      latitude: 0,
+      longitude: 0
+    },
     partnerNickname: '',
   },
 };
@@ -14,12 +19,15 @@ export const meetings = (state = initialState, action) => {
     case types.SET_MEETINGS:
       return {
         ...state,
-        filteredMeetings: [...action.payload],
+        filteredMeetings: [ ...action.payload ],
       };
     case types.SET_SELECTED_MEETING:
       return {
         ...state,
-        selectedMeeting: action.payload,
+        selectedMeeting: {
+          ...state.selectedMeeting,
+          ...action.payload
+        },
       };
     default:
       return state;

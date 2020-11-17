@@ -1,33 +1,56 @@
 import React, { useEffect, useState }  from 'react';
+import { connect } from 'react-redux';
 import { View, Text, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 
 import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
-import { TouchableOpacity } from 'react-native';
+import { setSelectedMeeting, setPromiseAmount } from '../actions/index';
 
 const {
     REACT_NATIVE_GOOGLE_PLACES_API_KEY
   } = getEnvVars();
 
-const RestaurantDetails = ({ navigation, userNickname, meetingId, route: { params: { restaurantId, restaurantName, searchWord } } }) => {
-  if (userNickname) {
-    // 메인 맵에서 마커를 눌러 들어온 경우에는 유저 닉네임이 함께 전달되어 그대로 렌더링 시 사용하면 되지만,
+const RestaurantDetails = ({
+    navigation,
+    selectedMeeting,
+    setSelectedMeeting,
+    userId,
+    userPromise,
+    setPromiseAmount,
+    route
+  }) => {
+  const {
+    meetingId,
+    restaurantId,
+    restaurantName,
+    partnerNickname
+  } = selectedMeeting;
 
-    // 음식점을 검색하여 들어온 경우에는 유저 닉네임이 전달되지 않기 때문에 서버에 restaurantId로 요청을 보내어 원하는 유저 닉네임을 찾아온다
-  }
+  const searchWord = route.params?.searchWord;
+
+  const hasCreatedMeeting = partnerNickname;
 
   const [photoUrls, setPhotoUrls] = useState([]);
-  const [restaurantInfo, setRestaurantInfo] = useState({});
-
+  console.log(restaurantId);
   // 마운트 시 restaurantId로 구글에 place details 요청
-  const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo`;
+  const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry`;
 
   useEffect(() => {
     (async () => {
       const { data: { result } } = await configuredAxios(reqUrl);
 
-      setRestaurantInfo(result);
+      const {
+        lat: latitude,
+        lng: longitude
+      } = result.geometry.location;
+
+      setSelectedMeeting({
+        restaurantLocation: {
+          latitude,
+          longitude
+        }
+      });
 
       const { photos } = result;
 
@@ -47,11 +70,56 @@ const RestaurantDetails = ({ navigation, userNickname, meetingId, route: { param
 
   const renderItem = ({ item }) => <Image source={{ uri: item }} />;
 
+  const handlePressCreateButton = async () => {
+    // 먼저 미팅 생성이 성공적으로 이루어 질 것으로 가정하고 리덕스 스토어의 유저 프로미스 값(UI)을 업데이트 (optimitstic update)
+    setPromiseAmount(promise - 1);
+
+    // 미팅을 생성하고,
+    const createdMeeting = await configuredAxios.post(
+      '/meetings',
+      {
+        selectedMeeting,
+        userId
+      }
+    );
+
+    // 성공적으로 생성되었다면 프로미스 감소 및 네비게이팅
+    if (createdMeeting) {
+      // 프로미스 감소
+      configuredAxios.put(
+        `/users/${userId}/promise`,
+        {
+          amount: -1
+        }
+      );
+
+      navigation.navigate('MatchWaiting');
+    }
+
+    // 생성되지 않았다면 do nothing..
+  };
+
+  const handlePressJoinButton = async () => {
+    const updateResult = await configuredAxios.put(
+      `/meetings/${meetingId}/join`,
+      { userId }
+    );
+
+    console.log(updateResult);
+
+    // navigation.navigate('MatchSuccess');
+  };
+
   return(
     <Container>
       <Header>
-      <HeaderText>{restaurantInfo.name}</HeaderText>
+        <HeaderText>{restaurantName}</HeaderText>
       </Header>
+
+      <PromiseContainer>
+        <PromiseAmount>{userPromise}개</PromiseAmount>
+      </PromiseContainer>
+
       {
         (photoUrls.length > 0) &&
         <FlatList
@@ -63,11 +131,11 @@ const RestaurantDetails = ({ navigation, userNickname, meetingId, route: { param
       }
 
       {
-        userNickname ?
+        hasCreatedMeeting ?
         <>
-          <DescriptionHeader>{`${searchWord} 로 유명한 "${restaurantName}"`}</DescriptionHeader>
+          <DescriptionHeader>{`"${restaurantName}" 에서 같이 밥먹을 사람!`}</DescriptionHeader>
           <Description>
-            {`${restaurantName}에서 함께 식사하고 싶어하는  ${userNickname}님이 계십니다! 함께 드시겠어요?`}
+            {`${restaurantName}에서 함께 식사하고 싶어하는  ${partnerNickname}님이 계십니다! 함께 드시겠어요?`}
           </Description>
         </>
         :
@@ -80,11 +148,12 @@ const RestaurantDetails = ({ navigation, userNickname, meetingId, route: { param
       }
 
       {
-        userNickname ?
-        <MeetingButton>
+        hasCreatedMeeting ?
+        <MeetingButton onPress={handlePressJoinButton}
+        >
           <ButtonText>참여하기!</ButtonText>
         </MeetingButton>:
-        <MeetingButton>
+        <MeetingButton onPress={handlePressCreateButton}>
           <ButtonText>생성하기!</ButtonText>
         </MeetingButton>
       }
@@ -142,4 +211,33 @@ const ButtonText = styled.Text`
   text-align: center;
 `;
 
-export default RestaurantDetails;
+const PromiseContainer = styled.View`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
+
+const PromiseAmount = styled.Text`
+  font-weight: bold;
+  font-size: 20px;
+`;
+
+const mapStateToProps = (
+  {
+    meetings: { selectedMeeting },
+    user: { _id, promise }
+  }) => {
+  return {
+    selectedMeeting,
+    userId: _id,
+    userPromise: promise
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  {
+    setSelectedMeeting,
+    setPromiseAmount
+  }
+)(RestaurantDetails);

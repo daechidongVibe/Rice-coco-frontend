@@ -9,6 +9,8 @@ import PreferredPartnerScreen from './src/screens/PreferredPartnerScreen';
 import MainMapScreen from './src/screens/MainMapScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import RestaurantDetailsScreen from './src/screens/RestaurantDetailsScreen';
+import MatchWaitingScreen from './src/screens/MatchWaitingScreen';
+import MatchSuccessScreen from './src/screens/MatchSuccessScreen';
 import store from './src/store/';
 
 const Stack = createStackNavigator();
@@ -27,6 +29,8 @@ const App = () => {
           <Stack.Screen name='UserRegister' component={UserRegisterScreen} />
           <Stack.Screen name='Search' component={SearchScreen} />
           <Stack.Screen name='RestaurantDetails' component={RestaurantDetailsScreen} />
+          <Stack.Screen name='MatchWaiting' component={MatchWaitingScreen} />
+          <Stack.Screen name='MatchSuccess' component={MatchSuccessScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

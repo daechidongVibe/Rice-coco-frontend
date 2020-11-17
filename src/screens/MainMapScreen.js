@@ -22,24 +22,23 @@ const MainMapScreen = ({
   setUserLocation,
   setSelectedMeeting,
 }) => {
-  const [fontLoaded] = useFonts({
+  const [ fontLoaded ] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [ errorMsg, setErrorMsg ] = useState(null);
   const isMeetingExisted = !!meetings.length;
 
-  console.log(2398457239523748);
-  console.log(meetings);
   const handleRestaurantSearchButton = () => {
     navigation.navigate('Search');
   };
 
   const handleRestaurantClick = (
+    meetingId,
     restaurantId,
     restaurantName,
     partnerNickname
   ) => {
-    setSelectedMeeting({ restaurantId, restaurantName, partnerNickname });
+    setSelectedMeeting({ meetingId, restaurantId, restaurantName, partnerNickname });
     navigation.navigate('RestaurantDetails');
   };
 
@@ -62,8 +61,8 @@ const MainMapScreen = ({
   useEffect(() => {
     (async () => {
       const { data } = await axiosInstance.get('/meetings');
-
-      setMeetings(mockMeeting);
+      const { filteredMeetings } = data;
+      setMeetings(filteredMeetings);
     })();
   }, []);
 
@@ -85,13 +84,16 @@ const MainMapScreen = ({
         >
           <Marker coordinate={userLocation} />
 
-          {isMeetingExisted &&
+          {
+            isMeetingExisted &&
             meetings.map(meeting => {
               const {
+                _id: meetingId,
                 restaurant: { restaurantId, name, location },
-                userNickname: partnerNickname,
+                participant: partnerNickname,
                 expiredTime,
               } = meeting;
+
               const isMarkerInRange = isLocationNear(
                 location,
                 userLocation,
@@ -106,12 +108,17 @@ const MainMapScreen = ({
                   coordinate={location}
                   onCalloutPress={() => {
                     if (!isMarkerInRange) return;
-                    handleRestaurantClick(restaurantId, name, partnerNickname);
+                    handleRestaurantClick(
+                      meetingId,
+                      restaurantId,
+                      name,
+                      partnerNickname
+                    );
                   }}
                 >
-                  {isMarkerInRange && (
+                  {/* {isMarkerInRange && (
                     <RemainingTime expiredTime={expiredTime} />
-                  )}
+                  )} */}
 
                   <Image
                     source={require('../../assets/images/rice.png')}
@@ -123,7 +130,8 @@ const MainMapScreen = ({
                   />
                 </Marker>
               );
-            })}
+            })
+          }
           <Circle
             center={userLocation}
             radius={5000}

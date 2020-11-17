@@ -25,6 +25,7 @@ const Search = ({ navigation }) => {
       setPlaceHolder(SHOULD_ENTER_WORD);
       return;
     }
+
     Keyboard.dismiss();
     setIsSearching(true);
 

@@ -7,6 +7,7 @@ import { setSelectedMeeting } from '../actions/index';
 
 const RenderItem = ({
   item,
+  searchWord,
   navigation,
   filteredMeetings,
   setSelectedMeeting,
@@ -17,41 +18,33 @@ const RenderItem = ({
   if (typeof openingHours === OBJECT) {
     isOpen = openingHours['open_now'] ? OPEN : CLOSE;
   }
-  const onHandlePress = () => {
-    const hasWattingPartnerMeeting = filteredMeetings.find(meeting => meeting.restaurant.restaurantId === item.restaurantId);
 
-    if (hasWattingPartnerMeeting) {
-      setSeletedMeeting({
-        restaurantId: item.id,
-        restaurantName: item.name,
-        partnerNickname: hasWattingPartnerMeeting.partnerNickname,
-      });
-    }
+  const handlePressRestaurant = () => {
+    console.log('전체 미팅..', filteredMeetings);
+    console.log('에서 이 아이디의 레스토랑이 있는지 확인..', item.restaurantId);
 
-    return navigation.navigate('RestaurantDetails');
-  };
-
-  const onHandlePress = () => {
-    const hasWaitingPartnerMeeting = filteredMeetings.find(
+    const hasCreatedMeeting = filteredMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.restaurantId
     );
+
+    console.log('이미 만들어진 미팅 존재하나요???', hasCreatedMeeting);
 
     setSelectedMeeting({
       restaurantId: item.id,
       restaurantName: item.name,
-      partnerNickname: hasWaitingPartnerMeeting
-        ? hasWaitingPartnerMeeting.partnerNickname
-        : '',
+      partnerNickname: hasCreatedMeeting ?
+        hasCreatedMeeting.partnerNickname :
+        '',
     });
 
-    navigation.navigate('RestaurantDetails');
+    return navigation.navigate('RestaurantDetails', { searchWord });
   };
 
   return (
-    <TouchableOpacity onPress={onHandlePress}>
+    <TouchableOpacity onPress={handlePressRestaurant}>
       <View>
         <Text>{item.name}</Text>
-        <Rating imageSize={20} readonly startingValue={item.rating} />
+        <Rating imageSize={20} startingValue={item.rating} readonly />
         <Text>{isOpen}</Text>
       </View>
     </TouchableOpacity>
