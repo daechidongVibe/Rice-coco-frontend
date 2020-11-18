@@ -75,7 +75,17 @@ const MatchSuccessScreen = ({
     (async () => {
       const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
 
-      setSelectedMeeting(data);
+      console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+
+      if (data.result === 'ok') {
+        const { meetingDetails } = data;
+
+        setSelectedMeeting(meetingDetails);
+      }
+
+      if (data.result === 'failure') {
+        console.log(data.errMessage);
+      }
     })();
   }, []);
 
@@ -110,7 +120,7 @@ const MatchSuccessScreen = ({
         style={styles.mapStyle}
         showsMyLocationButton={true}
         showsUserLocation={true}
-        onMapReady={() => console.log(11111111)}
+        onMapReady={() => console.log('Map Is Ready!')}
       >
         <Marker title={userNickname} coordinate={userLocation} />
         <Marker title={partnerNickname} coordinate={partnerLocation} />

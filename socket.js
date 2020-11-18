@@ -1,8 +1,6 @@
 import io from 'socket.io-client';
-import getEnvVars from './environment';
 
-const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
-
-export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
+export const socket = io.connect('http://192.168.0.42:4000', {
     transports: ['websocket'],
+    reconnectionAttempts: 15
 });
