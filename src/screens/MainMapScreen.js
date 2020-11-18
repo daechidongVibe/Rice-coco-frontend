@@ -39,6 +39,7 @@ const MainMapScreen = ({
     partnerNickname
   ) => {
     setSelectedMeeting({ meetingId, restaurantId, restaurantName, partnerNickname });
+
     navigation.navigate('RestaurantDetails');
   };
 
@@ -59,23 +60,18 @@ const MainMapScreen = ({
 
   useEffect(() => {
     (async () => {
-      // 필터링 된 미팅들을 가져오려는 요청을 시도하기 전에,
-      // '내가 만들거나 참여한 미팅' 이 있는지 먼저 확인하고,
       const { data: { userMeeting } } = await axiosInstance.get(`/meetings/user/${userId}`);
 
       console.log('내가 만들거나 참여한 미팅이 존재하나요?', userMeeting);
 
-      // 만약 그런 미팅이 존재한다면 MatchWaiting / MatchSuccess 로 바로 라우팅.
       if (userMeeting) {
         const { _id: meetingId } = userMeeting;
 
         setSelectedMeeting({ meetingId });
 
         if (userMeeting.isMatched) {
-          // isMatched 속성을 확인하여 매치된 미팅이라면 MatchSuccess로 가고,
           navigation.navigate('MatchSuccess');
         } else {
-          // 아니라면 MatchWaiting으로 간다
           navigation.navigate('MatchWaiting')
         }
 
@@ -181,6 +177,7 @@ const MainMapScreen = ({
     </>
   ) : null;
 };
+
 const Wrapper = styled.View`
   flex: 1;
   justify-content: center;
