@@ -40,6 +40,7 @@ const Login = ({ navigation, setUserInfo }) => {
         { email }
       );
 
+
       if (data.result === 'no member information') {
         return navigation.navigate('UserRegister', { email });
       }

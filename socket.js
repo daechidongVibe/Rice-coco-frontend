@@ -1,6 +1,23 @@
 import io from 'socket.io-client';
+import getEnvVars from './environment';
 
-export const socket = io.connect('http://192.168.0.42:4000', {
-    transports: ['websocket'],
-    reconnectionAttempts: 15
+const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
+
+export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
+  transports: ['websocket'],
 });
+
+export const socketApi = {
+  joinMeeting: (meetingId, userId) => {
+    socket.emit('join meeting', { meetingId, userId });
+  },
+  cancelMeeting: meetigId => {
+    socket.emit('cancel meeting', meetigId);
+  },
+  changeLocation: (location, meetigId) => {
+    socket.emit('change location', { location, meetigId });
+  },
+  endMeeting: meetingId => {
+    socket.emit('end meeting', meetingId);
+  },
+};
