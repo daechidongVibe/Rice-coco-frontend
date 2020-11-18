@@ -20,7 +20,9 @@ const MatchWaiting = ({
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+
         console.log('새롭게 받아온 미팅 데이터', data);
+
         setMeetingDetails(data);
       } catch (err) {
         console.error(err);
