@@ -43,7 +43,8 @@ const MatchWaiting = ({
     }
   }, [currentMeeting]);
 
-  const handleCancleButtonClick = () => {
+  const handlePressCancelButton = () => {
+    console.log('click');
     socket.emit('leaveMeeting', meetingId);
     navigation.goBack();
   };
@@ -55,7 +56,7 @@ const MatchWaiting = ({
       <RotatedIcon />
       <Text>{meetingDetails.restaurantName}</Text>
       <CancleButton
-        onPress={handleCancleButtonClick}
+        onPress={handlePressCancelButton}
         title='취소하기'
       />
     </Container>
