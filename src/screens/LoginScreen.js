@@ -31,12 +31,10 @@ const Login = ({ navigation, setUserInfo }) => {
   }, []);
 
   const handleLoginButtonClick = async (e) => {
-    console.log('로그인버튼 눌림!!');
     e.target.disabled = true;
 
     try {
       const { email } = await auth();
-      console.log('구글에서 authentication 성공 이후 받아온 구글 이메일 => ', email);
       const { data } = await configuredAxios.post(
         'users/login',
         { email }

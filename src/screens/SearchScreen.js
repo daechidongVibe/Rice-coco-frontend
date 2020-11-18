@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import {  Keyboard, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { Input } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import RenderItem from '../components/RenderItem';
 import configuredAxios from '../config/axiosConfig';
-import { SHOULD_ENTER_WORD, SHOULD_ENTER_FOOD } from '../constants/messages';
+import { SHOULD_ENTER_WORD, SHOULD_ENTER_FOOD, SHOULD_INPUT_RESTAURANT} from '../constants/messages';
 import getEnvVars from '../../environment';
+import RotatedIcon from '../components/RotatedIcon';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 const { REACT_NATIVE_GOOGLE_PLACES_URL, REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
 
 const Search = ({ navigation }) => {
-  const [searchList, setSearchList] = useState([]);
+  const [searchList, setSearchList] = useState('');
   const [searchWord, setSearchWord] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [placeHolder, setPlaceHolder] = useState(SHOULD_ENTER_FOOD);
 
   const restaurantUrl = `${REACT_NATIVE_GOOGLE_PLACES_URL}&keyword=${searchWord}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`;
 
-  const handleSearchIconClick = async () => {
+  const handleSearchWordSubmit = async (e) => {
     if (isSearching) return;
+    console.log(e)
 
     if (!searchWord) {
       setPlaceHolder(SHOULD_ENTER_WORD);
@@ -49,43 +52,65 @@ const Search = ({ navigation }) => {
 
     setIsSearching(false);
   };
-
   return (
-    <Container>
-      <Input
-        placeholder={placeHolder}
-        value={searchWord}
-        onChangeText={setSearchWord}
-        rightIcon={
-          <Icon
-            name='utensil-spoon'
-            size={30}
-            color='#ff914d'
-            onPress={handleSearchIconClick}
-          />
+    <>
+      <Container>
+        <Input
+          placeholder={placeHolder}
+          value={searchWord}
+          onChangeText={setSearchWord}
+          onSubmitEditing={handleSearchWordSubmit}
+        />
+        <ImageBackground
+          style={{
+            width: 160,
+            height: 160,
+            position: 'absolute',
+            bottom: 100,
+            opacity: 0.5
+          }}
+        ><Description>{!searchList&&!isSearching ? SHOULD_INPUT_RESTAURANT : ''}</Description>
+        </ImageBackground>
+        {
+          isSearching ?
+            <LoadingSpinner
+            />
+            :
+            <RestaurantList
+              data={searchList}
+              renderItem={({ item }) => (
+                <RenderItem
+                  item={item}
+                  navigation={navigation}
+                  searchWord={searchWord}
+                />
+              )}
+              keyExtractor={restaurant => restaurant.id}
+            />
         }
-      />
-      <FlatList
-        data={searchList}
-        renderItem={({ item }) => (
-          <RenderItem
-            item={item}
-            navigation={navigation}
-            searchWord={searchWord}
-          />
-        )}
-        keyExtractor={restaurant => restaurant.id}
-      />
-    </Container>
+      </Container>
+    </>
   );
 };
 
 const Container = styled.View`
   flex: 1;
-  padding: 10px;
   padding-top: 40px;
   background-color: #ffffff;
   text-align: center;
+  align-content: center;
+  align-items: center;
 `;
 
+const Description = styled.Text`
+  width: 100%;
+  font-size: 16px;
+  margin: auto;
+`;
+
+const RestaurantList = styled.FlatList`
+  width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+`;
 export default Search;

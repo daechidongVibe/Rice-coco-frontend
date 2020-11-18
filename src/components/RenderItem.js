@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { OBJECT, OPEN, CLOSE } from '../constants/messages';
 import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
+import styled from 'styled-components/native';
 
 const RenderItem = ({
   item,
@@ -36,13 +37,19 @@ const RenderItem = ({
   };
 
   return (
-    <TouchableOpacity onPress={handlePressRestaurant}>
+    <>
+    <ItemContainer onPress={handlePressRestaurant}>
+    <View>
+      <Rating imageSize={20} startingValue={item.rating} readonly />
+    </View>
       <View>
-        <Text>{item.name}</Text>
-        <Rating imageSize={20} startingValue={item.rating} readonly />
-        <Text>{isOpen}</Text>
+        <NameText>{item.name}</NameText>
       </View>
-    </TouchableOpacity>
+      <View>
+        <DetailText isOpen={isOpen === OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</DetailText>
+      </View>
+    </ItemContainer>
+    </>
   );
 };
 
@@ -54,3 +61,23 @@ export default connect(
     setSelectedMeeting,
   }
 )(RenderItem);
+
+const ItemContainer = styled.TouchableOpacity`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 180px;
+  border: 2px solid #fbf6f0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+`;
+
+const NameText = styled.Text`
+  font-size: 24px;
+`;
+
+const DetailText = styled.Text`
+  font-size: 36px;
+  color: ${props => props.isOpen}
+`;
