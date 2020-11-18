@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import Loading from '../components/Loading'
+import RotatedIcon from '../components/RotatedIcon';
 import { socket } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { setCurrentMeeting } from '../actions/index';
@@ -44,7 +44,6 @@ const MatchWaiting = ({
   }, [currentMeeting]);
 
   const handleCancleButtonClick = () => {
-    console.log('click');
     socket.emit('leaveMeeting', meetingId);
     navigation.goBack();
   };
@@ -53,7 +52,7 @@ const MatchWaiting = ({
     <Container>
       <Text>MatchWaiting</Text>
       <Text>{leftTime}</Text>
-      <Loading />
+      <RotatedIcon />
       <Text>{meetingDetails.restaurantName}</Text>
       <CancleButton
         onPress={handleCancleButtonClick}
