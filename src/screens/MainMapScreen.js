@@ -106,7 +106,7 @@ const MainMapScreen = ({
           showsMyLocationButton={true}
           showsUserLocation={true}
         >
-          <Marker coordinate={userLocation} />
+          {/* <Marker coordinate={userLocation} /> */}
 
           {
             isMeetingExisted &&

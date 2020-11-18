@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
-import { sub, format } from 'date-fns';
+import { sub, format, parseISO } from 'date-fns';
 import styled from 'styled-components';
 
 const RemainingTime = ({ expiredTime, onTimeEnd }) => {
@@ -16,7 +16,8 @@ const RemainingTime = ({ expiredTime, onTimeEnd }) => {
         return;
       }
 
-      const currentTime = sub(expiredTime, { seconds: subtractTime });
+      const parsedTime = parseISO(expiredTime);
+      const currentTime = sub(parsedTime, { seconds: subtractTime });
       const formattedTime = format(currentTime, 'mm:ss');
 
       setSubtractTime(subtractTime + 1);
@@ -38,6 +39,7 @@ const Wrapper = styled.View`
   align-items: center;
   padding: 10px;
 `;
+
 const TimeText = styled.Text`
   text-align: center;
   background-color: black;
