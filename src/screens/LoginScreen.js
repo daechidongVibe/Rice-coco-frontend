@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Button, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import { StackActions } from '@react-navigation/native';
+import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
 import auth from '../utils/auth';
@@ -26,7 +27,9 @@ const Login = ({ navigation, setUserInfo }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MainMap');
+      navigation.dispatch(
+        StackActions.replace('MainMap')
+      );
     })();
   }, []);
 
@@ -41,7 +44,9 @@ const Login = ({ navigation, setUserInfo }) => {
       );
 
       if (data.result === 'no member information') {
-        return navigation.navigate('UserRegister', { email });
+        return navigation.dispatch(
+          StackActions.replace('UserRegister', { email })
+        );
       }
 
       const { user, token } = data;
@@ -51,10 +56,14 @@ const Login = ({ navigation, setUserInfo }) => {
       setUserInfo(user);
 
       if (!user.preferredPartner) {
-        return navigation.navigate('PreferredPartner');
+        return navigation.dispatch(
+          StackActions.replace('PreferredPartner')
+        );
       }
 
-      navigation.navigate('MainMap');
+      navigation.dispatch(
+        StackActions.replace('MainMap')
+      );
     } catch (error) {
       console.warn(error);
     }

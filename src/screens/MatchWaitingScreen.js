@@ -6,6 +6,7 @@ import RotatedIcon from '../components/RotatedIcon';
 import { socket } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { setCurrentMeeting } from '../actions/index';
+import { StackActions } from '@react-navigation/native';
 
 const MatchWaiting = ({
   navigation,
@@ -49,7 +50,10 @@ const MatchWaiting = ({
   const handlePressCancelButton = () => {
     console.log('click');
     socket.emit('leaveMeeting', meetingId);
-    navigation.goBack();
+
+    navigation.dispatch(
+      StackActions.replace('MainMap')
+    );
   };
 
   return (

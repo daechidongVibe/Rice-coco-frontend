@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Image } from 'react-native';
+import { StackActions } from '@react-navigation/native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -61,7 +62,6 @@ const MainMapScreen = ({
   useEffect(() => {
     (async () => {
       const { data: { userMeeting } } = await axiosInstance.get(`/meetings/user/${userId}`);
-
       console.log('내가 만들거나 참여한 미팅이 존재하나요?', userMeeting);
 
       if (userMeeting) {
@@ -70,9 +70,13 @@ const MainMapScreen = ({
         setSelectedMeeting({ meetingId });
 
         if (userMeeting.isMatched) {
-          navigation.navigate('MatchSuccess');
+          navigation.dispatch(
+            StackActions.replace('MatchSuccess')
+          );
         } else {
-          navigation.navigate('MatchWaiting')
+          navigation.dispatch(
+            StackActions.replace('MatchWaiting')
+          );
         }
 
         return;
