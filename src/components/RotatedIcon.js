@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 
-const Loading = () => {
+const RotatedIcon = () => {
   const spinAnim = new Animated.Value(0);
 
   const startAnimation = () => {
@@ -19,11 +19,13 @@ const Loading = () => {
     });
   };
 
-  startAnimation();
+  useEffect(() => {
+    startAnimation();
+  },[]);
 
   return (
     <Animated.Image
-      style={[
+      style={
         {
           transform: [{
             rotate: spinAnim.interpolate({
@@ -34,9 +36,9 @@ const Loading = () => {
             })
           }]
         }
-      ]}
+      }
       source={require('../../assets/images/rice.png')} />
   );
 };
 
-export default Loading;
+export default RotatedIcon;
