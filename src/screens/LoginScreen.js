@@ -8,10 +8,10 @@ import auth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 
-const Login = ({ navigation, onLogin }) => {
+const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      asyncStorage.clear();
+      asyncStorage.clear(); // 테스트용, 매번 로그인을 해야 앱에 접속할 수 있도록
       const token = await asyncStorage.getItem('token');
 
       if (!token) return;
@@ -20,7 +20,7 @@ const Login = ({ navigation, onLogin }) => {
         data: { user },
       } = await configuredAxios.post('users/login');
 
-      onLogin(user);
+      setUserInfo(user);
 
       if (!user.preferredPartner) {
         return navigation.navigate('PreferredPartner');
@@ -46,9 +46,10 @@ const Login = ({ navigation, onLogin }) => {
       }
 
       const { user, token } = data;
+
       await asyncStorage.setItem('token', token);
-      // user는 왜 리덕스에 꽂는 것..?
-      onLogin(user);
+
+      setUserInfo(user);
 
       if (!user.preferredPartner) {
         return navigation.navigate('PreferredPartner');
@@ -103,10 +104,7 @@ const ButtonText = styled.Text`
   color: black;
 `;
 
-const mapDispatchToProps = dispatch => ({
-  onLogin(user) {
-    dispatch(setUserInfo(user));
-  },
-});
-
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(
+  null,
+  { setUserInfo }
+  )(Login);
