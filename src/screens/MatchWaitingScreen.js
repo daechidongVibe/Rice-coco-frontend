@@ -3,27 +3,29 @@ import { Text } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import RotatedIcon from '../components/RotatedIcon';
-import { socket } from '../../socket';
+import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
-import { setCurrentMeeting } from '../actions/index';
+import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
+import RemainingTime from "../components/RemainingTime";
 
 const MatchWaiting = ({
   navigation,
   userId,
   currentMeeting,
+  setSelectedMeeting,
   setCurrentMeeting,
-  selectedMeeting: { meetingId, expiredTime } }) => {
-  const [leftTime, setLeftTime] = useState('28:00');
-  const [meetingDetails, setMeetingDetails] = useState({});
-
+  selectedMeeting: { meetingId, expiredTime, restaurantName },
+}) => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        const {
+          data: { meetingDetails },
+        } = await configuredAxios.get(`/meetings/${meetingId}`);
+        // restaurantName, expiredTime만 온다.
+        console.log('새롭게 받아온 미팅 데이터', meetingDetails);
 
-        console.log('새롭게 받아온 미팅 데이터', data);
-
-        setMeetingDetails(data);
+        setSelectedMeeting(meetingDetails);
       } catch (err) {
         console.error(err);
       }
@@ -31,7 +33,7 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
-    socket.emit('join meeting', { meetingId, user: userId });
+    socketApi.joinMeeting(meetingId, userId);
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
@@ -41,27 +43,23 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
-    if (currentMeeting && currentMeeting.users.length === 2) {
-      navigation.navigate('MatchSuccessScreen');
+    if (currentMeeting?.users?.length === 2) {
+      navigation.navigate('MatchSuccess');
     }
   }, [currentMeeting]);
 
   const handlePressCancelButton = () => {
-    console.log('click');
-    socket.emit('leaveMeeting', meetingId);
+    socketApi.cancelMeeting(meetingId);
     navigation.goBack();
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      <Text>{leftTime}</Text>
+      <RemainingTime expiredTime={expiredTime} />
       <RotatedIcon />
-      <Text>{meetingDetails.restaurantName}</Text>
-      <CancleButton
-        onPress={handlePressCancelButton}
-        title='취소하기'
-      />
+      <Text>{restaurantName}</Text>
+      <CancleButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>
   );
 };
@@ -87,22 +85,20 @@ const CancleButton = styled.Button`
   bottom: 15%;
   left: 50%;
   transform: translateX(-25px);
-`
+`;
 
-const mapStateToProps = (
-  {
-    meetings: { selectedMeeting, currentMeeting }, user: { _id }
-  }) => {
+const mapStateToProps = ({
+  meetings: { selectedMeeting, currentMeeting },
+  user: { _id },
+}) => {
   return {
     userId: _id,
     currentMeeting,
-    selectedMeeting
+    selectedMeeting,
   };
-}
+};
 
-export default connect(
-  mapStateToProps,
-  {
-    setCurrentMeeting
-  }
-)(MatchWaiting);
+export default connect(mapStateToProps, {
+  setCurrentMeeting,
+  setSelectedMeeting,
+})(MatchWaiting);

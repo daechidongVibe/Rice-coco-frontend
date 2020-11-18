@@ -11,9 +11,16 @@ import { connect } from 'react-redux';
 import RemainingTime from '../components/RemainingTime';
 import isLocationNear from '../utils/isLocationNear';
 import configuredAxios from '../config/axiosConfig';
-import { updateLocation, setSelectedMeeting, setUserInfo } from '../actions';
+import {
+  updateLocation,
+  setSelectedMeeting,
+  setUserInfo,
+  setCurrentMeeting,
+} from '../actions';
+import { socket, socketApi } from '../../socket';
 
 const MatchSuccessScreen = ({
+  userId,
   userNickname,
   userLocation,
   partnerNickname,
@@ -21,11 +28,14 @@ const MatchSuccessScreen = ({
   restaurantLocation,
   meetingId,
   expiredTime,
+  currentMeeting,
   setUserLocation,
   setSelectedMeeting,
+  setCurrentMeeting,
   updateUserPromise,
   navigation,
 }) => {
+  console.log();
   const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
@@ -34,16 +44,30 @@ const MatchSuccessScreen = ({
   });
 
   useEffect(() => {
+    socketApi.joinMeeting(meetingId, userId);
+
+    socket.on('current meeting', data => {
+      setCurrentMeeting(data);
+    });
+
+    socket.on('partner location changed', location => {
+      setPartnerLocation(location);
+    })
+
+    return () => socket.off('current meeting');
+  }, []);
+
+  useEffect(() => {
     isLocationNear(userLocation, restaurantLocation, 100)
       ? setIsArrived(true)
       : setIsArrived(false);
+
+    socketApi.changeLocation(userLocation);
   }, [userLocation]);
 
   // useEffect(() => {
-  //   let subscribeLocationMoved;
-
   //   (async () => {
-  //     subscribeLocationMoved = await Location.startLocationUpdatesAsync(
+  //     await Location.startLocationUpdatesAsync(
   //       'trackLocation',
   //       {
   //         accuracy: Location.Accuracy.Highest,
@@ -68,7 +92,7 @@ const MatchSuccessScreen = ({
   //       }
   //     );
   //   })();
-  //   return () => subscribeLocationMoved.remove();
+  //   return () => Location.stopLocationUpdatesAsync();
   // }, []);
 
   useEffect(() => {
@@ -90,7 +114,8 @@ const MatchSuccessScreen = ({
   }, []);
 
   const handleTimeEnd = () => {
-    // navigation.navigate('endView');
+    socketApi.endMeeting(meetingId);
+    navigation.navigate('endView');
   };
 
   const handleArrivalButtonClick = async () => {
@@ -122,7 +147,7 @@ const MatchSuccessScreen = ({
         showsUserLocation={true}
         onMapReady={() => console.log('Map Is Ready!')}
       >
-        <Marker title={userNickname} coordinate={userLocation} />
+        {/* <Marker title={userNickname} coordinate={userLocation} /> */}
         <Marker title={partnerNickname} coordinate={partnerLocation} />
         <Marker title={restaurantName} coordinate={restaurantLocation}>
           <View style={styles.view}>
@@ -159,8 +184,7 @@ const MatchSuccessScreen = ({
             </ArrivalText>
           </ArrivalButton>
         ) : (
-          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
-          null
+          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
         )}
       </OverlayHeader>
       <OverlayFooter>
@@ -251,7 +275,7 @@ const ArrivalText = styled.Text`
 
 const mapStateToProps = state => {
   const {
-    user: { nickname },
+    user: { nickname, _id },
     location,
     meetings: {
       selectedMeeting: {
@@ -261,10 +285,12 @@ const mapStateToProps = state => {
         expiredTime,
         meetingId,
       },
+      currentMeeting,
     },
   } = state;
 
   return {
+    userId: _id,
     userNickname: nickname,
     userLocation: location,
     partnerNickname,
@@ -272,6 +298,7 @@ const mapStateToProps = state => {
     restaurantLocation,
     expiredTime,
     meetingId,
+    currentMeeting,
   };
 };
 
@@ -284,6 +311,9 @@ const mapDispatchToProps = dispatch => ({
   },
   updateUserPromise(amount) {
     // dispatch(setUserInfo(amount));
+  },
+  setCurrentMeeting(meeting) {
+    dispatch(setCurrentMeeting(meeting));
   },
 });
 

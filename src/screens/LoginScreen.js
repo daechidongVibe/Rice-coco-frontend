@@ -55,7 +55,7 @@ const Login = ({ navigation, setUserInfo }) => {
         return navigation.navigate('PreferredPartner');
       }
 
-      navigation.navigate('MatchSuccess');
+      navigation.navigate('MainMap');
     } catch (error) {
       console.warn(error);
     }

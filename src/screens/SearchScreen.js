@@ -22,7 +22,6 @@ const Search = ({ navigation }) => {
 
   const handleSearchWordSubmit = async (e) => {
     if (isSearching) return;
-    console.log(e)
 
     if (!searchWord) {
       setPlaceHolder(SHOULD_ENTER_WORD);

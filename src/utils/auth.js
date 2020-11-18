@@ -11,8 +11,6 @@ const Auth = async () => {
       scopes: ['profile', 'email'],
     });
 
-    console.log(result);
-
     if (result.type === 'success') {
       console.log('로그인 성공');
       const { accessToken, user: { email } } = result;
