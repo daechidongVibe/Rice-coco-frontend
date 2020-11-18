@@ -32,8 +32,7 @@ const RestaurantDetails = ({
   const hasCreatedMeeting = partnerNickname;
 
   const [photoUrls, setPhotoUrls] = useState([]);
-  console.log(restaurantId);
-  // 마운트 시 restaurantId로 구글에 place details 요청
+
   const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry`;
 
   useEffect(() => {
@@ -73,38 +72,37 @@ const RestaurantDetails = ({
   const handlePressCreateButton = async (e) => {
     e.target.disabled = true;
 
-    // 먼저 미팅 생성이 성공적으로 이루어 질 것으로 가정하고 리덕스 스토어의 유저 프로미스 값(UI)을 업데이트 (optimitstic update)
     setPromiseAmount(userPromise - 1);
-    console.log(selectedMeeting, '<= 이 미팅을 생성할 것을 서버에 요청합니다..')
-    // 미팅을 생성하고,
-    const { data: { createdMeeting } } = await configuredAxios.post(
+
+    const { data } = await configuredAxios.post(
       '/meetings',
       {
         selectedMeeting,
         userId
       }
     );
-    console.log('생성된 미팅! => ', createdMeeting);
 
-    const { _id: meetingId, expiredTime } = createdMeeting;
+    if (data.result === 'ok') {
+      const { createdMeeting } = data;
 
-    setSelectedMeeting({
-      meetingId,
-      expiredTime
-    });
+      console.log('생성된 미팅! => ', createdMeeting);
 
-    if (createdMeeting) {
-      // 프로미스 감소
+      const { _id: meetingId, expiredTime } = createdMeeting;
+
+      setSelectedMeeting({
+        meetingId,
+        expiredTime
+      });
+
       configuredAxios.put(
         `/users/${userId}/promise`,
         {
           amount: -1
         }
       );
+
       navigation.navigate('MatchWaiting');
     }
-
-    // 생성되지 않았다면 do nothing..
   };
 
   const handlePressJoinButton = async (e) => {
@@ -112,12 +110,23 @@ const RestaurantDetails = ({
 
     setPromiseAmount(userPromise - 1);
 
-    const updateResult = await configuredAxios.put(
+    const { data } = await configuredAxios.put(
       `/meetings/${meetingId}/join`,
       { userId }
     );
 
-    if (createdMeeting) {
+    if (data.result === 'ok') {
+      const { updatedMeeting } = data;
+
+      console.log('조인에 성공한 미팅정보 =>', updatedMeeting);
+
+      const { _id: meetingId, expiredTime } = updatedMeeting;
+
+      setSelectedMeeting({
+        meetingId,
+        expiredTime
+      });
+
       configuredAxios.put(
         `/users/${userId}/promise`,
         {
