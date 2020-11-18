@@ -49,9 +49,12 @@ const MatchWaiting = ({
     }
   }, [currentMeeting]);
 
-  const handlePressCancelButton = () => {
-    console.log('click');
+  const handlePressCancelButton = async () => {
     socket.emit('leaveMeeting', meetingId);
+
+    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
+
+    console.log('미팅 삭제 결과', result);
 
     navigation.dispatch(
       StackActions.replace('MainMap')
@@ -64,7 +67,7 @@ const MatchWaiting = ({
       <RemainingTime expiredTime={expiredTime} />
       <RotatedIcon />
       <Text>{restaurantName}</Text>
-      <CancleButton onPress={handlePressCancelButton} title="취소하기" />
+      <CancelButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>
   );
 };
@@ -80,7 +83,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const CancleButton = styled.Button`
+const CancelButton = styled.Button`
   background-color: #ffffff;
   margin: auto;
   width: 100%;
