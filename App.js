@@ -23,7 +23,7 @@ const Tab = createBottomTabNavigator();
 
 const HomeStackScreen = () => {
   return (
-    <HomeStack.Navigator initialRouteName="MatchSuccess" headerMode="none">
+    <HomeStack.Navigator initialRouteName="Login" headerMode="none">
       <HomeStack.Screen name="Login" component={LoginScreen} />
       <HomeStack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
       <HomeStack.Screen name="MainMap" component={MainMapScreen} />
