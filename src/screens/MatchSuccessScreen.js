@@ -20,7 +20,6 @@ import {
   setCurrentMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
-import { StackActions } from '@react-navigation/native';
 
 const MatchSuccessScreen = ({
   userId,
@@ -116,18 +115,20 @@ const MatchSuccessScreen = ({
 
   useEffect(() => {
     (async () => {
-      const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+      try {
+        const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+        if (data.result === 'ok') {
+          const { meetingDetails } = data;
 
-      // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+          setSelectedMeeting(meetingDetails);
+        }
 
-      if (data.result === 'ok') {
-        const { meetingDetails } = data;
-
-        setSelectedMeeting(meetingDetails);
-      }
-
-      if (data.result === 'failure') {
-        console.log(data.errMessage);
+        if (data.result === 'failure') {
+          console.log(data.errMessage);
+        }
+      } catch (error) {
+        console.error(err);
       }
     })();
   }, []);
