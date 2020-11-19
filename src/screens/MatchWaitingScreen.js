@@ -48,11 +48,15 @@ const MatchWaiting = ({
     }
   }, [currentMeeting]);
 
-  const handlePressCancelButton = () => {
+  const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(meetingId);
-    navigation.goBack();
-  };
 
+    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
+
+    navigation.dispatch(
+      StackActions.replace('MainMap')
+    );
+  };
   return (
     <Container>
       <Text>MatchWaiting</Text>
