@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import { Text, Alert } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import RotatedIcon from '../components/RotatedIcon';
@@ -7,7 +7,7 @@ import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import { StackActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
-import RemainingTime from "../components/RemainingTime";
+import RemainingTime from '../components/RemainingTime';
 
 const MatchWaiting = ({
   navigation,
@@ -54,15 +54,30 @@ const MatchWaiting = ({
 
     await configuredAxios.delete(`/meetings/${meetingId}`);
 
-    navigation.dispatch(
-      StackActions.replace('MainMap')
+    navigation.dispatch(StackActions.replace('MainMap'));
+  };
+
+  const handleTimeEnd = async () => {
+    socketApi.cancelMeeting(meetingId);
+    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
+
+    Alert.alert(
+      '미팅 성사 시간 종료',
+      '안타깝게도 혼자 드셔야겠네요',
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
+        },
+      ],
+      { cancelable: false }
     );
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {/* <RemainingTime expiredTime={expiredTime} /> */}
+      {!!expiredTime && <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />}
       <RotatedIcon />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />

@@ -8,6 +8,9 @@ export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
 });
 
 export const socketApi = {
+  removeAllListeners: () => {
+    socket.removeAllListeners()
+  },
   joinMeeting: (meetingId, userId) => {
     socket.emit('join meeting', { meetingId, userId });
   },
@@ -22,5 +25,11 @@ export const socketApi = {
   },
   endMeeting: meetingId => {
     socket.emit('end meeting', meetingId);
+  },
+  arriveMeeting: meetingId => {
+    socket.emit('arrive meeting', meetingId);
+  },
+  leaveMeeting: meetingId => {
+    socket.emit('leave meeting', meetingId);
   },
 };

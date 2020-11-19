@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-  Text,
-  View,
-  Modal,
-  TouchableHighlight,
-} from 'react-native';
+import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,7 +17,6 @@ import {
   setCurrentMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
-import { StackActions } from '@react-navigation/native';
 
 const MatchSuccessScreen = ({
   userId,
@@ -46,7 +37,7 @@ const MatchSuccessScreen = ({
 }) => {
   const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 37.5011548,
     longitude: 127.0808086,
@@ -58,17 +49,28 @@ const MatchSuccessScreen = ({
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
     });
-
     socket.on('partner location changed', location => {
       setPartnerLocation(location);
     });
-
     socket.on('meeting broked up', () => {
-      navigation.dispatch(StackActions.replace('MainMap'));
+      Alert.alert(
+        '미팅 성사 취소',
+        '안타깝게도 상대방이 미팅을 취소하셨습니다.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              socketApi.leaveMeeting(meetingId);
+              navigation.dispatch(StackActions.replace('MainMap'));
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     });
 
-    return () => socket.off('current meeting');
-  }, []);
+    return () => socketApi.removeAllListeners();
+  }, [meetingId, userId]);
 
   useEffect(() => {
     isLocationNear(userLocation, restaurantLocation, 100)
@@ -110,18 +112,20 @@ const MatchSuccessScreen = ({
 
   useEffect(() => {
     (async () => {
-      const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+      try {
+        const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+        if (data.result === 'ok') {
+          const { meetingDetails } = data;
 
-      console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+          setSelectedMeeting(meetingDetails);
+        }
 
-      if (data.result === 'ok') {
-        const { meetingDetails } = data;
-
-        setSelectedMeeting(meetingDetails);
-      }
-
-      if (data.result === 'failure') {
-        console.log(data.errMessage);
+        if (data.result === 'failure') {
+          console.log(data.errMessage);
+        }
+      } catch (error) {
+        console.error(err);
       }
     })();
   }, []);
@@ -129,17 +133,23 @@ const MatchSuccessScreen = ({
   const handleTimeEnd = () => {
     socketApi.endMeeting(meetingId);
 
-    navigation.navigate('AfterMeeting');
+    const isAllparticipated = currentMeeting.arrivalCount >= 2;
+
+    isAllparticipated
+      ? navigation.dispatch(StackActions.replace('AfterMeeting'))
+      : navigation.dispatch(StackActions.replace('MainMap'));
   };
 
   const handleArrivalButtonClick = async () => {
+    if (isArrivalConfirmed) return;
+
     setIsArrivalConfirmed(true);
     setPromiseAmount(userPromise + 1);
-
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: 1,
     });
-    // console.log(response);
+
+    socketApi.arriveMeeting(meetingId);
   };
 
   const handleChatButtonClick = () => {
@@ -167,7 +177,6 @@ const MatchSuccessScreen = ({
         style={styles.mapStyle}
         showsMyLocationButton={true}
         showsUserLocation={true}
-        onMapReady={() => console.log('Map Is Ready!')}
       >
         {/* <Marker title={userNickname} coordinate={userLocation} /> */}
         <Marker title={partnerNickname} coordinate={partnerLocation} />
@@ -211,14 +220,14 @@ const MatchSuccessScreen = ({
       </OverlayHeader>
       <OverlayFooter>
         {!isArrived && (
-          <ArrivalButton onPress={() => setModalVisible(true)}>
+          <ArrivalButton onPress={() => setIsOnVergeofBreaking(true)}>
             <ArrivalText>{'약속 파토내기'}</ArrivalText>
           </ArrivalButton>
         )}
-        {modalVisible && (
+        {isOnVergeofBreaking && (
           <FinalQuestion
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
+            modalVisible={isOnVergeofBreaking}
+            setModalVisible={setIsOnVergeofBreaking}
             question={'정말 파토내시겠습니까?'}
             onClickYes={handleBreakupButtonClick}
           />
