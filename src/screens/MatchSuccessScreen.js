@@ -35,7 +35,6 @@ const MatchSuccessScreen = ({
   updateUserPromise,
   navigation,
 }) => {
-  console.log();
   const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
@@ -129,7 +128,7 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    // navigation.navigate('chatRoom');
+    navigation.navigate('chatRoom');
   };
 
   return (

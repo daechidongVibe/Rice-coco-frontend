@@ -8,7 +8,6 @@ import * as Location from 'expo-location';
 import { connect } from 'react-redux';
 import { useFonts } from 'expo-font';
 
-import RemainingTime from '../components/RemainingTime';
 import isLocationNear from '../utils/isLocationNear';
 import axiosInstance from '../config/axiosConfig';
 import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';

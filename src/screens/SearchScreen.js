@@ -7,7 +7,6 @@ import RenderItem from '../components/RenderItem';
 import configuredAxios from '../config/axiosConfig';
 import { SHOULD_ENTER_WORD, SHOULD_ENTER_FOOD, SHOULD_INPUT_RESTAURANT} from '../constants/messages';
 import getEnvVars from '../../environment';
-import RotatedIcon from '../components/RotatedIcon';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const { REACT_NATIVE_GOOGLE_PLACES_URL, REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
