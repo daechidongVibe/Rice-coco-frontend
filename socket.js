@@ -17,6 +17,9 @@ export const socketApi = {
   changeLocation: (location, meetigId) => {
     socket.emit('change location', { location, meetigId });
   },
+  breakupMeeting: meetingId => {
+    socket.emit('breakup meeting', meetingId);
+  },
   endMeeting: meetingId => {
     socket.emit('end meeting', meetingId);
   },
