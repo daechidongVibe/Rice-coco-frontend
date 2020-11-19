@@ -6,7 +6,6 @@ import Svg, { Polygon } from 'react-native-svg';
 import { Picker } from '@react-native-picker/picker';
 
 import axios from '../config/axiosConfig';
-import NavigationBar from '../components/NavigationBar';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
 const PreferredPartnerScreen = ({ navigation, userId }) => {
@@ -87,8 +86,8 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
           itemStyle={{ color: 'red' }}
         >
           {
-            MY_INFO_OPTIONS.gender.map(gen => {
-              return <Picker.Item label={gen} value={gen} />
+            MY_INFO_OPTIONS.gender.map((gen, index) => {
+              return <Picker.Item label={gen} value={gen} key={gen + index} />
             })
           }
         </Picker>
@@ -177,17 +176,15 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
           {!isReadyToSubmit ? 'disabled!' : '친구찾기!'}
         </Text>
       </CircularSubmitButton>
-
-      <NavigationBar />
     </>
   );
 };
 
 const Header = styled.Text`
+  color: #ff914d;
   font-size: 32px;
   font-weight: bold;
   margin: 32px auto;
-  color: #ff914d;
 `;
 
 const InputDescription = styled.Text`
@@ -199,7 +196,7 @@ const InputDescription = styled.Text`
 const InputHeader = styled.Text`
   font-size: 20px;
   position: absolute;
-  top: 80;
+  top: 80px;
   left: 16%;
   text-align: center;
   background-color: white;
@@ -208,7 +205,7 @@ const InputHeader = styled.Text`
 const InputHeader2 = styled.Text`
   font-size: 20px;
   position: absolute;
-  top: 80;
+  top: 80px;
   right: 17%;
   text-align: center;
   background-color: white;
@@ -217,7 +214,7 @@ const InputHeader2 = styled.Text`
 const InputHeader3 = styled.Text`
   font-size: 20px;
   position: absolute;
-  top: 240;
+  top: 240px;
   right: 37%;
   text-align: center;
   background-color: white;
