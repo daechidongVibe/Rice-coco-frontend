@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, Image, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  Image,
+  Text,
+  View,
+  Modal,
+  TouchableHighlight,
+} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,8 +15,8 @@ import styled from 'styled-components/native';
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
 import { connect } from 'react-redux';
-
 import RemainingTime from '../components/RemainingTime';
+import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
 import configuredAxios from '../config/axiosConfig';
 import {
@@ -18,11 +26,13 @@ import {
   setCurrentMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
+import { StackActions } from '@react-navigation/native';
 
 const MatchSuccessScreen = ({
   userId,
   userNickname,
   userLocation,
+  userPromise,
   partnerNickname,
   restaurantName,
   restaurantLocation,
@@ -32,12 +42,12 @@ const MatchSuccessScreen = ({
   setUserLocation,
   setSelectedMeeting,
   setCurrentMeeting,
-  updateUserPromise,
+  setPromiseAmount,
   navigation,
 }) => {
-  console.log();
   const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 37.5011548,
     longitude: 127.0808086,
@@ -52,7 +62,11 @@ const MatchSuccessScreen = ({
 
     socket.on('partner location changed', location => {
       setPartnerLocation(location);
-    })
+    });
+
+    socket.on('meeting broked up', () => {
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
 
     return () => socket.off('current meeting');
   }, []);
@@ -115,21 +129,30 @@ const MatchSuccessScreen = ({
 
   const handleTimeEnd = () => {
     socketApi.endMeeting(meetingId);
-    navigation.navigate('endView');
+
+    navigation.navigate('AfterMeeting');
   };
 
   const handleArrivalButtonClick = async () => {
     setIsArrivalConfirmed(true);
-    updateUserPromise(1);
-    // const response = await configuredAxios.put('users/:userId/promise', {
-    //   amount: 1,
-    // });
+    setPromiseAmount(userPromise + 1);
 
+    await configuredAxios.put(`/users/${userId}/promise`, {
+      amount: 1,
+    });
     // console.log(response);
   };
 
   const handleChatButtonClick = () => {
     // navigation.navigate('chatRoom');
+  };
+
+  const handleBreakupButtonClick = async () => {
+    socketApi.breakupMeeting(meetingId);
+
+    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
+
+    navigation.dispatch(StackActions.replace('MainMap'));
   };
 
   return (
@@ -176,18 +199,31 @@ const MatchSuccessScreen = ({
       <OverlayHeader>
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
-
-        {isArrived ? (
-          <ArrivalButton onPress={handleArrivalButtonClick}>
-            <ArrivalText>
-              {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
-            </ArrivalText>
-          </ArrivalButton>
-        ) : (
-          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
-        )}
+        {
+          isArrived ? (
+            <ArrivalButton onPress={handleArrivalButtonClick}>
+              <ArrivalText>
+                {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
+              </ArrivalText>
+            </ArrivalButton>
+          ) : null
+          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} /> */
+        }
       </OverlayHeader>
       <OverlayFooter>
+        {!isArrived && (
+          <ArrivalButton onPress={() => setModalVisible(true)}>
+            <ArrivalText>{'약속 파토내기'}</ArrivalText>
+          </ArrivalButton>
+        )}
+        {modalVisible && (
+          <FinalQuestion
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            question={'정말 파토내시겠습니까?'}
+            onClickYes={handleBreakupButtonClick}
+          />
+        )}
         <ChatButton onPress={handleChatButtonClick}>
           <FontAwesome5 name="rocketchat" size={30} color="black" />
         </ChatButton>
@@ -195,6 +231,7 @@ const MatchSuccessScreen = ({
     </Wrapper>
   );
 };
+
 const Wrapper = styled.View`
   flex: 1;
   justify-content: center;
@@ -309,11 +346,11 @@ const mapDispatchToProps = dispatch => ({
   setSelectedMeeting(meeting) {
     dispatch(setSelectedMeeting(meeting));
   },
-  updateUserPromise(amount) {
-    // dispatch(setUserInfo(amount));
-  },
   setCurrentMeeting(meeting) {
     dispatch(setCurrentMeeting(meeting));
+  },
+  setPromiseAmount(amount) {
+    dispatch(setPromiseAmount(amount));
   },
 });
 
