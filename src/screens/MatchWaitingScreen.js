@@ -52,9 +52,7 @@ const MatchWaiting = ({
   const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(meetingId);
 
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
-
-    console.log('미팅 삭제 결과', result);
+    await configuredAxios.delete(`/meetings/${meetingId}`);
 
     navigation.dispatch(StackActions.replace('MainMap'));
   };

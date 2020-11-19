@@ -4,10 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
-import * as TaskManager from 'expo-task-manager';
-import * as Location from 'expo-location';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
 
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
@@ -156,7 +153,7 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    // navigation.navigate('chatRoom');
+    navigation.navigate('ChatRoom');
   };
 
   const handleBreakupButtonClick = async () => {

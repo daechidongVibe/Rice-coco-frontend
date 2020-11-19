@@ -17,7 +17,7 @@ const AfterMeetingScreen = ({ userId, meetingId }) => {
     }
 
     if (data.result === 'FAILURE') {
-      console.log(data.result.errMessage);
+      // console.log(data.result.errMessage);
     }
   });
 
