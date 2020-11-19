@@ -37,7 +37,14 @@ const Login = ({ navigation, setUserInfo }) => {
     e.target.disabled = true;
 
     try {
-      const { email } = await auth();
+      const result = await auth();
+
+      if (result.status === 'FAILURE') {
+        return;
+      }
+
+      const { email } = result;
+
       const { data } = await configuredAxios.post(
         'users/login',
         { email }
