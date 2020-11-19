@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { StackActions } from '@react-navigation/native';
+
+import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
+import RemainingTime from '../components/RemainingTime';
 import RotatedIcon from '../components/RotatedIcon';
 import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
-import { StackActions } from '@react-navigation/native';
-import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
-import RemainingTime from '../components/RemainingTime';
 
 const MatchWaiting = ({
   navigation,

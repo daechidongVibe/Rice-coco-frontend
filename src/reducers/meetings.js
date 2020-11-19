@@ -40,6 +40,8 @@ export const meetings = (state = initialState, action) => {
         ...state,
         currentMeeting: action.payload
       }
+    case types.RESET_MEETING:
+      return initialState;
     default:
       return state;
   }

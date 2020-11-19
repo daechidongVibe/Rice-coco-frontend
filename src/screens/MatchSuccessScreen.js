@@ -159,6 +159,11 @@ const MatchSuccessScreen = ({
   const handleBreakupButtonClick = async () => {
     socketApi.breakupMeeting(meetingId);
 
+    setPromiseAmount(userPromise - 1);
+    await configuredAxios.put(`/users/${userId}/promise`, {
+      amount: -1,
+    });
+
     const result = await configuredAxios.delete(`/meetings/${meetingId}`);
 
     navigation.dispatch(StackActions.replace('MainMap'));
@@ -207,16 +212,14 @@ const MatchSuccessScreen = ({
       <OverlayHeader>
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
-        {
-          isArrived ? (
-            <ArrivalButton onPress={handleArrivalButtonClick}>
-              <ArrivalText>
-                {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
-              </ArrivalText>
-            </ArrivalButton>
-          ) : null
-          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} /> */
-        }
+        {isArrived && (
+          <ArrivalButton onPress={handleArrivalButtonClick}>
+            <ArrivalText isArrivalConfirmed>
+              {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
+            </ArrivalText>
+          </ArrivalButton>
+        )}
+        <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} /> */
       </OverlayHeader>
       <OverlayFooter>
         {!isArrived && (
@@ -313,7 +316,7 @@ const ArrivalButton = styled.TouchableOpacity`
 const ArrivalText = styled.Text`
   border-radius: 50px;
   padding: 10px;
-  background-color: #ff914d;
+  background-color: ${props => props.isArrivalConfirmed ? black : orange};
   text-align: center;
   color: white;
 `;
