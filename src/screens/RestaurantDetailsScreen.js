@@ -2,6 +2,7 @@ import React, { useEffect, useState }  from 'react';
 import { connect } from 'react-redux';
 import { View, Text, FlatList } from 'react-native';
 import styled from 'styled-components/native';
+import { StackActions, useNavigationState } from '@react-navigation/native';
 
 import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
@@ -20,6 +21,8 @@ const RestaurantDetails = ({
     setPromiseAmount,
     route
   }) => {
+  const navigationState = useNavigationState(state => state);
+
   const {
     meetingId,
     restaurantId,
@@ -101,7 +104,13 @@ const RestaurantDetails = ({
         }
       );
 
-      navigation.navigate('MatchWaiting');
+      if (navigationState.routes?.length===1) {
+        navigation.dispatch(StackActions.pop(1));
+      }
+
+      navigation.dispatch(
+        StackActions.replace('MatchWaiting')
+      );
     }
   };
 
@@ -134,7 +143,13 @@ const RestaurantDetails = ({
         }
       );
 
-      navigation.navigate('MatchSuccess');
+      if (navigationState.routes?.length===1) {
+        navigation.dispatch(StackActions.pop(1));
+      }
+
+      navigation.dispatch(
+        StackActions.replace('MatchSuccess')
+      );
     }
   };
 

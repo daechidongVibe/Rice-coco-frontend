@@ -15,13 +15,13 @@ const Auth = async () => {
       console.log('로그인 성공');
       const { accessToken, user: { email } } = result;
       return {
-        success: true,
-        accessToken,
+        status: 'SUCCESS',
+        accessToken, // 구글에서 온 토큰, 현재는 사용하지 않고있음
         email
       };
     } else {
       console.log('로그인 실패');
-      return { cancelled: true };
+      return { status: 'FAILURE' };
     }
   } catch (err) {
     return { error: true };
