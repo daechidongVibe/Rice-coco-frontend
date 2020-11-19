@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import RotatedIcon from '../components/RotatedIcon';
 import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
+import { StackActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from "../components/RemainingTime";
 
@@ -51,19 +52,20 @@ const MatchWaiting = ({
   const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(meetingId);
 
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
+    await configuredAxios.delete(`/meetings/${meetingId}`);
 
     navigation.dispatch(
       StackActions.replace('MainMap')
     );
   };
+
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      <RemainingTime expiredTime={expiredTime} />
+      {/* <RemainingTime expiredTime={expiredTime} /> */}
       <RotatedIcon />
       <Text>{restaurantName}</Text>
-      <CancleButton onPress={handlePressCancelButton} title="취소하기" />
+      <CancelButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>
   );
 };
@@ -79,7 +81,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const CancleButton = styled.Button`
+const CancelButton = styled.Button`
   background-color: #ffffff;
   margin: auto;
   width: 100%;
