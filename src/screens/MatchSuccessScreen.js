@@ -15,6 +15,8 @@ import styled from 'styled-components/native';
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
 import { connect } from 'react-redux';
+import { StackActions } from '@react-navigation/native';
+
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
