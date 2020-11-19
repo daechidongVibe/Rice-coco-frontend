@@ -16,6 +16,7 @@ const initialState = {
   currentMeeting: {
     meetingId : '',
     users: [],
+    arrivalCount: 0,
   }
 };
 
