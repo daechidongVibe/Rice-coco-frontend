@@ -24,7 +24,7 @@ const Tab = createBottomTabNavigator();
 
 const HomeStackScreen = () => {
   return (
-    <HomeStack.Navigator initialRouteName="chatRoom" headerMode="none">
+    <HomeStack.Navigator initialRouteName="Login" headerMode="none">
       <HomeStack.Screen name="Login" component={LoginScreen} />
       <HomeStack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
       <HomeStack.Screen name="MainMap" component={MainMapScreen} />
@@ -33,7 +33,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="RestaurantDetails" component={RestaurantDetailsScreen} />
       <HomeStack.Screen name="MatchWaiting" component={MatchWaitingScreen} />
       <HomeStack.Screen name="MatchSuccess" component={MatchSuccessScreen} />
-      <HomeStack.Screen name="chatRoom" component={ChatRoomScreen} />
+      <HomeStack.Screen name="ChatRoom" component={ChatRoomScreen} />
     </HomeStack.Navigator>
   );
 };
