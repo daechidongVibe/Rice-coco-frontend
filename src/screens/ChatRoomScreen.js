@@ -17,6 +17,7 @@ const ChatRoom = ({
 }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+
   useEffect(() => {
     if(!messages) return;
     (async () => {
