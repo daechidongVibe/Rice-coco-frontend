@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { OBJECT, OPEN, CLOSE } from '../constants/messages';
+import { View, Alert } from 'react-native';
 import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
 import styled from 'styled-components/native';
+import {
+  OBJECT,
+  OPEN,
+  CLOSE,
+  IT_IS_CLOSED,
+  FIND_OTHER_RESTAURANT,
+  YES
+} from '../constants/messages';
 
 const RenderItem = ({
   item,
@@ -21,6 +28,16 @@ const RenderItem = ({
   }
 
   const handlePressRestaurant = () => {
+    if (isOpen === CLOSE) return Alert.alert(
+      IT_IS_CLOSED,
+      FIND_OTHER_RESTAURANT,
+      [
+        {
+          text: YES
+        }
+      ]
+    );
+
     const hasCreatedMeeting = filteredMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.restaurantId
     );
@@ -38,17 +55,17 @@ const RenderItem = ({
 
   return (
     <>
-    <ItemContainer onPress={handlePressRestaurant}>
-    <View>
-      <Rating imageSize={20} startingValue={item.rating} readonly />
-    </View>
-      <View>
-        <NameText>{item.name}</NameText>
-      </View>
-      <View>
-        <DetailText isOpen={isOpen === OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</DetailText>
-      </View>
-    </ItemContainer>
+      <ItemContainer onPress={handlePressRestaurant}>
+        <View>
+          <Rating imageSize={20} startingValue={item.rating} readonly />
+        </View>
+        <View>
+          <NameText>{item.name}</NameText>
+        </View>
+        <View>
+          <DetailText isOpen={isOpen === OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</DetailText>
+        </View>
+      </ItemContainer>
     </>
   );
 };

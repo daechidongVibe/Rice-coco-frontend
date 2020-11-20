@@ -5,7 +5,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-
+import { StackActions } from '@react-navigation/native';
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
@@ -157,11 +157,9 @@ const MatchSuccessScreen = ({
   };
 
   const handleBreakupButtonClick = async () => {
-    socketApi.breakupMeeting(meetingId);
-
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
-
-    navigation.dispatch(StackActions.replace('MainMap'));
+    socketApi.breakupMeeting(meetingId, () => {
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   return (
