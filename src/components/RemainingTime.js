@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { sub, format, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import styled from 'styled-components';
 
 const RemainingTime = ({ expiredTime, onTimeEnd }) => {
@@ -8,14 +7,16 @@ const RemainingTime = ({ expiredTime, onTimeEnd }) => {
 
   const calculateRemaingTime = () => {
     const parsedTime = parseISO(expiredTime);
-    const remainingTime = format(parsedTime - Date.now(), 'mm:ss');
+    const currentTime = Date.now();
+    const remainingTime = parsedTime - currentTime
+    const formattedTime = format(remainingTime - 1000, 'mm:ss');
 
-    setRemainingTime(remainingTime);
+    setRemainingTime(formattedTime);
   }
 
   useEffect(() => {
     calculateRemaingTime();
-  }, []);
+  }, [expiredTime, onTimeEnd]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {

@@ -24,7 +24,7 @@ const AfterMeetingScreen = ({ userId, meetingId, resetMeeting }) => {
     })();
   }, []);
 
-  const handleAgreeButtonClick = () => {
+  const handleAgreeButtonClick = async () => {
     await configuredAxios.put(`users/${userId}/favorite-partners`, {
       partnerNickname,
     });

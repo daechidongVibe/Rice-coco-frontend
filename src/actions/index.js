@@ -33,4 +33,3 @@ export const setCurrentMeeting = meeting => ({
 export const resetMeeting = () => ({
   type: types.RESET_MEETING,
 });
-

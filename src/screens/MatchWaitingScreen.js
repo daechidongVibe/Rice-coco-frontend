@@ -18,6 +18,7 @@ const MatchWaiting = ({
   setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
 }) => {
+  console.log(currentMeeting);
   useEffect(() => {
     (async () => {
       try {
@@ -45,6 +46,7 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
+    console.log(currentMeeting);
     if (currentMeeting?.users?.length === 2) {
       navigation.navigate('MatchSuccess');
     }
