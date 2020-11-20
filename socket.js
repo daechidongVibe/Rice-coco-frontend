@@ -32,7 +32,7 @@ export const socketApi = {
   arriveMeeting: meetingId => {
     socket.emit('arrive meeting', meetingId);
   },
-  leaveMeeting: meetingId => {
-    socket.emit('leave meeting', meetingId);
+  leaveMeeting: (meetingId, callback) => {
+    socket.emit('leave meeting', meetingId, callback);
   },
 };

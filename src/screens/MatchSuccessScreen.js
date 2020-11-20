@@ -60,8 +60,9 @@ const MatchSuccessScreen = ({
           {
             text: 'OK',
             onPress: () => {
-              socketApi.leaveMeeting(meetingId);
-              navigation.dispatch(StackActions.replace('MainMap'));
+              socketApi.leaveMeeting(meetingId, () => {
+                navigation.dispatch(StackActions.replace('MainMap'));
+              });
             },
           },
         ],
