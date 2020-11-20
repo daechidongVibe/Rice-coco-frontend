@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { sub, format, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import styled from 'styled-components';
-import { cos } from 'react-native-reanimated';
 
 const RemainingTime = ({ expiredTime, onTimeEnd }) => {
   const [remainingTime, setRemainingTime] = useState('59:59');
 
   const calculateRemaingTime = () => {
     const parsedTime = parseISO(expiredTime);
-    const remainingTime = format(parsedTime - Date.now() - 1000, 'mm:ss');
+    const currentTime = Date.now();
+    const remainingTime = parsedTime - currentTime
+    const formattedTime = format(remainingTime - 1000, 'mm:ss');
 
-    setRemainingTime(remainingTime);
+    setRemainingTime(formattedTime);
   }
 
   useEffect(() => {
     calculateRemaingTime();
-  }, []);
+  }, [expiredTime, onTimeEnd]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {

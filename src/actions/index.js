@@ -29,3 +29,7 @@ export const setCurrentMeeting = meeting => ({
   type: types.SET_CURRENT_MEETING,
   payload: meeting,
 });
+
+export const resetMeeting = () => ({
+  type: types.RESET_MEETING,
+});

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { StackActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
+import * as TaskManager from 'expo-task-manager';
+import * as Location from 'expo-location';
+
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
@@ -15,6 +18,8 @@ import {
   setSelectedMeeting,
   setUserInfo,
   setCurrentMeeting,
+  setPromiseAmount,
+  resetMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
 
@@ -29,10 +34,11 @@ const MatchSuccessScreen = ({
   meetingId,
   expiredTime,
   currentMeeting,
+  setPromiseAmount,
   setUserLocation,
   setSelectedMeeting,
   setCurrentMeeting,
-  setPromiseAmount,
+  resetMeeting,
   navigation,
 }) => {
   const [isArrived, setIsArrived] = useState(false);
@@ -42,7 +48,7 @@ const MatchSuccessScreen = ({
     latitude: 37.5011548,
     longitude: 127.0808086,
   });
-
+  StackActions;
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
@@ -61,6 +67,7 @@ const MatchSuccessScreen = ({
             text: 'OK',
             onPress: () => {
               socketApi.leaveMeeting(meetingId, () => {
+                resetMeeting();
                 navigation.dispatch(StackActions.replace('MainMap'));
               });
             },
@@ -71,7 +78,7 @@ const MatchSuccessScreen = ({
     });
 
     return () => socketApi.removeAllListeners();
-  }, [meetingId, userId]);
+  }, []);
 
   useEffect(() => {
     isLocationNear(userLocation, restaurantLocation, 100)
@@ -81,35 +88,27 @@ const MatchSuccessScreen = ({
     socketApi.changeLocation(userLocation);
   }, [userLocation]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await Location.startLocationUpdatesAsync(
-  //       'trackLocation',
-  //       {
-  //         accuracy: Location.Accuracy.Highest,
-  //         timeInterval: 1000,
-  //         distanceInterval: 1,
-  //         howsBackgroundLocationIndicator: true,
-  //         foregroundService: {
-  //           notificationTitle: '342342',
-  //           notificationBody: 'asdasdashjksdasd',
-  //           notificationColor: '#EEE',
-  //         },
-  //       }
-  //     );
-  //     TaskManager.defineTask(
-  //       'trackLocation',
-  //       ({ data: { locations }, error }) => {
-  //         if (error) return;
-  //         const {
-  //           coords: { latitude, longitude },
-  //         } = locations[0];
-  //         setUserLocation({ latitude, longitude });
-  //       }
-  //     );
-  //   })();
-  //   return () => Location.stopLocationUpdatesAsync();
-  // }, []);
+  useEffect(() => {
+    // (async () => {
+    //   await Location.startLocationUpdatesAsync('trackLocation', {
+    //     accuracy: Location.Accuracy.Highest,
+    //     timeInterval: 1000,
+    //     distanceInterval: 1,
+    //     howsBackgroundLocationIndicator: true,
+    //   });
+    //   TaskManager.defineTask(
+    //     'trackLocation',
+    //     ({ data: { locations }, error }) => {
+    //       if (error) return;
+    //       const {
+    //         coords: { latitude, longitude },
+    //       } = locations[0];
+    //       setUserLocation({ latitude, longitude });
+    //     }
+    //   );
+    // })();
+    // return () => Location.stopLocationUpdatesAsync();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -133,7 +132,7 @@ const MatchSuccessScreen = ({
 
   const handleTimeEnd = () => {
     socketApi.endMeeting(meetingId);
-
+    resetMeeting();
     const isAllparticipated = currentMeeting.arrivalCount >= 2;
 
     isAllparticipated
@@ -158,7 +157,13 @@ const MatchSuccessScreen = ({
   };
 
   const handleBreakupButtonClick = async () => {
+    await configuredAxios.put(`/users/${userId}/promise`, {
+      amount: -1,
+    });
+
     socketApi.breakupMeeting(meetingId, () => {
+      setPromiseAmount(userPromise - 1);
+      resetMeeting();
       navigation.dispatch(StackActions.replace('MainMap'));
     });
   };
@@ -206,16 +211,16 @@ const MatchSuccessScreen = ({
       <OverlayHeader>
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
-        {
-          isArrived ? (
-            <ArrivalButton onPress={handleArrivalButtonClick}>
-              <ArrivalText>
-                {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
-              </ArrivalText>
-            </ArrivalButton>
-          ) : null
-          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} /> */
-        }
+        {isArrived && (
+          <ArrivalButton onPress={handleArrivalButtonClick}>
+            <ArrivalText>
+              {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
+            </ArrivalText>
+          </ArrivalButton>
+        )}
+        {!!expiredTime && (
+          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+        )}
       </OverlayHeader>
       <OverlayFooter>
         {!isArrived && (
@@ -358,6 +363,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setPromiseAmount(amount) {
     dispatch(setPromiseAmount(amount));
+  },
+  resetMeeting() {
+    dispatch(resetMeeting());
   },
 });
 
