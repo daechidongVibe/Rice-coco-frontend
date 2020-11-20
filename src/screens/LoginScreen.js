@@ -12,19 +12,19 @@ import { setUserInfo } from '../actions';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      asyncStorage.clear(); // 테스트용, 매번 로그인을 해야 앱에 접속할 수 있도록
       const token = await asyncStorage.getItem('token');
 
       if (!token) return;
 
-      const {
-        data: { user },
-      } = await configuredAxios.post('users/login');
+      const { data } = await configuredAxios.post('users/login');
+      const { user } = data;
 
       setUserInfo(user);
 
       if (!user.preferredPartner) {
-        return navigation.navigate('PreferredPartner');
+        return navigation.dispatch(
+          StackActions.replace('PreferredPartner')
+        );
       }
 
       navigation.dispatch(
