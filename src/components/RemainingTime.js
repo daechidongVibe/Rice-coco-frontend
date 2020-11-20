@@ -9,10 +9,7 @@ const RemainingTime = ({ expiredTime, onTimeEnd }) => {
 
   const calculateRemaingTime = () => {
     const parsedTime = parseISO(expiredTime);
-    const remainingTime = format(parsedTime - Date.now(), 'mm:ss');
-
-    console.log(parsedTime, remainingTime);
-
+    const remainingTime = format(parsedTime - Date.now() - 1000, 'mm:ss');
 
     setRemainingTime(remainingTime);
   }
