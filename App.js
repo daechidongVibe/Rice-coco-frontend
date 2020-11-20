@@ -28,7 +28,11 @@ const TabNavigation = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
-      tabBarOptions={{ activeTintColor: '#ff914d', inactiveTintColor: 'gray' }}
+      tabBarOptions={{
+        activeTintColor: '#ff914d',
+        inactiveTintColor: 'gray',
+        keyboardHidesTabBar: true,
+      }}
     >
       <Tab.Screen name="Home" component={HomeStackScreen} />
       <Tab.Screen name="MyPage" component={MyPageStackScreen} />

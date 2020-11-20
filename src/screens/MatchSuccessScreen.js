@@ -28,7 +28,6 @@ import {
   setCurrentMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
-import { StackActions } from '@react-navigation/native';
 
 const MatchSuccessScreen = ({
   userId,
