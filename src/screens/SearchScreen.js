@@ -68,7 +68,10 @@ const Search = ({ navigation }) => {
             bottom: 100,
             opacity: 0.5
           }}
-        ><Description>{!searchList&&!isSearching ? SHOULD_INPUT_RESTAURANT : ''}</Description>
+        >
+          <Description>
+            {!searchList && !isSearching ? SHOULD_INPUT_RESTAURANT : ''}
+          </Description>
         </ImageBackground>
         {
           isSearching ?

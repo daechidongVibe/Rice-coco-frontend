@@ -1,21 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Svg, { Polygon } from 'react-native-svg';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigationState } from '@react-navigation/native';
 
 import axios from '../config/axiosConfig';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import { setUserInfo } from '../actions';
 
-const PreferredPartnerScreen = ({ navigation, userId }) => {
+const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
+  const navigationState = useNavigationState(state => state);
+
   const [genderInput, setGenderInput] = useState('남자');
   const [ageInput, setAgeInput] = useState('20대');
-  const [occupationInput, setOccupationInput] = useState('프로그래머');
+  const [occupationInput, setOccupationInput] = useState('개발');
 
   const [clickedGenderInput, setClickedGenderInput] = useState(true);
   const [clickedAgeInput, setClickedAgeInput] = useState(false);
   const [clickedOccupationInput, setClickedOccupationInput] = useState(false);
+
+  useEffect(() => {
+    if (userId) {
+      setGenderInput(user.preferredPartner.gender);
+      setAgeInput(user.preferredPartner.birthYear);
+      setOccupationInput(user.preferredPartner.occupation);
+    }
+  }, []);
 
   const handleSubmit = async () => {
     const preferredPartner = {
@@ -24,10 +36,6 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
       occupation: occupationInput,
     };
 
-    setGenderInput('');
-    setAgeInput('');
-    setOccupationInput('');
-
     try {
       const { data: { result, updatedUser, errMessage }} = await axios.put(
         `/users/${userId}/preferred-partner`,
@@ -35,7 +43,18 @@ const PreferredPartnerScreen = ({ navigation, userId }) => {
       );
 
       if (result === 'ok') {
-        console.log('선호 친구 정보 업데이트 성공!');
+        // 리덕스 스토어의 유저 선호 정보 변경..(UI)
+        setUserInfo({
+          preferredPartner: updatedUser.preferredPartner
+        });
+
+        // 내 정보에서 들어온 경우, 다시 내 정보로 되돌아간다
+        if (navigationState.routes.length >= 2) {
+          navigation.goBack();
+          return;
+        }
+
+        // 초기 화면에서 들어온 경우, 메인맵으로 보내준다
         navigation.navigate('MainMap');
         return;
       }
@@ -270,13 +289,16 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ user: { _id } }) => {
+const mapStateToProps = ({ user, user: { _id } }) => {
   return {
+    user,
     userId: _id
   };
 };
 
 export default connect(
   mapStateToProps,
-  null
+  {
+    setUserInfo
+  }
   )(PreferredPartnerScreen);
