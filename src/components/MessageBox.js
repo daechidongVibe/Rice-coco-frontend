@@ -2,18 +2,26 @@ import React from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components';
 
-const MessageBox = ({ user, message }) => {
+const MessageBox = ({
+  user, 
+  message,
+  userNickName,
+  partnerNickname,
+  }) => {
+const userLastNickName = userNickName.slice(0, 1);
+const partnerLastNickname = partnerNickname.slice(0, 1);
+
   return (
     <>
       <MeesageBoxContainer
         direction={user ? 'row' : 'row-reverse'}
         >
         <MessageContainer
-          color={!user ? '#fbf6f0' : '#f7dad9'}
+          color={user ? '#fbf6f0' : '#f7dad9'}
           >
           <Message>{message}</Message>
         </MessageContainer>
-          <UserProfile><Text>{user}</Text></UserProfile>
+          <UserProfile><Text>{user ? `${userLastNickName}` : `${partnerLastNickname}`}</Text></UserProfile>
       </MeesageBoxContainer>
     </>
   );
@@ -26,7 +34,7 @@ const MeesageBoxContainer = styled.View`
   flex-direction: ${props => props.direction}
   justify-content: flex-end;
   align-items: flex-end;
-  margin-bottom: 3px;
+  margin-bottom: 9px;
 `;
 
 const MessageContainer = styled.View`

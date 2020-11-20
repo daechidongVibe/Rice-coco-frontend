@@ -53,16 +53,13 @@ const MatchWaiting = ({
   }, [currentMeeting]);
 
   const handlePressCancelButton = async () => {
-    socketApi.cancelMeeting(meetingId);
-
-    await configuredAxios.delete(`/meetings/${meetingId}`);
-
-    navigation.dispatch(StackActions.replace('MainMap'));
+    socketApi.cancelMeeting(meetingId, () => {
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   const handleTimeEnd = async () => {
     socketApi.cancelMeeting(meetingId);
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
 
     Alert.alert(
       '미팅 성사 시간 종료',

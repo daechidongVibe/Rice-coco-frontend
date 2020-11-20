@@ -66,9 +66,10 @@ const MatchSuccessScreen = ({
           {
             text: 'OK',
             onPress: () => {
-              socketApi.leaveMeeting(meetingId);
-              resetMeeting();
-              navigation.dispatch(StackActions.replace('MainMap'));
+              socketApi.leaveMeeting(meetingId, () => {
+                resetMeeting();
+                navigation.dispatch(StackActions.replace('MainMap'));
+              });
             },
           },
         ],
@@ -156,16 +157,15 @@ const MatchSuccessScreen = ({
   };
 
   const handleBreakupButtonClick = async () => {
-    socketApi.breakupMeeting(meetingId);
-    setPromiseAmount(userPromise - 1);
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: -1,
     });
 
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
-
-    resetMeeting();
-    navigation.dispatch(StackActions.replace('MainMap'));
+    socketApi.breakupMeeting(meetingId, () => {
+      setPromiseAmount(userPromise - 1);
+      resetMeeting();
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   return (
