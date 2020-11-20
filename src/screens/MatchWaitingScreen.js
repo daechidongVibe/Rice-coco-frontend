@@ -18,7 +18,7 @@ const MatchWaiting = ({
   setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
 }) => {
-  console.log(currentMeeting);
+
   useEffect(() => {
     (async () => {
       try {
