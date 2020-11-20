@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-  Text,
-  View,
-  Modal,
-  TouchableHighlight,
-} from 'react-native';
+import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { StackActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
-import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
 
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
@@ -26,6 +18,8 @@ import {
   setSelectedMeeting,
   setUserInfo,
   setCurrentMeeting,
+  setPromiseAmount,
+  resetMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
 
@@ -40,36 +34,50 @@ const MatchSuccessScreen = ({
   meetingId,
   expiredTime,
   currentMeeting,
+  setPromiseAmount,
   setUserLocation,
   setSelectedMeeting,
   setCurrentMeeting,
-  setPromiseAmount,
+  resetMeeting,
   navigation,
 }) => {
   const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 37.5011548,
     longitude: 127.0808086,
   });
-
+  StackActions;
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
     });
-
     socket.on('partner location changed', location => {
       setPartnerLocation(location);
     });
-
     socket.on('meeting broked up', () => {
-      navigation.dispatch(StackActions.replace('MainMap'));
+      Alert.alert(
+        '미팅 성사 취소',
+        '안타깝게도 상대방이 미팅을 취소하셨습니다.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              socketApi.leaveMeeting(meetingId, () => {
+                resetMeeting();
+                navigation.dispatch(StackActions.replace('MainMap'));
+              });
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     });
 
-    return () => socket.off('current meeting');
+    return () => socketApi.removeAllListeners();
   }, []);
 
   useEffect(() => {
@@ -80,80 +88,84 @@ const MatchSuccessScreen = ({
     socketApi.changeLocation(userLocation);
   }, [userLocation]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await Location.startLocationUpdatesAsync(
-  //       'trackLocation',
-  //       {
-  //         accuracy: Location.Accuracy.Highest,
-  //         timeInterval: 1000,
-  //         distanceInterval: 1,
-  //         howsBackgroundLocationIndicator: true,
-  //         foregroundService: {
-  //           notificationTitle: '342342',
-  //           notificationBody: 'asdasdashjksdasd',
-  //           notificationColor: '#EEE',
-  //         },
-  //       }
-  //     );
-  //     TaskManager.defineTask(
-  //       'trackLocation',
-  //       ({ data: { locations }, error }) => {
-  //         if (error) return;
-  //         const {
-  //           coords: { latitude, longitude },
-  //         } = locations[0];
-  //         setUserLocation({ latitude, longitude });
-  //       }
-  //     );
-  //   })();
-  //   return () => Location.stopLocationUpdatesAsync();
-  // }, []);
+  useEffect(() => {
+    // (async () => {
+    //   await Location.startLocationUpdatesAsync('trackLocation', {
+    //     accuracy: Location.Accuracy.Highest,
+    //     timeInterval: 1000,
+    //     distanceInterval: 1,
+    //     howsBackgroundLocationIndicator: true,
+    //   });
+    //   TaskManager.defineTask(
+    //     'trackLocation',
+    //     ({ data: { locations }, error }) => {
+    //       if (error) return;
+    //       const {
+    //         coords: { latitude, longitude },
+    //       } = locations[0];
+    //       setUserLocation({ latitude, longitude });
+    //     }
+    //   );
+    // })();
+    // return () => Location.stopLocationUpdatesAsync();
+  }, []);
 
   useEffect(() => {
     (async () => {
-      const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+      try {
+        const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+        if (data.result === 'ok') {
+          const { meetingDetails } = data;
 
-      console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
+          setSelectedMeeting(meetingDetails);
+        }
 
-      if (data.result === 'ok') {
-        const { meetingDetails } = data;
-
-        setSelectedMeeting(meetingDetails);
-      }
-
-      if (data.result === 'failure') {
-        console.log(data.errMessage);
+        if (data.result === 'failure') {
+          console.log(data.errMessage);
+        }
+      } catch (error) {
+        console.error(err);
       }
     })();
   }, []);
 
   const handleTimeEnd = () => {
     socketApi.endMeeting(meetingId);
+    resetMeeting();
+    const isAllparticipated = currentMeeting.arrivalCount >= 2;
 
-    navigation.navigate('AfterMeeting');
+    isAllparticipated
+      ? navigation.dispatch(StackActions.replace('AfterMeeting'))
+      : navigation.dispatch(StackActions.replace('MainMap'));
   };
 
   const handleArrivalButtonClick = async () => {
+    if (isArrivalConfirmed) return;
+
     setIsArrivalConfirmed(true);
     setPromiseAmount(userPromise + 1);
-
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: 1,
     });
-    // console.log(response);
+
+    socketApi.arriveMeeting(meetingId);
   };
 
   const handleChatButtonClick = () => {
-    // navigation.navigate('chatRoom');
+    navigation.navigate('ChatRoom');
   };
 
   const handleBreakupButtonClick = async () => {
-    socketApi.breakupMeeting(meetingId);
+    await configuredAxios.put(`/users/${userId}/promise`, {
+      amount: -1,
+    });
 
-    const result = await configuredAxios.delete(`/meetings/${meetingId}`);
-
-    navigation.dispatch(StackActions.replace('MainMap'));
+    socketApi.breakupMeeting(meetingId, () => {
+      setPromiseAmount(userPromise - 1);
+      resetMeeting();
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   return (
@@ -169,7 +181,6 @@ const MatchSuccessScreen = ({
         style={styles.mapStyle}
         showsMyLocationButton={true}
         showsUserLocation={true}
-        onMapReady={() => console.log('Map Is Ready!')}
       >
         {/* <Marker title={userNickname} coordinate={userLocation} /> */}
         <Marker title={partnerNickname} coordinate={partnerLocation} />
@@ -200,27 +211,27 @@ const MatchSuccessScreen = ({
       <OverlayHeader>
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
-        {
-          isArrived ? (
-            <ArrivalButton onPress={handleArrivalButtonClick}>
-              <ArrivalText>
-                {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
-              </ArrivalText>
-            </ArrivalButton>
-          ) : null
-          // <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} /> */
-        }
+        {isArrived && (
+          <ArrivalButton onPress={handleArrivalButtonClick}>
+            <ArrivalText>
+              {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
+            </ArrivalText>
+          </ArrivalButton>
+        )}
+        {!!expiredTime && (
+          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+        )}
       </OverlayHeader>
       <OverlayFooter>
         {!isArrived && (
-          <ArrivalButton onPress={() => setModalVisible(true)}>
+          <ArrivalButton onPress={() => setIsOnVergeofBreaking(true)}>
             <ArrivalText>{'약속 파토내기'}</ArrivalText>
           </ArrivalButton>
         )}
-        {modalVisible && (
+        {isOnVergeofBreaking && (
           <FinalQuestion
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
+            modalVisible={isOnVergeofBreaking}
+            setModalVisible={setIsOnVergeofBreaking}
             question={'정말 파토내시겠습니까?'}
             onClickYes={handleBreakupButtonClick}
           />
@@ -352,6 +363,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setPromiseAmount(amount) {
     dispatch(setPromiseAmount(amount));
+  },
+  resetMeeting() {
+    dispatch(resetMeeting());
   },
 });
 

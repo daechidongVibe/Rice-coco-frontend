@@ -11,6 +11,8 @@ import SearchScreen from './SearchScreen';
 import RestaurantDetailsScreen from './RestaurantDetailsScreen';
 import MatchWaitingScreen from './MatchWaitingScreen';
 import MatchSuccessScreen from './MatchSuccessScreen';
+import ChatRoomScreen from './ChatRoomScreen';
+import AfterMeetingScreen from './AfterMeetingScreen';
 
 const HomeStack = createStackNavigator();
 
@@ -25,6 +27,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="RestaurantDetails" component={RestaurantDetailsScreen} />
       <HomeStack.Screen name="MatchWaiting" component={MatchWaitingScreen} />
       <HomeStack.Screen name="MatchSuccess" component={MatchSuccessScreen} />
+      <HomeStack.Screen name="ChatRoom" component={ChatRoomScreen} />
+      <HomeStack.Screen name="AfterMeeting" component={AfterMeetingScreen} />
     </HomeStack.Navigator>
   );
 };

@@ -7,7 +7,6 @@ import RenderItem from '../components/RenderItem';
 import configuredAxios from '../config/axiosConfig';
 import { SHOULD_ENTER_WORD, SHOULD_ENTER_FOOD, SHOULD_INPUT_RESTAURANT} from '../constants/messages';
 import getEnvVars from '../../environment';
-import RotatedIcon from '../components/RotatedIcon';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const { REACT_NATIVE_GOOGLE_PLACES_URL, REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
@@ -20,7 +19,7 @@ const Search = ({ navigation }) => {
 
   const restaurantUrl = `${REACT_NATIVE_GOOGLE_PLACES_URL}&keyword=${searchWord}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`;
 
-  const handleSearchWordSubmit = async (e) => {
+  const handleSearchWordSubmit = async () => {
     if (isSearching) return;
 
     if (!searchWord) {
@@ -33,7 +32,7 @@ const Search = ({ navigation }) => {
 
     try {
       const { data: { results } } = await configuredAxios.get(restaurantUrl);
-      const filteredDataList = results.map(
+      const filteredSearchList = results.map(
         result => {
           return {
             id: result.place_id,
@@ -44,13 +43,14 @@ const Search = ({ navigation }) => {
         }
       );
 
-      setSearchList(filteredDataList);
+      setSearchList(filteredSearchList);
     } catch (err) {
       console.log(err);
     }
 
     setIsSearching(false);
   };
+
   return (
     <>
       <Container>
