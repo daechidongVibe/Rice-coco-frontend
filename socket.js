@@ -11,14 +11,17 @@ export const socketApi = {
   joinMeeting: (meetingId, userId) => {
     socket.emit('join meeting', { meetingId, userId });
   },
-  cancelMeeting: meetigId => {
-    socket.emit('cancel meeting', meetigId);
+  sendMessage: (userId, message, callback) => {
+    socket.emit('send message', { userId, message}, callback);
+  },
+  cancelMeeting: (meetigId, callback) => {
+    socket.emit('cancel meeting', meetigId, callback);
   },
   changeLocation: (location, meetigId) => {
     socket.emit('change location', { location, meetigId });
   },
-  breakupMeeting: meetingId => {
-    socket.emit('breakup meeting', meetingId);
+  breakupMeeting: (meetingId, callback) => {
+    socket.emit('breakup meeting', meetingId, callback);
   },
   endMeeting: meetingId => {
     socket.emit('end meeting', meetingId);
