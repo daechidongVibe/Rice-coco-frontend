@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, Image, Text, View, Alert, Button } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  Image,
+  Text,
+  View,
+  Alert,
+  Button,
+} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
@@ -50,8 +58,6 @@ const MatchSuccessScreen = ({
   });
 
   useEffect(() => {
-    console.log(userNickname);
-    console.log(currentMeeting);
     socketApi.joinMeeting(meetingId, userId);
 
     socket.on('current meeting', data => {
@@ -80,8 +86,6 @@ const MatchSuccessScreen = ({
         { cancelable: false }
       );
     });
-
-    return () => socketApi.removeAllListeners();
   }, []);
 
   // useEffect(() => {
@@ -136,7 +140,6 @@ const MatchSuccessScreen = ({
 
   const handleTimeEnd = () => {
     socketApi.endMeeting(meetingId, () => {
-      console.log(currentMeeting);
       const isAllparticipated = currentMeeting.arrivalCount >= 2;
 
       if (isAllparticipated) {

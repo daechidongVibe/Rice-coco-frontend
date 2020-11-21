@@ -13,6 +13,7 @@ import isLocationNear from '../utils/isLocationNear';
 import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
 import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';
+import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
   meetings,
@@ -52,7 +53,7 @@ const MainMapScreen = ({
   const handleReloadClick = async () => {
     const { data } = await axiosInstance.get('/meetings');
     const { filteredMeetings } = data;
-    setMeetings(filteredMeetings)
+    setMeetings(filteredMeetings);
   };
 
   useEffect(() => {
@@ -95,6 +96,10 @@ const MainMapScreen = ({
       setMeetings(filteredMeetings);
     })();
   }, []);
+
+  useEffect(() => {
+    socketApi.removeAllListeners();
+  });
 
   return fontLoaded ? (
     <>

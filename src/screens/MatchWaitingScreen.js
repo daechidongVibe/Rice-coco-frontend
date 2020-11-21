@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions, useNavigationState } from '@react-navigation/native';
+import {
+  StackActions,
+  useNavigationState,
+  CommonActions,
+} from '@react-navigation/native';
 
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
@@ -21,8 +25,6 @@ const MatchWaiting = ({
   const navigationState = useNavigationState(state => state);
 
   useEffect(() => {
-    console.log('생성 이후 네비게이션 히스토리!!!!!!',navigationState.routes);
-
     (async () => {
       try {
         const {
@@ -45,13 +47,30 @@ const MatchWaiting = ({
       setCurrentMeeting(data);
     });
 
-    return () => socketApi.removeAllListeners();
+    return () => socket.off('current meeting');
   }, []);
 
   useEffect(() => {
     if (currentMeeting?.users?.length === 2) {
-      navigation.navigate('MatchSuccess');
-      // navigation.dispatch(StackActions.replace('MatchSuccess'));
+      // 여기에서 쿼리 보내서 파트너 닉네임을 가져온다..?
+      (async () => {
+        const partnerId = currentMeeting.users.find(user => user !== userId);
+        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+        const partnerNickname = partner.nickname;
+
+        setSelectedMeeting({ partnerNickname });
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'MatchSuccess',
+              },
+            ],
+          })
+        );
+      })()
     }
   }, [currentMeeting]);
 
@@ -69,7 +88,17 @@ const MatchWaiting = ({
         [
           {
             text: 'OK',
-            onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
+            onPress: () =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainMap',
+                    },
+                  ],
+                })
+              ),
           },
         ],
         { cancelable: false }
