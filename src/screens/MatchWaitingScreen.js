@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
+import { StackActions, useNavigationState } from '@react-navigation/native';
 
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
@@ -18,7 +18,11 @@ const MatchWaiting = ({
   setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
 }) => {
+  const navigationState = useNavigationState(state => state);
+
   useEffect(() => {
+    console.log('생성 이후 네비게이션 히스토리!!!!!!',navigationState.routes);
+
     (async () => {
       try {
         const {
