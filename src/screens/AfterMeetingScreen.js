@@ -2,27 +2,34 @@ import React, { useEffect } from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { resetMeeting } from '../actions';
+import { StackActions } from '@react-navigation/native';
 
+import { resetMeeting } from '../actions';
 import configuredAxios from '../config/axiosConfig';
 
-const AfterMeetingScreen = ({ userId, meetingId, resetMeeting }) => {
-  useEffect(() => {
-    (async () => {
-      // 마운트 되면 해당 미팅을 유저 히스토리로 추가
-      const { data } = await configuredAxios.put(`users/${userId}/history`, {
-        meetingId,
-      });
+const AfterMeetingScreen = ({
+  userId,
+  meetingId,
+  resetMeeting,
+  partnerNickname,
+  navigation,
+}) => {
+  // useEffect(() => {
+  //   (async () => {
+  //     // 마운트 되면 해당 미팅을 유저 히스토리로 추가
+  //     const { data } = await configuredAxios.put(`users/${userId}/history`, {
+  //       meetingId,
+  //     });
 
-      if (data.result === 'SUCCESS') {
-        return;
-      }
+  //     if (data.result === 'SUCCESS') {
+  //       return;
+  //     }
 
-      if (data.result === 'FAILURE') {
-        // console.log(data.result.errMessage);
-      }
-    })();
-  }, []);
+  //     if (data.result === 'FAILURE') {
+  //       // console.log(data.result.errMessage);
+  //     }
+  //   })();
+  // }, []);
 
   const handleAgreeButtonClick = async () => {
     await configuredAxios.put(`users/${userId}/favorite-partners`, {
@@ -42,7 +49,7 @@ const AfterMeetingScreen = ({ userId, meetingId, resetMeeting }) => {
     <Container>
       <BackgroundImage source={require('../../assets/images/rice.png')} />
       <TextWrapper>
-        <StyledText>끄릉이님과의 식사는 어떠하셨나요?</StyledText>
+        <StyledText>{partnerNickname}님과의 식사는 어떠하셨나요?</StyledText>
         <StyledText>밥친구로 추가하시겠어요?</StyledText>
       </TextWrapper>
       <ButtonWrapper>
@@ -110,7 +117,7 @@ const BackgroundImage = styled.Image`
 const mapStateToProps = state => {
   const {
     user: { _id },
-    meeting: {
+    meetings: {
       selectedMeeting: { meetingId, partnerNickname },
     },
   } = state;
@@ -118,7 +125,7 @@ const mapStateToProps = state => {
   return {
     userId: _id,
     meetingId,
-    partnerNickname
+    partnerNickname,
   };
 };
 

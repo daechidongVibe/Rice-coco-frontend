@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
+import { StyleSheet, Dimensions, Image, Text, View, Alert, Button } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
@@ -41,23 +41,27 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(false);
+  const [isArrived, setIsArrived] = useState(true);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 37.5011548,
     longitude: 127.0808086,
   });
-  StackActions;
+
   useEffect(() => {
+    console.log(userNickname);
+    console.log(currentMeeting);
     socketApi.joinMeeting(meetingId, userId);
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
     });
+
     socket.on('partner location changed', location => {
       setPartnerLocation(location);
     });
+
     socket.on('meeting broked up', () => {
       Alert.alert(
         '미팅 성사 취소',
@@ -80,13 +84,13 @@ const MatchSuccessScreen = ({
     return () => socketApi.removeAllListeners();
   }, []);
 
-  useEffect(() => {
-    isLocationNear(userLocation, restaurantLocation, 100)
-      ? setIsArrived(true)
-      : setIsArrived(false);
+  // useEffect(() => {
+  //   isLocationNear(userLocation, restaurantLocation, 100)
+  //     ? setIsArrived(true)
+  //     : setIsArrived(false);
 
-    socketApi.changeLocation(userLocation);
-  }, [userLocation]);
+  //   socketApi.changeLocation(userLocation);
+  // }, [userLocation]);
 
   useEffect(() => {
     // (async () => {
@@ -131,19 +135,25 @@ const MatchSuccessScreen = ({
   }, []);
 
   const handleTimeEnd = () => {
-    socketApi.endMeeting(meetingId);
-    resetMeeting();
-    const isAllparticipated = currentMeeting.arrivalCount >= 2;
+    socketApi.endMeeting(meetingId, () => {
+      console.log(currentMeeting);
+      const isAllparticipated = currentMeeting.arrivalCount >= 2;
 
-    isAllparticipated
-      ? navigation.dispatch(StackActions.replace('AfterMeeting'))
-      : navigation.dispatch(StackActions.replace('MainMap'));
+      if (isAllparticipated) {
+        navigation.dispatch(StackActions.replace('AfterMeeting'));
+
+        return;
+      }
+
+      resetMeeting();
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   const handleArrivalButtonClick = async () => {
     if (isArrivalConfirmed) return;
-
     setIsArrivalConfirmed(true);
+
     setPromiseAmount(userPromise + 1);
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: 1,
