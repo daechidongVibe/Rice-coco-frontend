@@ -14,8 +14,8 @@ export const socketApi = {
   joinMeeting: (meetingId, userId) => {
     socket.emit('join meeting', { meetingId, userId });
   },
-  sendMessage: (userId, message, callback) => {
-    socket.emit('send message', { userId, message}, callback);
+  sendMessage: (userId, message) => {
+    socket.emit('send message', { userId, message});
   },
   cancelMeeting: (meetigId, callback) => {
     socket.emit('cancel meeting', meetigId, callback);

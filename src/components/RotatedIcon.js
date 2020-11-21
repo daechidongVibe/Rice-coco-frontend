@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 
-const RotatedIcon = () => {
+const RotatedIcon = ({start}) => {
   const spinAnim = new Animated.Value(0);
 
   const startAnimation = () => {
@@ -21,7 +21,7 @@ const RotatedIcon = () => {
 
   useEffect(() => {
     startAnimation();
-  },[]);
+  }, [start]);
 
   return (
     <Animated.Image
