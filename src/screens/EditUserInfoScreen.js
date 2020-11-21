@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { MaterialIcons, Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import configuredAxios from '../config/axiosConfig';
+import InputSelector from '../components/InputSelector';
+import { setUserInfo } from '../actions/index';
+import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
-const EditUserInfo = ({ user }) => {
+
+const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   console.log('리덕스에 들어있는 유저 정보..', user);
 
   const {
@@ -19,11 +23,24 @@ const EditUserInfo = ({ user }) => {
   } = user;
 
   const [isEdited, setIsEdited] = useState(false);
-  const [localNickname, setLocalNickname] = useState('');
+  const [nicknameInput, setNicknameInput] = useState('');
+  const [occupationInput, setOccupationInput] = useState('');
 
   useEffect(() => {
-    setLocalNickname(nickname);
+    setNicknameInput(nickname);
+    setOccupationInput(occupation);
   }, []);
+
+  useEffect(() => {
+    const didUserEditedNicknameInput = nickname !== nicknameInput;
+    const didUserEditedOccupationInput = occupation !== occupationInput;
+
+    if (didUserEditedNicknameInput || didUserEditedOccupationInput) {
+      setIsEdited(true);
+    } else {
+      setIsEdited(false);
+    }
+  }, [nicknameInput, occupationInput]);
 
   const handlePressNicknameRefresher = async () => {
     const {
@@ -32,14 +49,38 @@ const EditUserInfo = ({ user }) => {
       'https://nickname.hwanmoo.kr/?format=json&count=1'
     );
 
-    setLocalNickname(randomName[0]);
-    setIdEdited(true);
+    setNicknameInput(randomName[0]);
   };
 
-  const handlePressOccupationEditIcon = () => {
-    //
+  const onPressSubmitButton = async () => {
+    console.log(nicknameInput, occupationInput)
 
-    setIdEdited(true);
+    const { data: response } = await configuredAxios.put(
+      `/users/${userId}`,
+      {
+        nickname: nicknameInput,
+        occupation: occupationInput
+      }
+    );
+
+    if (response.status === 'ok') {
+      const { nickname, occupation } = response.updatedUser;
+
+      setUserInfo({
+        nickname,
+        occupation
+      });
+
+      alert('업데이트 성공!');
+
+      navigation.goBack();
+    }
+
+    if (response.status === 'failure') {
+      alert(response.errMessage);
+
+      navigation.goBack();
+    }
   };
 
   return (
@@ -54,7 +95,7 @@ const EditUserInfo = ({ user }) => {
 
         <InputHeader>닉네임</InputHeader>
         <InputContainer>
-          <Input value={localNickname} editable={false} />
+          <Input value={nicknameInput} editable={false} />
           <TouchableOpacity onPress={handlePressNicknameRefresher} >
             <MaterialIcons
               name="refresh"
@@ -66,17 +107,14 @@ const EditUserInfo = ({ user }) => {
         </InputContainer>
 
         <InputHeader>직업</InputHeader>
-        <InputContainer>
-          <Input value={occupation} editable={false} />
-          <TouchableOpacity onPress={handlePressOccupationEditIcon} >
-            <Feather
-              name="edit-2"
-              size={24}
-              color="black"
-              style={{ width: 24, height: 24, color: '#ff914d', marginRight: 12 }}
-            />
-          </TouchableOpacity>
-        </InputContainer>
+        <PickerWrapper>
+          <InputSelector
+            value={occupationInput}
+            setValue={setOccupationInput}
+            styleObj={{ paddingVertical: 10, paddingHorizontal: 10 }}
+            items={MY_INFO_OPTIONS.occupation}
+          />
+        </PickerWrapper>
 
         <InputHeader>성별</InputHeader>
         <InputContainer>
@@ -97,7 +135,10 @@ const EditUserInfo = ({ user }) => {
           />
         </InputContainer>
         <Wrapper>
-          <SubmitButton disabled={isEdited ? false : true} >
+          <SubmitButton
+            disabled={isEdited ? false : true}
+            onPress={onPressSubmitButton}
+          >
             <Text style={{ color: 'white', textAlign: 'center' }}>수정하기</Text>
           </SubmitButton>
         </Wrapper>
@@ -116,7 +157,8 @@ const Header = styled.Text`
   color: #ff914d;
   font-size: 32px;
   font-weight: bold;
-  margin: 32px auto;
+  margin: 25px auto;
+  margin-bottom: 20px;
 `;
 
 const InputHeader = styled.Text`
@@ -139,6 +181,11 @@ const Input = styled.TextInput`
   flex: 1;
 `;
 
+const PickerWrapper = styled.View`
+  background-color: white;
+  margin-bottom: 10px;
+`;
+
 const Wrapper = styled.View`
   width: 100%;
   display: flex;
@@ -147,16 +194,21 @@ const Wrapper = styled.View`
 const SubmitButton = styled.TouchableOpacity`
   align-self: center;
   padding: 13px 20px;
+  margin-top: 5px;
+  margin-bottom: 15px;
   background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
 `;
 
-const mapStateToProps = ({ user }) => {
+const mapStateToProps = ({ user, user : { _id } }) => {
   return {
-    user
+    user,
+    userId: _id
   };
 };
 
 export default connect(
   mapStateToProps,
-  null
+  {
+    setUserInfo
+  }
 )(EditUserInfo);
