@@ -9,13 +9,13 @@ export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
 
 export const socketApi = {
   removeAllListeners: () => {
-    socket.removeAllListeners()
+    socket.removeAllListeners();
   },
-  joinMeeting: (meetingId, userId) => {
-    socket.emit('join meeting', { meetingId, userId });
+  joinMeeting: (meetingId, userId, userNickname) => {
+    socket.emit('join meeting', { meetingId, userId, userNickname });
   },
   sendMessage: (userId, message, callback) => {
-    socket.emit('send message', { userId, message}, callback);
+    socket.emit('send message', { userId, message }, callback);
   },
   cancelMeeting: (meetigId, callback) => {
     socket.emit('cancel meeting', meetigId, callback);
@@ -26,11 +26,11 @@ export const socketApi = {
   breakupMeeting: (meetingId, callback) => {
     socket.emit('breakup meeting', meetingId, callback);
   },
-  endMeeting: meetingId => {
-    socket.emit('end meeting', meetingId);
+  endMeeting: (meetingId, callback) => {
+    socket.emit('end meeting', meetingId, callback);
   },
-  arriveMeeting: meetingId => {
-    socket.emit('arrive meeting', meetingId);
+  arriveMeeting: (meetingId, userNickname) => {
+    socket.emit('arrive meeting', {meetingId, userNickname} );
   },
   leaveMeeting: (meetingId, callback) => {
     socket.emit('leave meeting', meetingId, callback);

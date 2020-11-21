@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 
@@ -18,7 +18,6 @@ const MatchWaiting = ({
   setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
 }) => {
-  console.log(currentMeeting);
   useEffect(() => {
     (async () => {
       try {
@@ -26,7 +25,7 @@ const MatchWaiting = ({
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
         // restaurantName, expiredTime만 온다.
-        console.log('새롭게 받아온 미팅 데이터', meetingDetails);
+        // console.log('새롭게 받아온 미팅 데이터', meetingDetails);
 
         setSelectedMeeting(meetingDetails);
       } catch (err) {
@@ -42,13 +41,12 @@ const MatchWaiting = ({
       setCurrentMeeting(data);
     });
 
-    return () => socket.off('current meeting');
+    return () => socketApi.removeAllListeners();
   }, []);
 
   useEffect(() => {
-    console.log(currentMeeting);
     if (currentMeeting?.users?.length === 2) {
-      navigation.navigate('MatchSuccess');
+      navigation.dispatch(StackActions.replace('MatchSuccess'));
     }
   }, [currentMeeting]);
 
@@ -59,25 +57,27 @@ const MatchWaiting = ({
   };
 
   const handleTimeEnd = async () => {
-    socketApi.cancelMeeting(meetingId);
-
-    Alert.alert(
-      '미팅 성사 시간 종료',
-      '안타깝게도 혼자 드셔야겠네요',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
-        },
-      ],
-      { cancelable: false }
-    );
+    socketApi.cancelMeeting(meetingId, () => {
+      Alert.alert(
+        '미팅 성사 시간 종료',
+        '안타깝게도 혼자 드셔야겠네요',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
+          },
+        ],
+        { cancelable: false }
+      );
+    });
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {!!expiredTime && <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />}
+      {!!expiredTime && (
+        <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+      )}
       <RotatedIcon />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />

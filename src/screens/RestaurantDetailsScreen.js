@@ -88,7 +88,7 @@ const RestaurantDetails = ({
     if (data.result === 'ok') {
       const { createdMeeting } = data;
 
-      console.log('생성된 미팅! => ', createdMeeting);
+      // console.log('생성된 미팅! => ', createdMeeting);
 
       const { _id: meetingId, expiredTime } = createdMeeting;
 
@@ -127,7 +127,7 @@ const RestaurantDetails = ({
     if (data.result === 'ok') {
       const { updatedMeeting } = data;
 
-      console.log('조인에 성공한 미팅정보 =>', updatedMeeting);
+      // console.log('조인에 성공한 미팅정보 =>', updatedMeeting);
 
       const { _id: meetingId, expiredTime } = updatedMeeting;
 
