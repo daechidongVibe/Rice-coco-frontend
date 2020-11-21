@@ -48,7 +48,7 @@ const MatchSuccessScreen = ({
     latitude: 37.5011548,
     longitude: 127.0808086,
   });
-  StackActions;
+
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 

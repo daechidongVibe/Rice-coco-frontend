@@ -10,38 +10,38 @@ import { socket, socketApi } from '../../socket';
 
 const ChatRoom = ({
   userId,
-  userNickName,
-  partnerNickname,
-  restaurantName,
+  nickname,
   meetingId,
 }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [partnerNickname, setPartnerNickname] = useState('');
 
   useEffect(() => {
-    if(!messages) return;
+    if (!messages) return;
     (async () => {
       try {
-        const {data : {filteredMessages}}  = await configuredAxios.get(`/meetings/${meetingId}/chat`);
+        const { data: { filteredMessages } } = await configuredAxios.get(`/meetings/${meetingId}/chat`);
         setMessages(filteredMessages);
+
       } catch (err) {
         console.error(err);
       }
     })();
-  },[]);
+  }, []);
 
   useEffect(() => {
-    socket.on('message', ({userId, message}) => {
-
-      setMessages(pre => [...pre, { userId, message }]);
+    socket.on('message', ({ userId, nickname, message }) => {
+      setPartnerNickname(nickname);
+      setMessages(pre => [...pre, { userId, nickname, message }]);
     });
 
     return () => socket.off('message');
   }, []);
 
   const handleMessageSubmit = () => {
-    socketApi.sendMessage(userId, message);
-    setMessage('')
+    if (!message) return;
+    socketApi.sendMessage(userId, nickname, message, () => setMessage(''));
   };
 
   return (
@@ -53,16 +53,14 @@ const ChatRoom = ({
           <MessageBox
             user={item.userId === userId}
             message={item.message}
-            userNickName={userNickName}
-            partnerNickname={partnerNickname}
+            nickname={item.nickname}
           />
         )}
       />
       <Input
-        labele={partnerNickname}
         onChangeText={setMessage}
         value={message}
-        errorMessage={!message ? `${partnerNickname}님에게 메세지를 전달하세요` : SHOULD_ENTER_MESSAGE}
+        errorMessage={message ? `${partnerNickname}님에게 메세지를 전달하세요` : SHOULD_ENTER_MESSAGE}
         onSubmitEditing={handleMessageSubmit}
       />
     </Container>
@@ -85,8 +83,6 @@ const MessageList = styled.FlatList`
 
 export default connect(state => ({
   userId: state.user._id,
-  restaurantName: state.meetings.selectedMeeting?.restaurantName,
-  userNickName: state.user.nickname,
-  partnerNickname: state.meetings.selectedMeeting?.partnerNickname,
+  nickname: state.user.nickname,
   meetingId: state.meetings.currentMeeting?.meetingId,
 }))(ChatRoom);
