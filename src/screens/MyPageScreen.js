@@ -55,7 +55,7 @@ const Header = styled.Text`
 `;
 
 const Button = styled.TouchableOpacity`
-  background-color: orange;
+  background-color: #ff914d;
   width: 100%;
   margin: 10px auto;
   padding: 15px;

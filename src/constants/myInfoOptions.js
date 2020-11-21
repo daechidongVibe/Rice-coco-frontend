@@ -21,7 +21,28 @@ const MY_INFO_OPTIONS = {
     '건설-시설',
     '공공-복지',
   ],
+  age: [
+    '20대',
+    '30대',
+    '40대',
+    '50대'
+  ],
   birthYear: [...Array(40).keys()].map(x => String(x + 1970)),
+  paymentInfo: [
+    {
+      name: '프로미스 10개',
+      price: 100
+    },
+    {
+      name: '프로미스 50개',
+      price: 400
+    }
+    ,
+    {
+      name: '프로미스 100개',
+      price: 700
+    }
+  ]
 };
 
 export default MY_INFO_OPTIONS;
