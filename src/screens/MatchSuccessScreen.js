@@ -52,7 +52,7 @@ const MatchSuccessScreen = ({
   useEffect(() => {
     console.log(userNickname);
     console.log(currentMeeting);
-    socketApi.joinMeeting(meetingId, userId, userNickname);
+    socketApi.joinMeeting(meetingId, userId);
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
@@ -159,7 +159,7 @@ const MatchSuccessScreen = ({
       amount: 1,
     });
 
-    socketApi.arriveMeeting(meetingId, userNickname);
+    socketApi.arriveMeeting(meetingId);
   };
 
   const handleChatButtonClick = () => {

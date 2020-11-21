@@ -11,8 +11,8 @@ export const socketApi = {
   removeAllListeners: () => {
     socket.removeAllListeners();
   },
-  joinMeeting: (meetingId, userId, userNickname) => {
-    socket.emit('join meeting', { meetingId, userId, userNickname });
+  joinMeeting: (meetingId, userId) => {
+    socket.emit('join meeting', { meetingId, userId });
   },
   sendMessage: (userId, message, callback) => {
     socket.emit('send message', { userId, message }, callback);
@@ -29,8 +29,8 @@ export const socketApi = {
   endMeeting: (meetingId, callback) => {
     socket.emit('end meeting', meetingId, callback);
   },
-  arriveMeeting: (meetingId, userNickname) => {
-    socket.emit('arrive meeting', {meetingId, userNickname} );
+  arriveMeeting: (meetingId) => {
+    socket.emit('arrive meeting', meetingId);
   },
   leaveMeeting: (meetingId, callback) => {
     socket.emit('leave meeting', meetingId, callback);
