@@ -32,15 +32,16 @@ const ChatRoom = ({
 
   useEffect(() => {
     socket.on('message', ({userId, message}) => {
-      console.log(userId, message)
+
       setMessages(pre => [...pre, { userId, message }]);
     });
-    console.log(messages);
+
     return () => socket.off('message');
   }, []);
 
   const handleMessageSubmit = () => {
-    socketApi.sendMessage(userId, message, () => setMessage('') );
+    socketApi.sendMessage(userId, message);
+    setMessage('')
   };
 
   return (
