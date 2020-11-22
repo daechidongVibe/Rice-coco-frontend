@@ -9,7 +9,7 @@ import configuredAxios from '../config/axiosConfig';
 const EditUserInfo = ({ user }) => {
   console.log('리덕스에 들어있는 유저 정보..', user);
 
-  const {
+ const {
     nickname,
     birthYear,
     email,

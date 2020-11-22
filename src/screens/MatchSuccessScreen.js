@@ -153,7 +153,7 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    navigation.navigate('ChatRoom');
+    navigation.navigate('ChatRoom',{navigation});
   };
 
   const handleBreakupButtonClick = async () => {

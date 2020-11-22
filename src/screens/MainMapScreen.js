@@ -80,9 +80,6 @@ const MainMapScreen = ({
 
         return;
       }
-
-      console.log('내가 만들거나 참여한 미팅이 없다면 내가 좋아하는 사람들의 미팅 정보를 가져와서 지도에 그려줍니다....')
-
       const { data } = await axiosInstance.get('/meetings');
       const { filteredMeetings } = data;
       setMeetings(filteredMeetings);
