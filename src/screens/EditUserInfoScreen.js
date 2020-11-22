@@ -11,8 +11,6 @@ import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
 
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
-  console.log('리덕스에 들어있는 유저 정보..', user);
-
   const {
     nickname,
     birthYear,
@@ -27,6 +25,17 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   const [occupationInput, setOccupationInput] = useState('');
 
   useEffect(() => {
+    (async () => {
+      // 유저 정보 다시 가져와서 리덕스에 세팅 (프로미스 바뀐 경우 반영)
+      const { data: user } = await configuredAxios.get(
+        `/users/${userId}`
+      );
+
+      const { promise } = user;
+
+      setUserInfo({ promise });
+    })();
+
     setNicknameInput(nickname);
     setOccupationInput(occupation);
   }, []);

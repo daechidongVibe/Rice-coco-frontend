@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions, useNavigationState } from '@react-navigation/native';
+import { StackActions } from '@react-navigation/native';
 
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
@@ -13,23 +13,17 @@ import configuredAxios from '../config/axiosConfig';
 const MatchWaiting = ({
   navigation,
   userId,
-  currentMeeting,
-  setSelectedMeeting,
-  setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
+  setSelectedMeeting,
+  currentMeeting,
+  setCurrentMeeting,
 }) => {
-  const navigationState = useNavigationState(state => state);
-
   useEffect(() => {
-    console.log('생성 이후 네비게이션 히스토리!!!!!!',navigationState.routes);
-
     (async () => {
       try {
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
-        // restaurantName, expiredTime만 온다.
-        // console.log('새롭게 받아온 미팅 데이터', meetingDetails);
 
         setSelectedMeeting(meetingDetails);
       } catch (err) {
@@ -118,8 +112,8 @@ const mapStateToProps = ({
 }) => {
   return {
     userId: _id,
-    currentMeeting,
     selectedMeeting,
+    currentMeeting,
   };
 };
 

@@ -92,7 +92,7 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
   const isReadyToSubmit = genderInput && ageInput && occupationInput;
 
   return (
-    <>
+    <Container>
       <Header>내가 좋아하는 친구는?</Header>
       <InputDescription>{mentMap[clickedInput]}</InputDescription>
 
@@ -104,7 +104,9 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
         />
       </View>
 
-      <CircularForm></CircularForm>
+      <FormWrapper>
+        <CircularForm />
+      </FormWrapper>
 
       <Svg height="300" width="350" viewBox="0 0 100 100" style={styles.svg}>
         <InputHeader>{genderInput}</InputHeader>
@@ -132,25 +134,30 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
         />
       </Svg>
 
-      <CircularSubmitButton
-        onPress={() => {
-          if (!isReadyToSubmit) {
-            alert('모든 인풋을 입력하셔야 합니다!');
-            return;
-          }
+      <ButtonWrapper>
+        <CircularSubmitButton
+          onPress={() => {
+            if (!isReadyToSubmit) {
+              alert('모든 인풋을 입력하셔야 합니다!');
+              return;
+            }
 
-          handleSubmit();
-        }}
-        style={!isReadyToSubmit && styles.disabled}
-        activeOpacity={0.9}
-      >
-        <Text style={!isReadyToSubmit ? styles.disabled : styles.text}>
-          {!isReadyToSubmit ? 'disabled!' : '친구찾기!'}
-        </Text>
-      </CircularSubmitButton>
-    </>
+            handleSubmit();
+          }}
+          style={!isReadyToSubmit && styles.disabled}
+          activeOpacity={0.9}
+        >
+          <Text style={!isReadyToSubmit ? styles.disabled : styles.text}>
+            {!isReadyToSubmit ? 'disabled!' : '친구찾기!'}
+          </Text>
+        </CircularSubmitButton>
+      </ButtonWrapper>
+    </Container>
   );
 };
+
+const Container = styled.ScrollView`
+`;
 
 const Header = styled.Text`
   color: #ff914d;
@@ -169,7 +176,7 @@ const InputHeader = styled.Text`
   font-size: 20px;
   position: absolute;
   top: 80px;
-  left: 13%;
+  left: 10%;
   text-align: center;
   color: white;
   width: 100px;
@@ -179,7 +186,7 @@ const InputHeader2 = styled.Text`
   font-size: 20px;
   position: absolute;
   top: 80px;
-  right: 14%;
+  right: 10%;
   text-align: center;
   color: white;
   width: 100px;
@@ -188,34 +195,47 @@ const InputHeader2 = styled.Text`
 const InputHeader3 = styled.Text`
   font-size: 20px;
   position: absolute;
-  top: 240px;
-  right: 37%;
+  top: 225px;
+  right: 35%;
   text-align: center;
   color: white;
   width: 100px;
 `;
 
+const FormWrapper = styled.View`
+  background-color: transparent;
+  width: 100%;
+  position: absolute;
+  top: 220px;
+  display: flex;
+`;
+
 const CircularForm = styled.TouchableOpacity`
+  align-self: center;
+
   width: 300px;
   height: 300px;
   border-radius: 300px;
   background-color: #ff914d;
+`;
+
+const ButtonWrapper = styled.View`
+  background-color: transparent;
+  width: 100%;
   position: absolute;
-  top: 228px;
-  left: 25px;
+  top: 310px;
+  display: flex;
 `;
 
 const CircularSubmitButton = styled.TouchableHighlight`
+  align-self: center;
+
   width: 120px;
   height: 120px;
   border: 3px solid white;
   border-radius: 300px;
   background-color: white;
   color: #ff914d;
-  position: absolute;
-  top: 370px;
-  left: 50%;
-  transform: translate(-65px, -50px);
 
   display: flex;
   justify-content: center;

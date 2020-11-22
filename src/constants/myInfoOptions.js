@@ -30,16 +30,19 @@ const MY_INFO_OPTIONS = {
   birthYear: [...Array(40).keys()].map(x => String(x + 1970)),
   paymentInfo: [
     {
-      name: '프로미스 10개',
+      name: '프로미스',
+      amount: 10,
       price: 100
     },
     {
-      name: '프로미스 50개',
+      name: '프로미스',
+      amount: 50,
       price: 400
     }
     ,
     {
-      name: '프로미스 100개',
+      name: '프로미스',
+      amount: 100,
       price: 700
     }
   ]

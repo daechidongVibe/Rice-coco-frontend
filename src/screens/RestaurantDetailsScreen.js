@@ -1,8 +1,8 @@
 import React, { useEffect, useState }  from 'react';
 import { connect } from 'react-redux';
-import { View, Text, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import { StackActions, CommonActions, useNavigationState } from '@react-navigation/native';
+import { CommonActions, useNavigationState } from '@react-navigation/native';
 
 import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
@@ -21,7 +21,6 @@ const RestaurantDetails = ({
     setPromiseAmount,
     route
   }) => {
-  const navigationState = useNavigationState(state => state);
 
   const {
     meetingId,
@@ -56,6 +55,8 @@ const RestaurantDetails = ({
 
       const { photos } = result;
 
+      if (!photos) return;
+
       const photoUrls = [];
 
       for (let photo of photos.slice(0, 3)) {
@@ -87,8 +88,6 @@ const RestaurantDetails = ({
 
     if (data.result === 'ok') {
       const { createdMeeting } = data;
-
-      // console.log('생성된 미팅! => ', createdMeeting);
 
       const { _id: meetingId, expiredTime } = createdMeeting;
 
@@ -164,6 +163,7 @@ const RestaurantDetails = ({
       </Header>
 
       <PromiseContainer>
+        <PromiseIcon source={require('../../assets/images/promise.png')} />
         <PromiseAmount>{userPromise}개</PromiseAmount>
       </PromiseContainer>
 
@@ -199,9 +199,21 @@ const RestaurantDetails = ({
         <MeetingButton onPress={handlePressJoinButton}
         >
           <ButtonText>참여하기!</ButtonText>
+          <ButtonPromiseContainer>
+            <PromiseIcon
+              source={require('../../assets/images/promise.png')}
+            />
+            <PromiseAmount>-1개</PromiseAmount>
+          </ButtonPromiseContainer>
         </MeetingButton>:
         <MeetingButton onPress={handlePressCreateButton}>
           <ButtonText>생성하기!</ButtonText>
+          <ButtonPromiseContainer>
+            <PromiseIcon
+              source={require('../../assets/images/promise.png')}
+            />
+            <PromiseAmount>-1개</PromiseAmount>
+          </ButtonPromiseContainer>
         </MeetingButton>
       }
     </Container>
@@ -209,7 +221,8 @@ const RestaurantDetails = ({
 };
 
 const Container = styled.View`
-  margin: 30px 20px;
+  margin: auto 20px;
+  height: 80%;
 `;
 
 const Header = styled.View`
@@ -223,6 +236,11 @@ const HeaderText = styled.Text`
   font-size: 35px;
   font-weight: bold;
   text-align: center;
+`;
+
+const PromiseIcon = styled.Image`
+  width: 25px;
+  height: 25px;
 `;
 
 const Image = styled.Image`
@@ -249,6 +267,7 @@ const MeetingButton = styled.TouchableOpacity`
   margin: 0 20px;
   padding: 10px;
   border-radius: 18px;
+  position: relative;
 `;
 
 const ButtonText = styled.Text`
@@ -260,13 +279,26 @@ const ButtonText = styled.Text`
 
 const PromiseContainer = styled.View`
   position: absolute;
-  top: 10px;
+  top: -2%;
+  right: -2%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 5px;
+`;
+
+const ButtonPromiseContainer = styled.View`
+  position: absolute;
+  top: 8px;
   right: 10px;
+  display: flex;
+  flex-direction: row;
 `;
 
 const PromiseAmount = styled.Text`
   font-weight: bold;
-  font-size: 20px;
+  font-size: 13px;
 `;
 
 const mapStateToProps = (

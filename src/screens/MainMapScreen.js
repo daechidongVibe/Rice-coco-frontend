@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, Dimensions, Image } from 'react-native';
 import { StackActions } from '@react-navigation/native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
+import * as Location from 'expo-location';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import styled from 'styled-components/native';
-import * as Location from 'expo-location';
-import { connect } from 'react-redux';
 import { useFonts } from 'expo-font';
+import styled from 'styled-components/native';
 
 import isLocationNear from '../utils/isLocationNear';
 import ReloadImage from '../components/ReloadImage';
