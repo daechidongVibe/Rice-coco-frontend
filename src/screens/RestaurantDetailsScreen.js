@@ -262,22 +262,12 @@ const PromiseAmount = styled.Text`
   font-size: 20px;
 `;
 
-const mapStateToProps = (
-  {
-    meetings: { selectedMeeting },
-    user: { _id, promise }
-  }) => {
-  return {
-    selectedMeeting,
-    userId: _id,
-    userPromise: promise
-  }
-};
-
 export default connect(
-  mapStateToProps,
-  {
+  state => ({
+    selectedMeeting: state.meetings.selectedMeeting,
+    userId: state.user._id,
+    userPromise: state.user.promise
+  }),{
     setSelectedMeeting,
     setPromiseAmount
-  }
-)(RestaurantDetails);
+  })(RestaurantDetails);

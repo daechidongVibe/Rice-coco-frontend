@@ -10,7 +10,7 @@ import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
 import InputSelector from '../components/InputSelector';
 
-const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
+const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
   const navigationState = useNavigationState(state => state);
   const [genderInput, setGenderInput] = useState('남자');
   const [ageInput, setAgeInput] = useState('20대');
@@ -18,7 +18,7 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
   const [clickedInput, setClickedInput] = useState('');
 
   useEffect(() => {
-    if (userId) {
+    if (user._id) {
       setGenderInput(user.preferredPartner.gender);
       setAgeInput(user.preferredPartner.birthYear);
       setOccupationInput(user.preferredPartner.occupation);
@@ -35,8 +35,8 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
     };
 
     try {
-      const { data: { result, updatedUser, errMessage }} = await axios.put(
-        `/users/${userId}/preferred-partner`,
+      const { data: { result, updatedUser, errMessage } } = await axios.put(
+        `/users/${user._id}/preferred-partner`,
         preferredPartner
       );
 
@@ -227,16 +227,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ user, user: { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-};
 
-export default connect(
-  mapStateToProps,
-  {
-    setUserInfo
-  }
-  )(PreferredPartnerScreen);
+export default connect(state => ({
+    user: state.user,
+  }), {
+  setUserInfo
+})(PreferredPartnerScreen);

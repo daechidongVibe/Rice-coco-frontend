@@ -114,25 +114,10 @@ const BackgroundImage = styled.Image`
   opacity: 0.2;
 `;
 
-const mapStateToProps = state => {
-  const {
-    user: { _id },
-    meetings: {
-      selectedMeeting: { meetingId, partnerNickname },
-    },
-  } = state;
-
-  return {
-    userId: _id,
-    meetingId,
-    partnerNickname,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  resetMeeting() {
-    dispatch(resetMeeting());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AfterMeetingScreen);
+export default connect(state => ({
+  userId: state.user._id,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  partnerNickname: state.meetings.selectedMeeting.partnerNickname,
+},{
+  resetMeeting,
+}))(AfterMeetingScreen);

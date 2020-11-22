@@ -20,7 +20,9 @@ const MatchWaiting = ({
   currentMeeting,
   setSelectedMeeting,
   setCurrentMeeting,
-  selectedMeeting: { meetingId, expiredTime, restaurantName },
+  meetingId,
+  expiredTime,
+  restaurantName
 }) => {
   const navigationState = useNavigationState(state => state);
 
@@ -138,18 +140,13 @@ const CancelButton = styled.Button`
   transform: translateX(-25px);
 `;
 
-const mapStateToProps = ({
-  meetings: { selectedMeeting, currentMeeting },
-  user: { _id },
-}) => {
-  return {
-    userId: _id,
-    currentMeeting,
-    selectedMeeting,
-  };
-};
-
-export default connect(mapStateToProps, {
+export default connect(state => ({
+  userId: state.user._id,
+  currentMeeting: state.meetings.currentMeeting,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  restaurantName: state.meetings.selectedMeeting.restaurantName
+}), {
   setCurrentMeeting,
   setSelectedMeeting,
 })(MatchWaiting);

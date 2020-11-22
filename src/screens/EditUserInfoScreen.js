@@ -11,7 +11,7 @@ import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
 
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
- const {
+  const {
     nickname,
     birthYear,
     email,
@@ -195,16 +195,9 @@ const SubmitButton = styled.TouchableOpacity`
   background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
 `;
 
-const mapStateToProps = ({ user, user : { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {
-    setUserInfo
-  }
-)(EditUserInfo);
+export default connect(state => ({
+  user: state.user,
+  userId: state.user._id
+}),{
+  setUserInfo
+})(EditUserInfo);

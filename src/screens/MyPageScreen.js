@@ -62,14 +62,7 @@ const ButtonText = styled.Text`
   font-size: 20px;
 `;
 
-const mapStateToProps = ({ user, user: { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  null
-)(MyPageScreen);
+export default connect(state => ({
+  user: state.user,
+  userId: state.user._id,
+}))(MyPageScreen);

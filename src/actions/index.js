@@ -10,7 +10,7 @@ export const setPromiseAmount = amount => ({
   promise: amount,
 });
 
-export const updateLocation = location => ({
+export const setUserLocation = location => ({
   type: types.UPDATE_LOCATION,
   payload: location,
 });

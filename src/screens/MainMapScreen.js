@@ -12,7 +12,7 @@ import { useFonts } from 'expo-font';
 import isLocationNear from '../utils/isLocationNear';
 import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
-import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';
+import { setUserLocation, setMeetings, setSelectedMeeting } from '../actions';
 import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
@@ -262,28 +262,12 @@ const RestaurantSearchButton = styled.TouchableOpacity`
   background-color: white;
 `;
 
-const mapStateToProps = ({
-  location,
-  meetings: { filteredMeetings },
-  user: { _id },
-}) => {
-  return {
-    userId: _id,
-    userLocation: location,
-    meetings: filteredMeetings,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  setUserLocation(location) {
-    dispatch(updateLocation(location));
-  },
-  setMeetings(meetings) {
-    dispatch(setMeetings(meetings));
-  },
-  setSelectedMeeting(meeting) {
-    dispatch(setSelectedMeeting(meeting));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainMapScreen);
+export default connect(state => ({
+  userId: state.user._id,
+  userLocation: state.location,
+  meetings: state.meetings.filteredMeetings,
+}), {
+  setUserLocation,
+  setMeetings,
+  setSelectedMeeting
+})(MainMapScreen);
