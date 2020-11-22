@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { StackActions } from '@react-navigation/native';
+import { StackActions, CommonActions } from '@react-navigation/native';
 
 import { resetMeeting } from '../actions';
 import configuredAxios from '../config/axiosConfig';
@@ -36,13 +36,31 @@ const AfterMeetingScreen = ({
       partnerNickname,
     });
 
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'MainMap',
+          },
+        ],
+      })
+    );
     resetMeeting();
-    navigation.dispatch(StackActions.replace('MainMap'));
   };
 
   const handleRejectButtonClick = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'MainMap',
+          },
+        ],
+      })
+    );
     resetMeeting();
-    navigation.dispatch(StackActions.replace('MainMap'));
   };
 
   return (
@@ -118,6 +136,6 @@ export default connect(state => ({
   userId: state.user._id,
   meetingId: state.meetings.selectedMeeting.meetingId,
   partnerNickname: state.meetings.selectedMeeting.partnerNickname,
-},{
+}),{
   resetMeeting,
-}))(AfterMeetingScreen);
+})(AfterMeetingScreen);

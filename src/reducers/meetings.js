@@ -22,7 +22,7 @@ const initialState = {
 
 export const meetings = (state = initialState, action) => {
   switch (action.type) {
-    case types.SET_MEETINGS:
+    case types.SET_FILTERED_MEETINGS:
       return {
         ...state,
         filteredMeetings: [ ...action.payload ],

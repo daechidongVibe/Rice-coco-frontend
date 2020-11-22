@@ -12,7 +12,7 @@ import styled from 'styled-components/native';
 import isLocationNear from '../utils/isLocationNear';
 import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
-import { setUserLocation, setMeetings, setSelectedMeeting } from '../actions';
+import { setUserLocation, setFilteredMeetings, setSelectedMeeting } from '../actions';
 import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
@@ -20,7 +20,7 @@ const MainMapScreen = ({
   userId,
   userLocation,
   navigation,
-  setMeetings,
+  setFilteredMeetings,
   setUserLocation,
   setSelectedMeeting,
 }) => {
@@ -53,7 +53,7 @@ const MainMapScreen = ({
   const handleReloadClick = async () => {
     const { data } = await axiosInstance.get('/meetings');
     const { filteredMeetings } = data;
-    setMeetings(filteredMeetings);
+    setFilteredMeetings(filteredMeetings);
   };
 
   useEffect(() => {
@@ -74,26 +74,23 @@ const MainMapScreen = ({
   useEffect(() => {
     (async () => {
       const {
-        data: { userMeeting },
+        data: { activeMeeting },
       } = await axiosInstance.get(`/meetings/user/${userId}`);
 
-      if (userMeeting) {
-        const { _id: meetingId } = userMeeting;
-
+      if (activeMeeting) {
+        const { _id: meetingId } = activeMeeting;
         setSelectedMeeting({ meetingId });
 
-        if (userMeeting.isMatched) {
-          navigation.dispatch(StackActions.replace('MatchSuccess'));
-        } else {
-          navigation.dispatch(StackActions.replace('MatchWaiting'));
-        }
+        activeMeeting.isMatched
+          ? navigation.dispatch(StackActions.replace('MatchSuccess'))
+          : navigation.dispatch(StackActions.replace('MatchWaiting'));
 
         return;
       }
 
       const { data } = await axiosInstance.get('/meetings');
       const { filteredMeetings } = data;
-      setMeetings(filteredMeetings);
+      setFilteredMeetings(filteredMeetings);
     })();
   }, []);
 
@@ -262,12 +259,15 @@ const RestaurantSearchButton = styled.TouchableOpacity`
   background-color: white;
 `;
 
-export default connect(state => ({
-  userId: state.user._id,
-  userLocation: state.location,
-  meetings: state.meetings.filteredMeetings,
-}), {
-  setUserLocation,
-  setMeetings,
-  setSelectedMeeting
-})(MainMapScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    userLocation: state.location,
+    meetings: state.meetings.filteredMeetings,
+  }),
+  {
+    setUserLocation,
+    setFilteredMeetings,
+    setSelectedMeeting,
+  }
+)(MainMapScreen);

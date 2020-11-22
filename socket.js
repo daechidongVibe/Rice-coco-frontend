@@ -14,28 +14,25 @@ export const socketApi = {
   joinMeeting: (meetingId, userId) => {
     socket.emit('join meeting', { meetingId, userId });
   },
+  sendLocation: location => {
+    socket.emit('send location', { location });
+  },
   sendMessage: (userId, nickname, message, callback) => {
     socket.emit('send message', { userId, nickname, message }, callback);
   },
   sendNotification: (nickname, message) => {
     socket.emit('send notification', { nickname, message });
   },
-  cancelMeeting: (meetigId, callback) => {
-    socket.emit('cancel meeting', meetigId, callback);
+  arriveMeeting: () => {
+    socket.emit('arrive meeting');
   },
-  changeLocation: (location, meetigId) => {
-    socket.emit('change location', { location, meetigId });
+  finishMeeting: callback => {
+    socket.emit('finish meeting', callback);
   },
-  breakupMeeting: (meetingId, callback) => {
-    socket.emit('breakup meeting', meetingId, callback);
+  cancelMeeting: callback => {
+    socket.emit('cancel meeting', callback);
   },
-  endMeeting: (meetingId, callback) => {
-    socket.emit('end meeting', meetingId, callback);
-  },
-  arriveMeeting: (meetingId) => {
-    socket.emit('arrive meeting', meetingId);
-  },
-  leaveMeeting: (meetingId, callback) => {
-    socket.emit('leave meeting', meetingId, callback);
+  breakupMeeting: callback => {
+    socket.emit('breakup meeting', callback);
   },
 };
