@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from 'react';
 import { connect } from 'react-redux';
 import { View, Text, FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import { StackActions, useNavigationState } from '@react-navigation/native';
+import { StackActions, CommonActions, useNavigationState } from '@react-navigation/native';
 
 import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
@@ -87,9 +87,6 @@ const RestaurantDetails = ({
 
     if (data.result === 'ok') {
       const { createdMeeting } = data;
-
-      console.log('생성된 미팅! => ', createdMeeting);
-
       const { _id: meetingId, expiredTime } = createdMeeting;
 
       setSelectedMeeting({
@@ -104,12 +101,15 @@ const RestaurantDetails = ({
         }
       );
 
-      if (navigationState.routes?.length===1) {
-        navigation.dispatch(StackActions.pop(1));
-      }
-
       navigation.dispatch(
-        StackActions.replace('MatchWaiting')
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MatchWaiting',
+            },
+          ],
+        })
       );
     }
   };
@@ -127,8 +127,6 @@ const RestaurantDetails = ({
     if (data.result === 'ok') {
       const { updatedMeeting } = data;
 
-      console.log('조인에 성공한 미팅정보 =>', updatedMeeting);
-
       const { _id: meetingId, expiredTime } = updatedMeeting;
 
       setSelectedMeeting({
@@ -136,19 +134,22 @@ const RestaurantDetails = ({
         expiredTime
       });
 
-      configuredAxios.put(
+      await configuredAxios.put(
         `/users/${userId}/promise`,
         {
           amount: -1
         }
       );
 
-      if (navigationState.routes?.length===1) {
-        navigation.dispatch(StackActions.pop(1));
-      }
-
       navigation.dispatch(
-        StackActions.replace('MatchSuccess')
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MatchSuccess',
+            },
+          ],
+        })
       );
     }
   };
@@ -158,11 +159,9 @@ const RestaurantDetails = ({
       <Header>
         <HeaderText>{restaurantName}</HeaderText>
       </Header>
-
       <PromiseContainer>
         <PromiseAmount>{userPromise}개</PromiseAmount>
       </PromiseContainer>
-
       {
         (photoUrls.length > 0) &&
         <FlatList
@@ -172,7 +171,6 @@ const RestaurantDetails = ({
           horizontal={true}
         />
       }
-
       {
         hasCreatedMeeting ?
         <>
@@ -189,7 +187,6 @@ const RestaurantDetails = ({
           </Description>
         </>
       }
-
       {
         hasCreatedMeeting ?
         <MeetingButton onPress={handlePressJoinButton}

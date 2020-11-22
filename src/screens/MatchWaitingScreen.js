@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
+import {
+  StackActions,
+  useNavigationState,
+  CommonActions,
+} from '@react-navigation/native';
 
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
@@ -18,6 +22,7 @@ const MatchWaiting = ({
   setCurrentMeeting,
   selectedMeeting: { meetingId, expiredTime, restaurantName },
 }) => {
+  const navigationState = useNavigationState(state => state);
 
   useEffect(() => {
     (async () => {
@@ -25,9 +30,6 @@ const MatchWaiting = ({
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
-        // restaurantName, expiredTime만 온다.
-        console.log('새롭게 받아온 미팅 데이터', meetingDetails);
-
         setSelectedMeeting(meetingDetails);
       } catch (err) {
         console.error(err);
@@ -47,7 +49,24 @@ const MatchWaiting = ({
 
   useEffect(() => {
     if (currentMeeting?.users?.length === 2) {
-      navigation.navigate('MatchSuccess');
+      (async () => {
+        const partnerId = currentMeeting.users.find(user => user !== userId);
+        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+        const partnerNickname = partner.nickname;
+
+        setSelectedMeeting({ partnerNickname });
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'MatchSuccess',
+              },
+            ],
+          })
+        );
+      })()
     }
   }, [currentMeeting]);
 
@@ -58,25 +77,37 @@ const MatchWaiting = ({
   };
 
   const handleTimeEnd = async () => {
-    socketApi.cancelMeeting(meetingId);
-
-    Alert.alert(
-      '미팅 성사 시간 종료',
-      '안타깝게도 혼자 드셔야겠네요',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
-        },
-      ],
-      { cancelable: false }
-    );
+    socketApi.cancelMeeting(meetingId, () => {
+      Alert.alert(
+        '미팅 성사 시간 종료',
+        '안타깝게도 혼자 드셔야겠네요',
+        [
+          {
+            text: 'OK',
+            onPress: () =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainMap',
+                    },
+                  ],
+                })
+              ),
+          },
+        ],
+        { cancelable: false }
+      );
+    });
   };
 
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {!!expiredTime && <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />}
+      {!!expiredTime && (
+        <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+      )}
       <RotatedIcon />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />

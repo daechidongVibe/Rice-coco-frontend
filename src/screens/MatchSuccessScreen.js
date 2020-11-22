@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  Image,
+  Text,
+  View,
+  Alert,
+  Button,
+} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
@@ -41,7 +49,7 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(false);
+  const [isArrived, setIsArrived] = useState(true);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
@@ -55,9 +63,11 @@ const MatchSuccessScreen = ({
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
     });
+
     socket.on('partner location changed', location => {
       setPartnerLocation(location);
     });
+
     socket.on('meeting broked up', () => {
       Alert.alert(
         '미팅 성사 취소',
@@ -76,17 +86,15 @@ const MatchSuccessScreen = ({
         { cancelable: false }
       );
     });
-
-    return () => socketApi.removeAllListeners();
   }, []);
 
-  useEffect(() => {
-    isLocationNear(userLocation, restaurantLocation, 100)
-      ? setIsArrived(true)
-      : setIsArrived(false);
+  // useEffect(() => {
+  //   isLocationNear(userLocation, restaurantLocation, 100)
+  //     ? setIsArrived(true)
+  //     : setIsArrived(false);
 
-    socketApi.changeLocation(userLocation);
-  }, [userLocation]);
+  //   socketApi.changeLocation(userLocation);
+  // }, [userLocation]);
 
   useEffect(() => {
     // (async () => {
@@ -114,7 +122,6 @@ const MatchSuccessScreen = ({
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
-        // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
         if (data.result === 'ok') {
           const { meetingDetails } = data;
 
@@ -122,7 +129,7 @@ const MatchSuccessScreen = ({
         }
 
         if (data.result === 'failure') {
-          console.log(data.errMessage);
+          console.error(data.errMessage);
         }
       } catch (error) {
         console.error(err);
@@ -131,19 +138,24 @@ const MatchSuccessScreen = ({
   }, []);
 
   const handleTimeEnd = () => {
-    socketApi.endMeeting(meetingId);
-    resetMeeting();
-    const isAllparticipated = currentMeeting.arrivalCount >= 2;
+    socketApi.endMeeting(meetingId, () => {
+      const isAllparticipated = currentMeeting.arrivalCount >= 2;
 
-    isAllparticipated
-      ? navigation.dispatch(StackActions.replace('AfterMeeting'))
-      : navigation.dispatch(StackActions.replace('MainMap'));
+      if (isAllparticipated) {
+        navigation.dispatch(StackActions.replace('AfterMeeting'));
+
+        return;
+      }
+
+      resetMeeting();
+      navigation.dispatch(StackActions.replace('MainMap'));
+    });
   };
 
   const handleArrivalButtonClick = async () => {
     if (isArrivalConfirmed) return;
-
     setIsArrivalConfirmed(true);
+
     setPromiseAmount(userPromise + 1);
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: 1,

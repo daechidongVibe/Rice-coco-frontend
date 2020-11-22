@@ -10,8 +10,10 @@ import { connect } from 'react-redux';
 import { useFonts } from 'expo-font';
 
 import isLocationNear from '../utils/isLocationNear';
+import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
 import { updateLocation, setMeetings, setSelectedMeeting } from '../actions';
+import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
   meetings,
@@ -22,10 +24,10 @@ const MainMapScreen = ({
   setUserLocation,
   setSelectedMeeting,
 }) => {
-  const [ fontLoaded ] = useFonts({
+  const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-  const [ errorMsg, setErrorMsg ] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const isMeetingExisted = !!meetings.length;
 
   const handleRestaurantSearchButton = () => {
@@ -38,9 +40,20 @@ const MainMapScreen = ({
     restaurantName,
     partnerNickname
   ) => {
-    setSelectedMeeting({ meetingId, restaurantId, restaurantName, partnerNickname });
+    setSelectedMeeting({
+      meetingId,
+      restaurantId,
+      restaurantName,
+      partnerNickname,
+    });
 
     navigation.navigate('RestaurantDetails');
+  };
+
+  const handleReloadClick = async () => {
+    const { data } = await axiosInstance.get('/meetings');
+    const { filteredMeetings } = data;
+    setMeetings(filteredMeetings);
   };
 
   useEffect(() => {
@@ -60,8 +73,9 @@ const MainMapScreen = ({
 
   useEffect(() => {
     (async () => {
-      const { data: { userMeeting } } = await axiosInstance.get(`/meetings/user/${userId}`);
-      console.log('내가 만들거나 참여한 미팅이 존재하나요?', userMeeting);
+      const {
+        data: { userMeeting },
+      } = await axiosInstance.get(`/meetings/user/${userId}`);
 
       if (userMeeting) {
         const { _id: meetingId } = userMeeting;
@@ -69,22 +83,23 @@ const MainMapScreen = ({
         setSelectedMeeting({ meetingId });
 
         if (userMeeting.isMatched) {
-          navigation.dispatch(
-            StackActions.replace('MatchSuccess')
-          );
+          navigation.dispatch(StackActions.replace('MatchSuccess'));
         } else {
-          navigation.dispatch(
-            StackActions.replace('MatchWaiting')
-          );
+          navigation.dispatch(StackActions.replace('MatchWaiting'));
         }
 
         return;
       }
+
       const { data } = await axiosInstance.get('/meetings');
       const { filteredMeetings } = data;
       setMeetings(filteredMeetings);
     })();
   }, []);
+
+  useEffect(() => {
+    socketApi.removeAllListeners();
+  });
 
   return fontLoaded ? (
     <>
@@ -104,8 +119,7 @@ const MainMapScreen = ({
         >
           {/* <Marker coordinate={userLocation} /> */}
 
-          {
-            isMeetingExisted &&
+          {isMeetingExisted &&
             meetings.map(meeting => {
               const {
                 _id: meetingId,
@@ -150,8 +164,7 @@ const MainMapScreen = ({
                   />
                 </Marker>
               );
-            })
-          }
+            })}
           <Circle
             center={userLocation}
             radius={5000}
@@ -166,6 +179,9 @@ const MainMapScreen = ({
         <OverlayHeader>
           <OverlayTitle>R I C E C O C O</OverlayTitle>
           <OverlaySubDesc>코코들이 당신을 기다리고 있어요!</OverlaySubDesc>
+          <ReloadButton>
+            <ReloadImage onClick={handleReloadClick} />
+          </ReloadButton>
         </OverlayHeader>
         <OverlayFooter>
           <GuidanceText>함께 가고 싶은 맛집을 찾아보아요 ➪ </GuidanceText>
@@ -220,6 +236,12 @@ const OverlaySubDesc = styled.Text`
   color: #ff914d;
 `;
 
+const ReloadButton = styled.View`
+  position: absolute;
+  right: 10px;
+  top: 45px;
+`;
+
 const OverlayFooter = styled.View`
   display: flex;
   flex-direction: row;
@@ -240,7 +262,11 @@ const RestaurantSearchButton = styled.TouchableOpacity`
   background-color: white;
 `;
 
-const mapStateToProps = ({ location, meetings: { filteredMeetings }, user: { _id } }) => {
+const mapStateToProps = ({
+  location,
+  meetings: { filteredMeetings },
+  user: { _id },
+}) => {
   return {
     userId: _id,
     userLocation: location,

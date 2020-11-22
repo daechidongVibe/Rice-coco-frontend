@@ -56,7 +56,6 @@ const ChatRoom = ({
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
 
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {

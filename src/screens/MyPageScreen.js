@@ -4,35 +4,29 @@ import { connect } from 'react-redux';
 
 const MyPageScreen = ({ navigation, user, userId }) => {
   const isUserLoggedIn = userId ? true : false;
-  console.log('마이페이지에서의 유저정보', user);
+
   return (
     <Container>
       <Header>내 정보</Header>
-
       <Button
         onPress={() => {
           if (!isUserLoggedIn) return;
-
           navigation.navigate('EditUserInfo');
         }}
       >
         <ButtonText>내 정보 수정하기</ButtonText>
       </Button>
-
       <Button
         onPress={() => {
           if (!isUserLoggedIn) return;
-
           navigation.navigate('PreferredPartner');
         }}
       >
         <ButtonText>선호하는 친구</ButtonText>
       </Button>
-
       <Button
         onPress={() => {
           if (!isUserLoggedIn) return;
-
           navigation.navigate('Payment');
         }}
       >
@@ -55,7 +49,7 @@ const Header = styled.Text`
 `;
 
 const Button = styled.TouchableOpacity`
-  background-color: orange;
+  background-color: #ff914d;
   width: 100%;
   margin: 10px auto;
   padding: 15px;
@@ -74,8 +68,6 @@ const mapStateToProps = ({ user, user: { _id } }) => {
     userId: _id
   };
 }
-
-const mapDispatchToProps = dispatch => ({});
 
 export default connect(
   mapStateToProps,
