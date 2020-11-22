@@ -20,7 +20,9 @@ const MatchWaiting = ({
   currentMeeting,
   setSelectedMeeting,
   setCurrentMeeting,
-  selectedMeeting: { meetingId, expiredTime, restaurantName },
+  meetingId,
+  expiredTime,
+  restaurantName
 }) => {
   const navigationState = useNavigationState(state => state);
 
@@ -30,9 +32,6 @@ const MatchWaiting = ({
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
-        // restaurantName, expiredTime만 온다.
-        // console.log('새롭게 받아온 미팅 데이터', meetingDetails);
-
         setSelectedMeeting(meetingDetails);
       } catch (err) {
         console.error(err);
@@ -52,7 +51,6 @@ const MatchWaiting = ({
 
   useEffect(() => {
     if (currentMeeting?.users?.length === 2) {
-      // 여기에서 쿼리 보내서 파트너 닉네임을 가져온다..?
       (async () => {
         const partnerId = currentMeeting.users.find(user => user !== userId);
         const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
@@ -142,18 +140,13 @@ const CancelButton = styled.Button`
   transform: translateX(-25px);
 `;
 
-const mapStateToProps = ({
-  meetings: { selectedMeeting, currentMeeting },
-  user: { _id },
-}) => {
-  return {
-    userId: _id,
-    currentMeeting,
-    selectedMeeting,
-  };
-};
-
-export default connect(mapStateToProps, {
+export default connect(state => ({
+  userId: state.user._id,
+  currentMeeting: state.meetings.currentMeeting,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  restaurantName: state.meetings.selectedMeeting.restaurantName
+}), {
   setCurrentMeeting,
   setSelectedMeeting,
 })(MatchWaiting);

@@ -87,9 +87,6 @@ const RestaurantDetails = ({
 
     if (data.result === 'ok') {
       const { createdMeeting } = data;
-
-      // console.log('생성된 미팅! => ', createdMeeting);
-
       const { _id: meetingId, expiredTime } = createdMeeting;
 
       setSelectedMeeting({
@@ -162,11 +159,9 @@ const RestaurantDetails = ({
       <Header>
         <HeaderText>{restaurantName}</HeaderText>
       </Header>
-
       <PromiseContainer>
         <PromiseAmount>{userPromise}개</PromiseAmount>
       </PromiseContainer>
-
       {
         (photoUrls.length > 0) &&
         <FlatList
@@ -176,7 +171,6 @@ const RestaurantDetails = ({
           horizontal={true}
         />
       }
-
       {
         hasCreatedMeeting ?
         <>
@@ -193,7 +187,6 @@ const RestaurantDetails = ({
           </Description>
         </>
       }
-
       {
         hasCreatedMeeting ?
         <MeetingButton onPress={handlePressJoinButton}
@@ -269,22 +262,12 @@ const PromiseAmount = styled.Text`
   font-size: 20px;
 `;
 
-const mapStateToProps = (
-  {
-    meetings: { selectedMeeting },
-    user: { _id, promise }
-  }) => {
-  return {
-    selectedMeeting,
-    userId: _id,
-    userPromise: promise
-  }
-};
-
 export default connect(
-  mapStateToProps,
-  {
+  state => ({
+    selectedMeeting: state.meetings.selectedMeeting,
+    userId: state.user._id,
+    userPromise: state.user.promise
+  }),{
     setSelectedMeeting,
     setPromiseAmount
-  }
-)(RestaurantDetails);
+  })(RestaurantDetails);

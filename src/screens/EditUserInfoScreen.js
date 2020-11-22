@@ -11,8 +11,6 @@ import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
 
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
-  console.log('리덕스에 들어있는 유저 정보..', user);
-
   const {
     nickname,
     birthYear,
@@ -53,8 +51,6 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   };
 
   const onPressSubmitButton = async () => {
-    console.log(nicknameInput, occupationInput)
-
     const { data: response } = await configuredAxios.put(
       `/users/${userId}`,
       {
@@ -199,16 +195,9 @@ const SubmitButton = styled.TouchableOpacity`
   background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
 `;
 
-const mapStateToProps = ({ user, user : { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {
-    setUserInfo
-  }
-)(EditUserInfo);
+export default connect(state => ({
+  user: state.user,
+  userId: state.user._id
+}),{
+  setUserInfo
+})(EditUserInfo);

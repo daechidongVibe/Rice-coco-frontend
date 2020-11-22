@@ -22,7 +22,7 @@ import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
 import configuredAxios from '../config/axiosConfig';
 import {
-  updateLocation,
+  setUserLocation,
   setSelectedMeeting,
   setUserInfo,
   setCurrentMeeting,
@@ -122,7 +122,6 @@ const MatchSuccessScreen = ({
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
-        // console.log('새롭게 받아온 미팅 디테일 데이터! => ', data);
         if (data.result === 'ok') {
           const { meetingDetails } = data;
 
@@ -130,7 +129,7 @@ const MatchSuccessScreen = ({
         }
 
         if (data.result === 'failure') {
-          console.log(data.errMessage);
+          console.error(data.errMessage);
         }
       } catch (error) {
         console.error(err);
@@ -166,7 +165,7 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    navigation.navigate('ChatRoom');
+    navigation.navigate('ChatRoom', { navigation });
   };
 
   const handleBreakupButtonClick = async () => {
@@ -335,51 +334,20 @@ const ArrivalText = styled.Text`
   color: white;
 `;
 
-const mapStateToProps = state => {
-  const {
-    user: { nickname, _id },
-    location,
-    meetings: {
-      selectedMeeting: {
-        partnerNickname,
-        restaurantName,
-        restaurantLocation,
-        expiredTime,
-        meetingId,
-      },
-      currentMeeting,
-    },
-  } = state;
-
-  return {
-    userId: _id,
-    userNickname: nickname,
-    userLocation: location,
-    partnerNickname,
-    restaurantName,
-    restaurantLocation,
-    expiredTime,
-    meetingId,
-    currentMeeting,
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  setUserLocation(location) {
-    dispatch(updateLocation(location));
-  },
-  setSelectedMeeting(meeting) {
-    dispatch(setSelectedMeeting(meeting));
-  },
-  setCurrentMeeting(meeting) {
-    dispatch(setCurrentMeeting(meeting));
-  },
-  setPromiseAmount(amount) {
-    dispatch(setPromiseAmount(amount));
-  },
-  resetMeeting() {
-    dispatch(resetMeeting());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MatchSuccessScreen);
+export default connect(state => ({
+  userId: state.user._id,
+  userNickname: state.user.nickname,
+  userLocation: state.location,
+  partnerNickname: state.meetings.selectedMeeting.partnerNickname,
+  restaurantName: state.meetings.selectedMeeting.restaurantName,
+  restaurantLocation: state.meetings.selectedMeeting.restaurantLocation,
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  currentMeeting: state.meetings.currentMeeting,
+}), {
+  setUserLocation,
+  setSelectedMeeting,
+  setCurrentMeeting,
+  setPromiseAmount,
+  resetMeeting,
+})(MatchSuccessScreen);
