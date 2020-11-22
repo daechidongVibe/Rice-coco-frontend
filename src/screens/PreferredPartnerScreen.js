@@ -10,17 +10,15 @@ import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
 import InputSelector from '../components/InputSelector';
 
-const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
+const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
   const navigationState = useNavigationState(state => state);
-
   const [genderInput, setGenderInput] = useState('남자');
   const [ageInput, setAgeInput] = useState('20대');
   const [occupationInput, setOccupationInput] = useState('개발');
-
   const [clickedInput, setClickedInput] = useState('');
 
   useEffect(() => {
-    if (userId) {
+    if (user._id) {
       setGenderInput(user.preferredPartner.gender);
       setAgeInput(user.preferredPartner.birthYear);
       setOccupationInput(user.preferredPartner.occupation);
@@ -37,34 +35,29 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
     };
 
     try {
-      const { data: { result, updatedUser, errMessage }} = await axios.put(
-        `/users/${userId}/preferred-partner`,
+      const { data: { result, updatedUser, errMessage } } = await axios.put(
+        `/users/${user._id}/preferred-partner`,
         preferredPartner
       );
 
       if (result === 'ok') {
-        // 리덕스 스토어의 유저 선호 정보 변경..(UI)
         setUserInfo({
           preferredPartner: updatedUser.preferredPartner
         });
 
-        // 내 정보에서 들어온 경우, 다시 내 정보로 되돌아간다
         if (navigationState.routes.length >= 2) {
           navigation.goBack();
           return;
         }
-
-        // 초기 화면에서 들어온 경우, 메인맵으로 보내준다
         navigation.navigate('MainMap');
         return;
       }
 
       if (result === 'failure') {
-        alert('서버 에러..유저 정보 업데이트에 실패했습니다!');
-        console.log(errMessage);
+        console.error(errMessage);
       }
     } catch (err) {
-      console.log(`유저 정보 업데이트 시도 중 에러 발생..${err}`);
+      console.error(err);
     }
   };
 
@@ -95,7 +88,6 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
     <Container>
       <Header>내가 좋아하는 친구는?</Header>
       <InputDescription>{mentMap[clickedInput]}</InputDescription>
-
       <View style={{ backgroundColor: 'white' }}>
         <InputSelector
           value={inputMap[clickedInput]?.input}
@@ -116,7 +108,6 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
             setClickedInput('gender');
           }}
         />
-
         <InputHeader2>{ageInput}</InputHeader2>
         <Polygon
           points="50 0, 83 12, 100 43, 94 78, 50 50"
@@ -124,7 +115,6 @@ const PreferredPartnerScreen = ({ navigation, user, userId, setUserInfo }) => {
             setClickedInput('age');
           }}
         />
-
         <InputHeader3>{occupationInput}</InputHeader3>
         <Polygon
           points="50 50, 94 78, 70 100, 30 100, 6 78"
@@ -260,16 +250,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ user, user: { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-};
 
-export default connect(
-  mapStateToProps,
-  {
-    setUserInfo
-  }
-  )(PreferredPartnerScreen);
+export default connect(state => ({
+    user: state.user,
+  }), {
+  setUserInfo
+})(PreferredPartnerScreen);

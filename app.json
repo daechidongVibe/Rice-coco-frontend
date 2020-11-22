@@ -20,6 +20,7 @@
       "supportsTablet": true
     },
     "android": {
+      "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ricecoco-icon.png",
         "backgroundColor": "#FFFFFF"

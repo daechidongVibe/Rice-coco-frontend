@@ -2,7 +2,11 @@ import React, { useEffect } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
+import {
+  StackActions,
+  useNavigationState,
+  CommonActions,
+} from '@react-navigation/native';
 
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
@@ -17,14 +21,19 @@ const MatchWaiting = ({
   setSelectedMeeting,
   currentMeeting,
   setCurrentMeeting,
+  meetingId,
+  expiredTime,
+  restaurantName
 }) => {
+  const navigationState = useNavigationState(state => state);
+  const [isStart, setIsStart] = useState(false)
+
   useEffect(() => {
     (async () => {
       try {
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
-
         setSelectedMeeting(meetingDetails);
       } catch (err) {
         console.error(err);
@@ -37,14 +46,32 @@ const MatchWaiting = ({
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
+      setIsStart(true);
     });
 
-    return () => socketApi.removeAllListeners();
+    return () => socket.off('current meeting');
   }, []);
 
   useEffect(() => {
     if (currentMeeting?.users?.length === 2) {
-      navigation.dispatch(StackActions.replace('MatchSuccess'));
+      (async () => {
+        const partnerId = currentMeeting.users.find(user => user !== userId);
+        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+        const partnerNickname = partner.nickname;
+
+        setSelectedMeeting({ partnerNickname });
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'MatchSuccess',
+              },
+            ],
+          })
+        );
+      })()
     }
   }, [currentMeeting]);
 
@@ -62,7 +89,17 @@ const MatchWaiting = ({
         [
           {
             text: 'OK',
-            onPress: () => navigation.dispatch(StackActions.replace('MainMap')),
+            onPress: () =>
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainMap',
+                    },
+                  ],
+                })
+              ),
           },
         ],
         { cancelable: false }
@@ -76,7 +113,7 @@ const MatchWaiting = ({
       {!!expiredTime && (
         <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
       )}
-      <RotatedIcon />
+      <RotatedIcon start={isStart} />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>

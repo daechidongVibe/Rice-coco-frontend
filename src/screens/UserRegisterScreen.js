@@ -9,7 +9,7 @@ import PickerInput from '../components/PickerInput';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
 
-const UserRegisterScreen = ({ route, navigation, onLogin }) => {
+const UserRegisterScreen = ({ route, navigation }) => {
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');
@@ -41,7 +41,7 @@ const UserRegisterScreen = ({ route, navigation, onLogin }) => {
     if (result === 'ok') {
       await asyncStorage.setItem('token', token);
 
-      onLogin(user);
+      setUserInfo(user);
 
       navigation.navigate('PreferredPartner');
     }
@@ -139,10 +139,4 @@ const StyledSubmitButton = styled.TouchableOpacity`
   padding-bottom: 10px;
 `;
 
-const mapDispatchToProps = dispatch => ({
-  onLogin(user) {
-    dispatch(setUserInfo(user));
-  },
-});
-
-export default connect(null, mapDispatchToProps)(UserRegisterScreen);
+export default connect(null, { setUserInfo })(UserRegisterScreen);

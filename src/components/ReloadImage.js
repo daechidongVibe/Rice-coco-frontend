@@ -27,14 +27,12 @@ const ReloadImage = ({ onClick }) => {
     <Wrapper
       onPress={handleClick}
       style={{
-        transform: [
-          {
-            rotate: spinAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['360deg', '0deg'],
-            }),
-          },
-        ],
+        transform: [{
+          rotate: spinAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['360deg', '0deg'],
+          }),
+        }],
       }}
     >
       <SimpleLineIcons name="reload" size={24} color="black" />

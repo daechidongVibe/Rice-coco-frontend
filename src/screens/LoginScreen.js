@@ -119,7 +119,4 @@ const ButtonText = styled.Text`
   color: black;
 `;
 
-export default connect(
-  null,
-  { setUserInfo }
-  )(Login);
+export default connect(null, { setUserInfo })(Login);

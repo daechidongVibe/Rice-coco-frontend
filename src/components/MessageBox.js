@@ -3,13 +3,11 @@ import { Text } from 'react-native';
 import styled from 'styled-components';
 
 const MessageBox = ({
-  user, 
+  user,
   message,
-  userNickName,
-  partnerNickname,
+  nickname,
   }) => {
-const userLastNickName = userNickName.slice(0, 1);
-const partnerLastNickname = partnerNickname.slice(0, 1);
+const lastNickName = nickname.slice(0, 1);
 
   return (
     <>
@@ -21,7 +19,7 @@ const partnerLastNickname = partnerNickname.slice(0, 1);
           >
           <Message>{message}</Message>
         </MessageContainer>
-          <UserProfile><Text>{user ? `${userLastNickName}` : `${partnerLastNickname}`}</Text></UserProfile>
+          <UserProfile><Text>{lastNickName}</Text></UserProfile>
       </MeesageBoxContainer>
     </>
   );

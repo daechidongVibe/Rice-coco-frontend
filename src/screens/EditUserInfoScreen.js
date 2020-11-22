@@ -62,8 +62,6 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   };
 
   const onPressSubmitButton = async () => {
-    console.log(nicknameInput, occupationInput)
-
     const { data: response } = await configuredAxios.put(
       `/users/${userId}`,
       {
@@ -208,16 +206,9 @@ const SubmitButton = styled.TouchableOpacity`
   background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
 `;
 
-const mapStateToProps = ({ user, user : { _id } }) => {
-  return {
-    user,
-    userId: _id
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {
-    setUserInfo
-  }
-)(EditUserInfo);
+export default connect(state => ({
+  user: state.user,
+  userId: state.user._id
+}),{
+  setUserInfo
+})(EditUserInfo);

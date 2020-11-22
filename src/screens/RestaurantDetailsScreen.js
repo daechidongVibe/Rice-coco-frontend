@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import { CommonActions, useNavigationState } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 
 import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
@@ -88,7 +88,6 @@ const RestaurantDetails = ({
 
     if (data.result === 'ok') {
       const { createdMeeting } = data;
-
       const { _id: meetingId, expiredTime } = createdMeeting;
 
       setSelectedMeeting({
@@ -161,12 +160,10 @@ const RestaurantDetails = ({
       <Header>
         <HeaderText>{restaurantName}</HeaderText>
       </Header>
-
       <PromiseContainer>
         <PromiseIcon source={require('../../assets/images/promise.png')} />
         <PromiseAmount>{userPromise}개</PromiseAmount>
       </PromiseContainer>
-
       {
         (photoUrls.length > 0) &&
         <FlatList
@@ -176,7 +173,6 @@ const RestaurantDetails = ({
           horizontal={true}
         />
       }
-
       {
         hasCreatedMeeting ?
         <>
@@ -193,7 +189,6 @@ const RestaurantDetails = ({
           </Description>
         </>
       }
-
       {
         hasCreatedMeeting ?
         <MeetingButton onPress={handlePressJoinButton}
@@ -301,22 +296,12 @@ const PromiseAmount = styled.Text`
   font-size: 13px;
 `;
 
-const mapStateToProps = (
-  {
-    meetings: { selectedMeeting },
-    user: { _id, promise }
-  }) => {
-  return {
-    selectedMeeting,
-    userId: _id,
-    userPromise: promise
-  }
-};
-
 export default connect(
-  mapStateToProps,
-  {
+  state => ({
+    selectedMeeting: state.meetings.selectedMeeting,
+    userId: state.user._id,
+    userPromise: state.user.promise
+  }),{
     setSelectedMeeting,
     setPromiseAmount
-  }
-)(RestaurantDetails);
+  })(RestaurantDetails);

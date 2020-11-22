@@ -45,7 +45,7 @@ const Search = ({ navigation }) => {
 
       setSearchList(filteredSearchList);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
     setIsSearching(false);
