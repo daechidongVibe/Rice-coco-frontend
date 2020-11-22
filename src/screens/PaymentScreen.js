@@ -35,15 +35,16 @@ const PaymentScreen = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          productInfo: '${paymentInfo.name}',
+          productInfo: {
+            name: '${paymentInfo.name}',
+            amount: ${paymentInfo.amount}
+          },
           amount: ${paymentInfo.price}
         })
       })
       .then(res => res.json())
       .then(data => {
         const { _id: merchant_uid, buyer, amount, productInfo } = data;
-
-        alert(merchant_uid + buyer + amount + productInfo)
 
         // merchant_uid는 미리 생성한 주문정보의 id이다.
 
@@ -54,7 +55,7 @@ const PaymentScreen = () => {
           pg: "html5_inicis",
           pay_method: "card",
           merchant_uid,
-          name: "${paymentInfo.name}",
+          name: "${paymentInfo.name} ${paymentInfo.amount}개",
           amount: ${paymentInfo.price},
           buyer_email: "nninnnin7@gmail.com",
           buyer_name: "이동규",
@@ -83,7 +84,7 @@ const PaymentScreen = () => {
               MY_INFO_OPTIONS.paymentInfo.map((item, index) => {
                 return (
                   <PaymentItem onPress={() => setPaymentInfo(item)} key={index} disabled={item === paymentInfo ? true : false}>
-                    <Text>{`${item.name}  -  ₩${item.price}`}</Text>
+                    <Text>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</Text>
                   </PaymentItem>
                 );
               })

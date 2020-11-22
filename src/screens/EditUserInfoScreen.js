@@ -25,6 +25,17 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   const [occupationInput, setOccupationInput] = useState('');
 
   useEffect(() => {
+    (async () => {
+      // 유저 정보 다시 가져와서 리덕스에 세팅 (프로미스 바뀐 경우 반영)
+      const { data: user } = await configuredAxios.get(
+        `/users/${userId}`
+      );
+
+      const { promise } = user;
+
+      setUserInfo({ promise });
+    })();
+
     setNicknameInput(nickname);
     setOccupationInput(occupation);
   }, []);
