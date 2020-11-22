@@ -16,7 +16,7 @@ const RotatedIcon = ({ start }) => {
   };
 
   useEffect(() => {
-    if(!start) return;
+    if (!start) return;
     startAnimation();
   }, [start]);
 

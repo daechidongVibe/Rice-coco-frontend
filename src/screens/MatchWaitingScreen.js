@@ -25,6 +25,7 @@ const MatchWaiting = ({
   restaurantName
 }) => {
   const navigationState = useNavigationState(state => state);
+  const [isStart, setIsStart] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -44,6 +45,7 @@ const MatchWaiting = ({
 
     socket.on('current meeting', data => {
       setCurrentMeeting(data);
+      setIsStart(true);
     });
 
     return () => socket.off('current meeting');
@@ -110,7 +112,7 @@ const MatchWaiting = ({
       {!!expiredTime && (
         <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
       )}
-      <RotatedIcon />
+      <RotatedIcon start={isStart} />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>
