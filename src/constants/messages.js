@@ -7,4 +7,6 @@ export const SHOULD_INPUT_RESTAURANT = '맛집을 검색해주세요';
 export const IT_IS_CLOSED = '준비가 되지 않았습니다';
 export const FIND_OTHER_RESTAURANT = '다른 맛집을 찾아볼까요?';
 export const SHOULD_ENTER_MESSAGE = '메세지를 입력해주세요';
-export const YES = '다른 맛집 찾으러 가기';
+export const YOU_WANT_TO_LOGOUT = '로그아웃하시겠습니까?';
+export const YES = 'YES';
+export const NO = 'NO';

@@ -1,9 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import { Alert } from 'react-native';
+import asyncStorage from '@react-native-async-storage/async-storage';
+
+import  { YES, NO, YOU_WANT_TO_LOGOUT } from '../constants/messages';
 
 const MyPageScreen = ({ navigation, user, userId }) => {
   const isUserLoggedIn = userId ? true : false;
+
+  const logout = () => {
+    return Alert.alert(
+      YOU_WANT_TO_LOGOUT,
+      null,
+      [
+        {
+          text: YES,
+          onPress: async () => {
+            await asyncStorage.removeItem('token');
+            return navigation.navigate('Login');
+          }
+        },
+        {
+          text: NO,
+        }
+      ]
+    );
+  };
 
   return (
     <Container>
@@ -31,6 +54,11 @@ const MyPageScreen = ({ navigation, user, userId }) => {
         }}
       >
         <ButtonText>결제</ButtonText>
+      </Button>
+      <Button
+        onPress={logout}
+      >
+        <ButtonText>로그아웃</ButtonText>
       </Button>
     </Container>
   );
