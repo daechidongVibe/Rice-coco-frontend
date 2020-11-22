@@ -3,8 +3,14 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { Alert } from 'react-native';
 import asyncStorage from '@react-native-async-storage/async-storage';
+import {
+  StackActions,
+  useNavigationState,
+  CommonActions,
+} from '@react-navigation/native';
 
-import  { YES, NO, YOU_WANT_TO_LOGOUT } from '../constants/messages';
+import { YES, NO, YOU_WANT_TO_LOGOUT } from '../constants/messages';
+import { resetUserInfo, resetMeeting } from '../actions/index';
 
 const MyPageScreen = ({ navigation, user, userId }) => {
   const isUserLoggedIn = userId ? true : false;
@@ -18,7 +24,18 @@ const MyPageScreen = ({ navigation, user, userId }) => {
           text: YES,
           onPress: async () => {
             await asyncStorage.removeItem('token');
-            return navigation.navigate('Login');
+            resetUserInfo();
+            resetMeeting();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Home',
+                  },
+                ],
+              })
+            );
           }
         },
         {
@@ -93,4 +110,7 @@ const ButtonText = styled.Text`
 export default connect(state => ({
   user: state.user,
   userId: state.user._id,
-}))(MyPageScreen);
+}), {
+  resetUserInfo,
+  resetMeeting,
+})(MyPageScreen);

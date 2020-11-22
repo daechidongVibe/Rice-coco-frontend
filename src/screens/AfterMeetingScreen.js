@@ -118,6 +118,6 @@ export default connect(state => ({
   userId: state.user._id,
   meetingId: state.meetings.selectedMeeting.meetingId,
   partnerNickname: state.meetings.selectedMeeting.partnerNickname,
-},{
+}),{
   resetMeeting,
-}))(AfterMeetingScreen);
+})(AfterMeetingScreen);
