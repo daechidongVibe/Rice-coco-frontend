@@ -1,16 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import styled from 'styled-components/native';
+import asyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
+import { CommonActions } from '@react-navigation/native';
+import { LOGOUT_MESSAGE, YES, NO } from '../constants/messages';
+import { resetUserInfo, resetMeeting } from '../actions/index';
 
-const MyPageScreen = ({ navigation, user, userId }) => {
-  const isUserLoggedIn = userId ? true : false;
+const MyPageScreen = ({
+  navigation,
+  userId,
+  resetUserInfo,
+  resetMeeting
+}) => {
+  const logout = () => {
+    if (!userId) return;
+
+    return Alert.alert(
+      LOGOUT_MESSAGE,
+      null,
+      [{
+        text: YES,
+        onPress: async () => {
+          await asyncStorage.removeItem('token');
+          resetUserInfo();
+          resetMeeting();
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'Home',
+                },
+              ],
+            })
+          );
+        }
+      },
+      {
+        text: NO,
+      }
+      ]
+    );
+  };
 
   return (
     <Container>
       <Header>내 정보</Header>
       <Button
         onPress={() => {
-          if (!isUserLoggedIn) return;
+          if (!userId) return;
           navigation.navigate('EditUserInfo');
         }}
       >
@@ -18,7 +57,7 @@ const MyPageScreen = ({ navigation, user, userId }) => {
       </Button>
       <Button
         onPress={() => {
-          if (!isUserLoggedIn) return;
+          if (!userId) return;
           navigation.navigate('PreferredPartner');
         }}
       >
@@ -26,11 +65,16 @@ const MyPageScreen = ({ navigation, user, userId }) => {
       </Button>
       <Button
         onPress={() => {
-          if (!isUserLoggedIn) return;
+          if (!userId) return;
           navigation.navigate('Payment');
         }}
       >
         <ButtonText>결제</ButtonText>
+      </Button>
+      <Button
+        onPress={logout}
+      >
+        <ButtonText>로그아웃</ButtonText>
       </Button>
     </Container>
   );
@@ -65,4 +109,7 @@ const ButtonText = styled.Text`
 export default connect(state => ({
   user: state.user,
   userId: state.user._id,
-}))(MyPageScreen);
+}), {
+  resetUserInfo,
+  resetMeeting,
+})(MyPageScreen);
