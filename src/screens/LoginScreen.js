@@ -13,7 +13,6 @@ const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
       const token = await asyncStorage.getItem('token');
-
       if (!token) return;
 
       const {

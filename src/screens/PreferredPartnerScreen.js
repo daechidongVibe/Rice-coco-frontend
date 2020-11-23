@@ -17,7 +17,7 @@ const PreferredPartnerScreen = ({
 }) => {
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');
-  const [birthYear, setBirthYear] = useState('1970');
+  const [birthYear, setBirthYear] = useState('20대');
 
   useEffect(() => {
     if (userGender) {
@@ -29,9 +29,9 @@ const PreferredPartnerScreen = ({
 
   const handleSubmit = async () => {
     const newPartnerConditions = {
-      gender: gender,
-      occupation: occupation,
-      birthYear: birthYear,
+      gender,
+      birthYear,
+      occupation,
     };
 
     try {
@@ -67,7 +67,7 @@ const PreferredPartnerScreen = ({
         <PickerInput
           content={birthYear}
           onChange={setBirthYear}
-          contentOptions={MY_INFO_OPTIONS.birthYear}
+          contentOptions={MY_INFO_OPTIONS.age}
         />
       <StyledSubmitButton onPress={handleSubmit}>
         <View>
