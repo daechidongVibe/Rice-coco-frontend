@@ -8,6 +8,7 @@ import configuredAxios from '../config/axiosConfig';
 import PickerInput from '../components/PickerInput';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
+import { Title } from '../styledComponent/index';
 
 const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
   const [nickname, setNickname] = useState('');
@@ -105,13 +106,6 @@ const Wrapper = styled.View`
   justify-content: center;
   padding-left: 20px;
   padding-right: 20px;
-`;
-
-const Title = styled.Text`
-  text-align: center;
-  color: #ff914d;
-  font-size: 30px;
-  font-weight: bold;
 `;
 
 const NameInput = styled.TextInput`
