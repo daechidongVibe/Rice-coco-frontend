@@ -14,7 +14,6 @@ const Login = ({ navigation, setUserInfo }) => {
     (async () => {
       await asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
-
       if (!token) return;
 
       const {

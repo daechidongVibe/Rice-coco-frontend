@@ -27,7 +27,6 @@ const Search = ({ navigation }) => {
       return;
     }
 
-    Keyboard.dismiss();
     setIsSearching(true);
 
     try {
