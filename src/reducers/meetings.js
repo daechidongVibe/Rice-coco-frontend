@@ -1,7 +1,7 @@
 import * as types from '../constants/actionTypes';
 
 const initialState = {
-  filteredMeetings: [],
+  waitingMeetings: [],
   selectedMeeting: {
     meetingId: '',
     restaurantId: '',
@@ -22,10 +22,10 @@ const initialState = {
 
 export const meetings = (state = initialState, action) => {
   switch (action.type) {
-    case types.SET_FILTERED_MEETINGS:
+    case types.SET_WAITING_MEETINGS:
       return {
         ...state,
-        filteredMeetings: [ ...action.payload ],
+        waitingMeetings: [ ...action.payload ],
       };
     case types.SET_SELECTED_MEETING:
       return {

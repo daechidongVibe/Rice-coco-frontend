@@ -39,9 +39,10 @@ const PreferredPartnerScreen = ({
         `/users/${userId}/preferred-partner`,
         newPartnerConditions
       );
+
       setUserInfo({ preferredPartner });
     } catch (error) {
-      console.error(error);
+      console.warn(error);
     }
 
     navigation.navigate('MainMap');

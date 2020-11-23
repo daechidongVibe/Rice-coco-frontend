@@ -25,7 +25,7 @@ const RestaurantDetails = ({
     restaurantName,
   } = selectedMeeting;
 
-  const partnerNickname = route.params?.hasCreatedMeeting;
+  const partnerNickname = route.params.partnerNickname;
   const [photoUrls, setPhotoUrls] = useState([]);
   const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry`;
 
@@ -111,6 +111,7 @@ const RestaurantDetails = ({
         `/meetings/${meetingId}/join`,
         { userId }
       );
+
       const { updatedMeeting } = data;
       const { _id, expiredTime } = updatedMeeting;
 

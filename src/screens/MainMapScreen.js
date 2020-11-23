@@ -14,41 +14,42 @@ import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
 import {
   setUserLocation,
-  setFilteredMeetings,
+  setWaitingMeetings,
   setSelectedMeeting,
 } from '../actions';
 import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
-  meetings,
   userId,
   userLocation,
-  navigation,
-  setFilteredMeetings,
+  waitingMeetings,
+  setWaitingMeetings,
   setUserLocation,
   setSelectedMeeting,
+  navigation,
 }) => {
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
   const [errorMsg, setErrorMsg] = useState(null);
-  const isMeetingExisted = !!meetings.length;
+  const isMeetingExisted = !!waitingMeetings.length;
 
   const handleSearchButtonClick = () => {
     navigation.navigate('Search');
   };
 
   const handleRestaurantClick = restaurantInfo => {
-    setSelectedMeeting(restaurantInfo);
+    const partnerNickname = restaurantInfo.partnerNickname;
 
-    navigation.navigate('RestaurantDetails');
+    setSelectedMeeting(restaurantInfo);
+    navigation.navigate('RestaurantDetails', { partnerNickname });
   };
 
   const handleReloadClick = async () => {
     const { data } = await axiosInstance.get('/meetings');
     const { filteredMeetings } = data;
 
-    setFilteredMeetings(filteredMeetings);
+    setWaitingMeetings(filteredMeetings);
   };
 
   useEffect(() => {
@@ -68,30 +69,31 @@ const MainMapScreen = ({
 
   useEffect(() => {
     (async () => {
-      const {
-        data: { activeMeeting },
-      } = await axiosInstance.get(`/meetings/user/${userId}`);
+      try {
+        const {
+          data: { activeMeeting },
+        } = await axiosInstance.get(`/meetings/user/${userId}`);
 
-      if (activeMeeting) {
-        const { _id: meetingId } = activeMeeting;
-        setSelectedMeeting({ meetingId });
+        if (activeMeeting) {
+          const { _id: meetingId } = activeMeeting;
+          setSelectedMeeting({ meetingId });
 
-        activeMeeting.isMatched
-          ? navigation.dispatch(StackActions.replace('MatchSuccess'))
-          : navigation.dispatch(StackActions.replace('MatchWaiting'));
+          activeMeeting.isMatched
+            ? navigation.dispatch(StackActions.replace('MatchSuccess'))
+            : navigation.dispatch(StackActions.replace('MatchWaiting'));
 
-        return;
+          return;
+        }
+
+        const { data } = await axiosInstance.get('/meetings');
+        const { filteredMeetings } = data;
+
+        setWaitingMeetings(filteredMeetings);
+      } catch (error) {
+        console.warn(error);
       }
-
-      const { data } = await axiosInstance.get('/meetings');
-      const { filteredMeetings } = data;
-      setFilteredMeetings(filteredMeetings);
     })();
   }, []);
-
-  useEffect(() => {
-    socketApi.removeAllListeners();
-  });
 
   return fontLoaded ? (
     <>
@@ -112,11 +114,11 @@ const MainMapScreen = ({
           {/* <Marker coordinate={userLocation} /> */}
 
           {isMeetingExisted &&
-            meetings.map(meeting => {
+            waitingMeetings.map(meeting => {
               const {
-                _id: meetingId,
+                meetingId,
                 restaurant: { restaurantId, name: restaurantName, location },
-                participant: partnerNickname,
+                partnerNickname,
                 expiredTime,
               } = meeting;
 
@@ -128,7 +130,7 @@ const MainMapScreen = ({
 
               return (
                 <Marker
-                  key={meeting['_id']}
+                  key={meetingId}
                   title={restaurantName}
                   description={`${partnerNickname} 대기중`}
                   coordinate={location}
@@ -261,11 +263,11 @@ export default connect(
   state => ({
     userId: state.user._id,
     userLocation: state.location,
-    meetings: state.meetings.filteredMeetings,
+    waitingMeetings: state.meetings.waitingMeetings,
   }),
   {
     setUserLocation,
-    setFilteredMeetings,
+    setWaitingMeetings,
     setSelectedMeeting,
   }
 )(MainMapScreen);

@@ -16,7 +16,7 @@ import {
 const RenderItem = ({
   item,
   navigation,
-  filteredMeetings,
+  waitingMeetings,
   setSelectedMeeting,
 }) => {
   const openingHours = item.openingHours;
@@ -37,10 +37,10 @@ const RenderItem = ({
       ]
     );
 
-    const hasCreatedMeeting = filteredMeetings.find(
+    const hasCreatedMeeting = waitingMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.id
     );
-
+    const partnerNickname = hasCreatedMeeting?.partnerNickname;
     setSelectedMeeting({
       restaurantId: item.id,
       restaurantName: item.name,
@@ -49,7 +49,7 @@ const RenderItem = ({
         '',
     });
 
-    return navigation.navigate('RestaurantDetails', { hasCreatedMeeting });
+    return navigation.navigate('RestaurantDetails', { partnerNickname });
   };
 
   return (
@@ -70,7 +70,7 @@ const RenderItem = ({
 };
 
 export default connect(state => ({
-  filteredMeetings: state.meetings.filteredMeetings,
+  waitingMeetings: state.meetings.waitingMeetings,
 }), {
   setSelectedMeeting
 })(RenderItem);
