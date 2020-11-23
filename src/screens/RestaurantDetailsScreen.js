@@ -23,11 +23,9 @@ const RestaurantDetails = ({
     meetingId,
     restaurantId,
     restaurantName,
-    partnerNickname,
   } = selectedMeeting;
 
-  const searchWord = route.params?.searchWord;
-  const hasCreatedMeeting = partnerNickname;
+  const partnerNickname = route.params?.hasCreatedMeeting;
   const [photoUrls, setPhotoUrls] = useState([]);
   const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry`;
 
@@ -156,7 +154,7 @@ const RestaurantDetails = ({
           horizontal={true}
         />
       )}
-      {hasCreatedMeeting ? (
+      {partnerNickname ? (
         <>
           <DescriptionHeader>{`"${restaurantName}" 에서 같이 밥먹을 사람!`}</DescriptionHeader>
           <Description>
@@ -165,13 +163,13 @@ const RestaurantDetails = ({
         </>
       ) : (
         <>
-          <DescriptionHeader>{`${searchWord} 로 유명한 "${restaurantName}"`}</DescriptionHeader>
+          <DescriptionHeader>{restaurantName}</DescriptionHeader>
           <Description>
             {`${restaurantName}에서 함께 밥먹을 친구를 만나보시겠어요?`}
           </Description>
         </>
       )}
-      {hasCreatedMeeting ? (
+      {partnerNickname ? (
         <MeetingButton onPress={handlePressJoinButton}>
           <ButtonText>참여하기!</ButtonText>
           <ButtonPromiseContainer>

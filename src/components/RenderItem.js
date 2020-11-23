@@ -15,7 +15,6 @@ import {
 
 const RenderItem = ({
   item,
-  searchWord,
   navigation,
   filteredMeetings,
   setSelectedMeeting,
@@ -39,7 +38,7 @@ const RenderItem = ({
     );
 
     const hasCreatedMeeting = filteredMeetings.find(
-      meeting => meeting.restaurant.restaurantId === item.restaurantId
+      meeting => meeting.restaurant.restaurantId === item.id
     );
 
     setSelectedMeeting({
@@ -50,7 +49,7 @@ const RenderItem = ({
         '',
     });
 
-    return navigation.navigate('RestaurantDetails', { searchWord });
+    return navigation.navigate('RestaurantDetails', { hasCreatedMeeting });
   };
 
   return (
@@ -70,14 +69,11 @@ const RenderItem = ({
   );
 };
 
-export default connect(
-  state => ({
-    filteredMeetings: state.meetings.filteredMeetings,
-  }),
-  {
-    setSelectedMeeting,
-  }
-)(RenderItem);
+export default connect(state => ({
+  filteredMeetings: state.meetings.filteredMeetings,
+}), {
+  setSelectedMeeting
+})(RenderItem);
 
 const ItemContainer = styled.TouchableOpacity`
   display: flex;
