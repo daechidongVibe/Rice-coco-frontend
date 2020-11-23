@@ -34,16 +34,15 @@ const PreferredPartnerScreen = ({
       birthYear: birthYear,
     };
 
-    console.log('newPartnerCOn', newPartnerConditions);
     try {
       const { data: { preferredPartner }} = await axiosInstance.put(
         `/users/${userId}/preferred-partner`,
         newPartnerConditions
       );
-        console.log(newPartnerConditions);
+
       setUserInfo({ preferredPartner });
     } catch (error) {
-      console.error(error);
+      console.warn(error);
     }
 
     navigation.navigate('MainMap');

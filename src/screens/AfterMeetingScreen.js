@@ -60,6 +60,7 @@ const AfterMeetingScreen = ({
         ],
       })
     );
+
     resetMeeting();
   };
 
@@ -132,10 +133,13 @@ const BackgroundImage = styled.Image`
   opacity: 0.2;
 `;
 
-export default connect(state => ({
-  userId: state.user._id,
-  meetingId: state.meetings.selectedMeeting.meetingId,
-  partnerNickname: state.meetings.selectedMeeting.partnerNickname,
-}),{
-  resetMeeting,
-})(AfterMeetingScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    meetingId: state.meetings.selectedMeeting.meetingId,
+    partnerNickname: state.meetings.selectedMeeting.partnerNickname,
+  }),
+  {
+    resetMeeting,
+  }
+)(AfterMeetingScreen);

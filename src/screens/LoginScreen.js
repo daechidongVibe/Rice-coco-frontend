@@ -12,7 +12,6 @@ import { setUserInfo } from '../actions';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      await asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
 
       if (!token) return;

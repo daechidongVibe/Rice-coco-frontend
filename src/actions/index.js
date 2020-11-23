@@ -15,8 +15,8 @@ export const setUserLocation = location => ({
   payload: location,
 });
 
-export const setFilteredMeetings = meetings => ({
-  type: types.SET_FILTERED_MEETINGS,
+export const setWaitingMeetings = meetings => ({
+  type: types.SET_WAITING_MEETINGS,
   payload: meetings,
 });
 
