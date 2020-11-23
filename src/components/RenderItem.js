@@ -17,7 +17,7 @@ const RenderItem = ({
   item,
   searchWord,
   navigation,
-  filteredMeetings,
+  waitingMeetings,
   setSelectedMeeting,
 }) => {
   const openingHours = item.openingHours;
@@ -38,7 +38,7 @@ const RenderItem = ({
       ]
     );
 
-    const hasCreatedMeeting = filteredMeetings.find(
+    const hasCreatedMeeting = waitingMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.restaurantId
     );
 
@@ -72,7 +72,7 @@ const RenderItem = ({
 
 export default connect(
   state => ({
-    filteredMeetings: state.meetings.filteredMeetings,
+    waitingMeetings: state.meetings.waitingMeetings,
   }),
   {
     setSelectedMeeting,

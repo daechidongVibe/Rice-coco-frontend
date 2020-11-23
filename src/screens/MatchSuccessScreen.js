@@ -62,6 +62,10 @@ const MatchSuccessScreen = ({
 
     socket.on('change current meeting', meetingData => {
       setCurrentMeeting(meetingData);
+
+      if (meetingData.arrivalCount === 2) {
+        socketApi.removeAllListeners();
+      }
     });
 
     socket.on('get partner location', location => {
@@ -96,27 +100,28 @@ const MatchSuccessScreen = ({
   //   socketApi.sendLocation(userLocation);
   // }, [userLocation]);
 
-  useEffect(() => {
-    // (async () => {
-    //   await Location.startLocationUpdatesAsync('trackLocation', {
-    //     accuracy: Location.Accuracy.Highest,
-    //     timeInterval: 1000,
-    //     distanceInterval: 1,
-    //     howsBackgroundLocationIndicator: true,
-    //   });
-    //   TaskManager.defineTask(
-    //     'trackLocation',
-    //     ({ data: { locations }, error }) => {
-    //       if (error) return;
-    //       const {
-    //         coords: { latitude, longitude },
-    //       } = locations[0];
-    //       setUserLocation({ latitude, longitude });
-    //     }
-    //   );
-    // })();
-    // return () => Location.stopLocationUpdatesAsync();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await Location.startLocationUpdatesAsync('trackLocation', {
+  //       accuracy: Location.Accuracy.Highest,
+  //       timeInterval: 1000,
+  //       distanceInterval: 1,
+  //       howsBackgroundLocationIndicator: true,
+  //     });
+
+  //     TaskManager.defineTask(
+  //       'trackLocation',
+  //       ({ data: { locations }, error }) => {
+  //         if (error) return;
+  //         const {
+  //           coords: { latitude, longitude },
+  //         } = locations[0];
+  //         setUserLocation({ latitude, longitude });
+  //       }
+  //     );
+  //   })();
+  //   return () => Location.stopLocationUpdatesAsync();
+  // }, []);
 
   useEffect(() => {
     (async () => {
@@ -235,7 +240,10 @@ const MatchSuccessScreen = ({
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
         {isArrived && (
-          <ArrivalButton onPress={handleArrivalButtonClick}>
+          <ArrivalButton
+            onPress={handleArrivalButtonClick}
+            // opacity={isArrivalConfirmed ? '0.5' : '1'}
+          >
             <ArrivalText>
               {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
             </ArrivalText>
@@ -335,6 +343,7 @@ const ArrivalButton = styled.TouchableOpacity`
   width: 50%;
   padding: 10px;
   border-radius: 50px;
+  /* opacity: ${props => props.opacity}; */
 `;
 
 const ArrivalText = styled.Text`

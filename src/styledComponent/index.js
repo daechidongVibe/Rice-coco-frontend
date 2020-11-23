@@ -9,7 +9,7 @@ export const Wrapper = styled.View`
 `;
 
 export const Title = styled.Text`
-  flex:0.3;
+  flex: 0.3;
   color: #ff914d;
   font-size: 16px;
   font-weight: bold;

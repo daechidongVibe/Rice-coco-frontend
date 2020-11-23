@@ -29,7 +29,7 @@ export default MessageBox;
 
 const MeesageBoxContainer = styled.View`
   display: flex;
-  flex-direction: ${props => props.direction}
+  flex-direction: ${props => props.direction};
   justify-content: flex-end;
   align-items: flex-end;
   margin-bottom: 9px;
@@ -40,7 +40,7 @@ const MessageContainer = styled.View`
   height: 40px;
   padding: 8px;
   align-items: flex-end;
-  background-color: ${props => props.color}
+  background-color: ${props => props.color};
   justify-content: center;
   align-items: center;
   border-radius: 30px;

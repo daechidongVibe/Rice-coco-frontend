@@ -113,6 +113,7 @@ const RestaurantDetails = ({
         `/meetings/${meetingId}/join`,
         { userId }
       );
+
       const { updatedMeeting } = data;
       const { _id, expiredTime } = updatedMeeting;
 
