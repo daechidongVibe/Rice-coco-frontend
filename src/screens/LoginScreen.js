@@ -21,7 +21,6 @@ const Login = ({ navigation, setUserInfo }) => {
       const { user } = data;
 
       setUserInfo(user);
-
       if (!user.preferredPartner) {
         return navigation.dispatch(
           StackActions.replace('PreferredPartner')
@@ -62,7 +61,7 @@ const Login = ({ navigation, setUserInfo }) => {
       await asyncStorage.setItem('token', token);
 
       setUserInfo(user);
-
+      console.log('loginclick', user)
       if (!user.preferredPartner) {
         return navigation.dispatch(
           StackActions.replace('PreferredPartner')

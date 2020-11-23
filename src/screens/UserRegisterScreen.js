@@ -8,8 +8,9 @@ import configuredAxios from '../config/axiosConfig';
 import PickerInput from '../components/PickerInput';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
+import { Title, Wrapper, NameInput, NameCreationButton, StyledSubmitButton } from '../styledComponent/index';
 
-const UserRegisterScreen = ({ route, navigation }) => {
+const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');
@@ -98,45 +99,5 @@ const UserRegisterScreen = ({ route, navigation }) => {
     </Wrapper>
   );
 };
-
-const Wrapper = styled.View`
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  padding-left: 20px;
-  padding-right: 20px;
-`;
-
-const Title = styled.Text`
-  text-align: center;
-  color: #ff914d;
-  font-size: 30px;
-  font-weight: bold;
-`;
-
-const NameInput = styled.TextInput`
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  background-color: white;
-`;
-
-const NameCreationButton = styled.TouchableOpacity`
-  display: flex;
-  align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  background-color: #ff914d;
-`;
-
-const StyledSubmitButton = styled.TouchableOpacity`
-  display: flex;
-  align-items: center;
-  background-color: #ff914d;
-  padding-top: 10px;
-  padding-bottom: 10px;
-`;
 
 export default connect(null, { setUserInfo })(UserRegisterScreen);

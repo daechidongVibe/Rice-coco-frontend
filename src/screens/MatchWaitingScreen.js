@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -17,9 +17,8 @@ import configuredAxios from '../config/axiosConfig';
 const MatchWaiting = ({
   navigation,
   userId,
-  selectedMeeting: { meetingId, expiredTime, restaurantName },
-  setSelectedMeeting,
   currentMeeting,
+  setSelectedMeeting,
   setCurrentMeeting,
   meetingId,
   expiredTime,
@@ -143,18 +142,13 @@ const CancelButton = styled.Button`
   transform: translateX(-25px);
 `;
 
-const mapStateToProps = ({
-  meetings: { selectedMeeting, currentMeeting },
-  user: { _id },
-}) => {
-  return {
-    userId: _id,
-    selectedMeeting,
-    currentMeeting,
-  };
-};
-
-export default connect(mapStateToProps, {
+export default connect(state => ({
+  userId: state.user._id,
+  currentMeeting: state.meetings.currentMeeting,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  restaurantName: state.meetings.selectedMeeting.restaurantName
+}), {
   setCurrentMeeting,
   setSelectedMeeting,
 })(MatchWaiting);
