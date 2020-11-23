@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { StackActions } from '@react-navigation/native';
+import { StackActions, CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -60,15 +60,15 @@ const MatchSuccessScreen = ({
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
-    socket.on('current meeting', data => {
-      setCurrentMeeting(data);
+    socket.on('change current meeting', meetingData => {
+      setCurrentMeeting(meetingData);
     });
 
-    socket.on('partner location changed', location => {
+    socket.on('get partner location', location => {
       setPartnerLocation(location);
     });
 
-    socket.on('meeting broked up', () => {
+    socket.on('canceled by partner', () => {
       Alert.alert(
         '미팅 성사 취소',
         '안타깝게도 상대방이 미팅을 취소하셨습니다.',
@@ -76,7 +76,7 @@ const MatchSuccessScreen = ({
           {
             text: 'OK',
             onPress: () => {
-              socketApi.leaveMeeting(meetingId, () => {
+              socketApi.finishMeeting(() => {
                 resetMeeting();
                 navigation.dispatch(StackActions.replace('MainMap'));
               });
@@ -93,7 +93,7 @@ const MatchSuccessScreen = ({
   //     ? setIsArrived(true)
   //     : setIsArrived(false);
 
-  //   socketApi.changeLocation(userLocation);
+  //   socketApi.sendLocation(userLocation);
   // }, [userLocation]);
 
   useEffect(() => {
@@ -122,15 +122,9 @@ const MatchSuccessScreen = ({
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
-        if (data.result === 'ok') {
-          const { meetingDetails } = data;
+        const { meetingDetails } = data;
 
-          setSelectedMeeting(meetingDetails);
-        }
-
-        if (data.result === 'failure') {
-          console.error(data.errMessage);
-        }
+        setSelectedMeeting(meetingDetails);
       } catch (error) {
         console.error(err);
       }
@@ -138,18 +132,35 @@ const MatchSuccessScreen = ({
   }, []);
 
   const handleTimeEnd = () => {
-    socketApi.endMeeting(meetingId, () => {
-      const isAllparticipated = currentMeeting.arrivalCount >= 2;
+    const isAllArrived = currentMeeting.arrivalCount >= 2;
 
-      if (isAllparticipated) {
-        navigation.dispatch(StackActions.replace('AfterMeeting'));
+    isAllArrived
+      ? socketApi.finishMeeting(() => {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'AfterMeeting',
+                },
+              ],
+            })
+          );
+        })
+      : socketApi.cancelMeeting(() => {
+          resetMeeting();
 
-        return;
-      }
-
-      resetMeeting();
-      navigation.dispatch(StackActions.replace('MainMap'));
-    });
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'MainMap',
+                },
+              ],
+            })
+          );
+        });
   };
 
   const handleArrivalButtonClick = async () => {
@@ -161,7 +172,7 @@ const MatchSuccessScreen = ({
       amount: 1,
     });
 
-    socketApi.arriveMeeting(meetingId);
+    socketApi.arriveMeeting();
   };
 
   const handleChatButtonClick = () => {
@@ -172,9 +183,9 @@ const MatchSuccessScreen = ({
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: -1,
     });
+    setPromiseAmount(userPromise - 1);
 
-    socketApi.breakupMeeting(meetingId, () => {
-      setPromiseAmount(userPromise - 1);
+    socketApi.breakupMeeting(() => {
       resetMeeting();
       navigation.dispatch(StackActions.replace('MainMap'));
     });
@@ -334,20 +345,23 @@ const ArrivalText = styled.Text`
   color: white;
 `;
 
-export default connect(state => ({
-  userId: state.user._id,
-  userNickname: state.user.nickname,
-  userLocation: state.location,
-  partnerNickname: state.meetings.selectedMeeting.partnerNickname,
-  restaurantName: state.meetings.selectedMeeting.restaurantName,
-  restaurantLocation: state.meetings.selectedMeeting.restaurantLocation,
-  expiredTime: state.meetings.selectedMeeting.expiredTime,
-  meetingId: state.meetings.selectedMeeting.meetingId,
-  currentMeeting: state.meetings.currentMeeting,
-}), {
-  setUserLocation,
-  setSelectedMeeting,
-  setCurrentMeeting,
-  setPromiseAmount,
-  resetMeeting,
-})(MatchSuccessScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    userNickname: state.user.nickname,
+    userLocation: state.location,
+    partnerNickname: state.meetings.selectedMeeting.partnerNickname,
+    restaurantName: state.meetings.selectedMeeting.restaurantName,
+    restaurantLocation: state.meetings.selectedMeeting.restaurantLocation,
+    expiredTime: state.meetings.selectedMeeting.expiredTime,
+    meetingId: state.meetings.selectedMeeting.meetingId,
+    currentMeeting: state.meetings.currentMeeting,
+  }),
+  {
+    setUserLocation,
+    setSelectedMeeting,
+    setCurrentMeeting,
+    setPromiseAmount,
+    resetMeeting,
+  }
+)(MatchSuccessScreen);

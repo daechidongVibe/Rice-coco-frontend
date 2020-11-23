@@ -28,37 +28,27 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
   }, []);
 
   const handleSubmit = async () => {
-    const preferredPartner = {
+    const newPartnerConditions = {
       gender: genderInput,
       birthYear: ageInput,
       occupation: occupationInput,
     };
 
     try {
-      const { data: { result, updatedUser, errMessage } } = await axios.put(
+      const {
+        data: { preferredPartner },
+      } = await axios.put(
         `/users/${user._id}/preferred-partner`,
-        preferredPartner
+        newPartnerConditions
       );
 
-      if (result === 'ok') {
-        setUserInfo({
-          preferredPartner: updatedUser.preferredPartner
-        });
-
-        if (navigationState.routes.length >= 2) {
-          navigation.goBack();
-          return;
-        }
-        navigation.navigate('MainMap');
-        return;
-      }
-
-      if (result === 'failure') {
-        console.error(errMessage);
-      }
+      setUserInfo({ preferredPartner });
     } catch (err) {
-      console.error(err);
+      console.warn(err);
     }
+
+    const hasUpdatedInMyPage = navigationState.routes.length >= 2;
+    hasUpdatedInMyPage ? navigation.goBack() : navigation.navigate('MainMap');
   };
 
   const mentMap = {
@@ -74,11 +64,11 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
     },
     age: {
       input: ageInput,
-      inputSelector: setAgeInput
+      inputSelector: setAgeInput,
     },
     occupation: {
       input: occupationInput,
-      inputSelector: setOccupationInput
+      inputSelector: setOccupationInput,
     },
   };
 
@@ -100,29 +90,31 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
         <CircularForm />
       </FormWrapper>
 
-      <Svg height="300" width="350" viewBox="0 0 100 100" style={styles.svg}>
-        <InputHeader>{genderInput}</InputHeader>
-        <Polygon
-          points="50 0, 50 50, 6 78, 0 43, 17 12"
-          onPress={() => {
-            setClickedInput('gender');
-          }}
-        />
-        <InputHeader2>{ageInput}</InputHeader2>
-        <Polygon
-          points="50 0, 83 12, 100 43, 94 78, 50 50"
-          onPress={e => {
-            setClickedInput('age');
-          }}
-        />
-        <InputHeader3>{occupationInput}</InputHeader3>
-        <Polygon
-          points="50 50, 94 78, 70 100, 30 100, 6 78"
-          onPress={e => {
-            setClickedInput('occupation');
-          }}
-        />
-      </Svg>
+      <SvgWrapper>
+        <Svg height="300" width="300" viewBox="0 0 100 100" style={styles.svg}>
+          <InputHeader>{genderInput}</InputHeader>
+          <Polygon
+            points="50 0, 50 50, 6 78, 0 43, 17 12"
+            onPress={() => {
+              setClickedInput('gender');
+            }}
+          />
+          <InputHeader2>{ageInput}</InputHeader2>
+          <Polygon
+            points="50 0, 83 12, 100 43, 94 78, 50 50"
+            onPress={e => {
+              setClickedInput('age');
+            }}
+          />
+          <InputHeader3>{occupationInput}</InputHeader3>
+          <Polygon
+            points="50 50, 94 78, 70 100, 30 100, 6 78"
+            onPress={e => {
+              setClickedInput('occupation');
+            }}
+          />
+        </Svg>
+      </SvgWrapper>
 
       <ButtonWrapper>
         <CircularSubmitButton
@@ -146,8 +138,7 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
   );
 };
 
-const Container = styled.ScrollView`
-`;
+const Container = styled.ScrollView``;
 
 const Header = styled.Text`
   color: #ff914d;
@@ -160,6 +151,13 @@ const InputDescription = styled.Text`
   font-size: 20px;
   margin-left: 10px;
   margin-bottom: 10px;
+`;
+
+const SvgWrapper = styled.View`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const InputHeader = styled.Text`
@@ -236,7 +234,6 @@ const styles = StyleSheet.create({
   svg: {
     marginVertical: 20,
     position: 'relative',
-    top: 10,
   },
   disabled: {
     backgroundColor: 'black',
@@ -250,9 +247,11 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default connect(state => ({
+export default connect(
+  state => ({
     user: state.user,
-  }), {
-  setUserInfo
-})(PreferredPartnerScreen);
+  }),
+  {
+    setUserInfo,
+  }
+)(PreferredPartnerScreen);

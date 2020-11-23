@@ -5,7 +5,7 @@ import { StackActions } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
-import auth from '../utils/auth';
+import googleAuth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 
@@ -16,44 +16,32 @@ const Login = ({ navigation, setUserInfo }) => {
 
       if (!token) return;
 
-      const { data } = await configuredAxios.post('users/login');
-      const { user } = data;
+      const {
+        data: { user },
+      } = await configuredAxios.post('users/login');
 
       setUserInfo(user);
 
-      if (!user.preferredPartner) {
-        return navigation.dispatch(
-          StackActions.replace('PreferredPartner')
-        );
-      }
-
-      navigation.dispatch(
-        StackActions.replace('MainMap')
-      );
+      user.preferredPartner
+        ? navigation.dispatch(StackActions.replace('MainMap'))
+        : navigation.dispatch(StackActions.replace('PreferredPartner'));
     })();
   }, []);
 
-  const handleLoginButtonClick = async (e) => {
+  const handleLoginButtonClick = async e => {
     e.target.disabled = true;
 
     try {
-      const result = await auth();
+      const email = await googleAuth();
 
-      if (result.status === 'FAILURE') {
-        return;
-      }
+      if (!email) return;
 
-      const { email } = result;
-
-      const { data } = await configuredAxios.post(
-        'users/login',
-        { email }
-      );
+      const { data } = await configuredAxios.post('users/login', { email });
 
       if (data.result === 'no member information') {
-        return navigation.dispatch(
-          StackActions.replace('UserRegister', { email })
-        );
+        navigation.dispatch(StackActions.replace('UserRegister', { email }));
+
+        return;
       }
 
       const { user, token } = data;
@@ -62,17 +50,11 @@ const Login = ({ navigation, setUserInfo }) => {
 
       setUserInfo(user);
 
-      if (!user.preferredPartner) {
-        return navigation.dispatch(
-          StackActions.replace('PreferredPartner')
-        );
-      }
-
-      navigation.dispatch(
-        StackActions.replace('MainMap')
-      );
+      user.preferredPartner
+        ? navigation.dispatch(StackActions.replace('MainMap'))
+        : navigation.dispatch(StackActions.replace('PreferredPartner'));
     } catch (error) {
-      console.warn(error);
+      console.error(error);
     }
   };
 

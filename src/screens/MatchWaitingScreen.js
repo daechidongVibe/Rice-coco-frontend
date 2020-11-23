@@ -1,13 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import {
-  StackActions,
-  useNavigationState,
-  CommonActions,
-} from '@react-navigation/native';
-
+import { StackActions, CommonActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
 import RotatedIcon from '../components/RotatedIcon';
@@ -17,16 +12,14 @@ import configuredAxios from '../config/axiosConfig';
 const MatchWaiting = ({
   navigation,
   userId,
-  selectedMeeting: { meetingId, expiredTime, restaurantName },
-  setSelectedMeeting,
   currentMeeting,
+  setSelectedMeeting,
   setCurrentMeeting,
   meetingId,
   expiredTime,
-  restaurantName
+  restaurantName,
 }) => {
-  const navigationState = useNavigationState(state => state);
-  const [isStart, setIsStart] = useState(false)
+  const [isStart, setIsStart] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -34,9 +27,10 @@ const MatchWaiting = ({
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
+
         setSelectedMeeting(meetingDetails);
       } catch (err) {
-        console.error(err);
+        console.warn(err);
       }
     })();
   }, []);
@@ -44,19 +38,21 @@ const MatchWaiting = ({
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
-    socket.on('current meeting', data => {
+    socket.on('change current meeting', data => {
       setCurrentMeeting(data);
       setIsStart(true);
     });
 
-    return () => socket.off('current meeting');
+    return () => socket.off('change current meeting');
   }, []);
 
   useEffect(() => {
-    if (currentMeeting?.users?.length === 2) {
+    if (currentMeeting.users?.length === 2) {
       (async () => {
         const partnerId = currentMeeting.users.find(user => user !== userId);
-        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+        const { data: partner } = await configuredAxios.get(
+          `users/${partnerId}`
+        );
         const partnerNickname = partner.nickname;
 
         setSelectedMeeting({ partnerNickname });
@@ -71,18 +67,17 @@ const MatchWaiting = ({
             ],
           })
         );
-      })()
+      })();
     }
   }, [currentMeeting]);
 
   const handlePressCancelButton = async () => {
-    socketApi.cancelMeeting(meetingId, () => {
+    socketApi.cancelMeeting(() => {
       navigation.dispatch(StackActions.replace('MainMap'));
     });
   };
-
   const handleTimeEnd = async () => {
-    socketApi.cancelMeeting(meetingId, () => {
+    socketApi.cancelMeeting(() => {
       Alert.alert(
         '미팅 성사 시간 종료',
         '안타깝게도 혼자 드셔야겠네요',
@@ -106,7 +101,6 @@ const MatchWaiting = ({
       );
     });
   };
-
   return (
     <Container>
       <Text>MatchWaiting</Text>
@@ -119,7 +113,6 @@ const MatchWaiting = ({
     </Container>
   );
 };
-
 const Container = styled.View`
   display: flex;
   padding: 40px;
@@ -130,7 +123,6 @@ const Container = styled.View`
   align-content: center;
   align-items: center;
 `;
-
 const CancelButton = styled.Button`
   background-color: #ffffff;
   margin: auto;
@@ -142,19 +134,16 @@ const CancelButton = styled.Button`
   left: 50%;
   transform: translateX(-25px);
 `;
-
-const mapStateToProps = ({
-  meetings: { selectedMeeting, currentMeeting },
-  user: { _id },
-}) => {
-  return {
-    userId: _id,
-    selectedMeeting,
-    currentMeeting,
-  };
-};
-
-export default connect(mapStateToProps, {
-  setCurrentMeeting,
-  setSelectedMeeting,
-})(MatchWaiting);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    currentMeeting: state.meetings.currentMeeting,
+    meetingId: state.meetings.selectedMeeting.meetingId,
+    expiredTime: state.meetings.selectedMeeting.expiredTime,
+    restaurantName: state.meetings.selectedMeeting.restaurantName,
+  }),
+  {
+    setCurrentMeeting,
+    setSelectedMeeting,
+  }
+)(MatchWaiting);

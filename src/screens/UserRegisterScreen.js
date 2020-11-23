@@ -9,7 +9,7 @@ import PickerInput from '../components/PickerInput';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
 
-const UserRegisterScreen = ({ route, navigation }) => {
+const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');

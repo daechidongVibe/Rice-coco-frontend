@@ -29,7 +29,7 @@ const PaymentScreen = () => {
       e.target.style.backgroundColor = 'gray';
 
       // 먼저 Rice Coco 서버의 DB에 주문정보를 생성한다
-      fetch('http://192.168.0.45:3000/payment?authToken=${token}', {
+      fetch('http://192.168.0.54:3000/payment?authToken=${token}', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ const PaymentScreen = () => {
           buyer_email: "nninnnin7@gmail.com",
           buyer_name: "이동규",
           buyer_tel: "010-4280-5023",
-          m_redirect_url: "http://192.168.0.45:3000/payment?authToken=${token}"
+          m_redirect_url: "http://192.168.0.54:3000/payment?authToken=${token}"
         });
       })
       .catch(err => alert(err));
