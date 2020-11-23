@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
@@ -8,49 +8,42 @@ import configuredAxios from '../config/axiosConfig';
 import getEnvVars from '../../environment';
 import { setSelectedMeeting, setPromiseAmount } from '../actions/index';
 
-const {
-    REACT_NATIVE_GOOGLE_PLACES_API_KEY
-  } = getEnvVars();
+const { REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
 
 const RestaurantDetails = ({
-    navigation,
-    selectedMeeting,
-    setSelectedMeeting,
-    userId,
-    userPromise,
-    setPromiseAmount,
-    route
-  }) => {
-
+  navigation,
+  selectedMeeting,
+  setSelectedMeeting,
+  userId,
+  userPromise,
+  setPromiseAmount,
+  route,
+}) => {
   const {
     meetingId,
     restaurantId,
     restaurantName,
-    partnerNickname
+    partnerNickname,
   } = selectedMeeting;
 
   const searchWord = route.params?.searchWord;
-
   const hasCreatedMeeting = partnerNickname;
-
   const [photoUrls, setPhotoUrls] = useState([]);
-
   const reqUrl = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry`;
 
   useEffect(() => {
     (async () => {
-      const { data: { result } } = await configuredAxios(reqUrl);
-
       const {
-        lat: latitude,
-        lng: longitude
-      } = result.geometry.location;
+        data: { result },
+      } = await configuredAxios(reqUrl);
+
+      const { lat: latitude, lng: longitude } = result.geometry.location;
 
       setSelectedMeeting({
         restaurantLocation: {
           latitude,
-          longitude
-        }
+          longitude,
+        },
       });
 
       const { photos } = result;
@@ -62,7 +55,9 @@ const RestaurantDetails = ({
       for (let photo of photos.slice(0, 3)) {
         const { photo_reference } = photo;
 
-        const photoData = await configuredAxios(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo_reference}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`);
+        const photoData = await configuredAxios(
+          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo_reference}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`
+        );
 
         photoUrls.push(photoData.config.url);
       }
@@ -73,89 +68,78 @@ const RestaurantDetails = ({
 
   const renderItem = ({ item }) => <Image source={{ uri: item }} />;
 
-  const handlePressCreateButton = async (e) => {
+  const handlePressCreateButton = async e => {
     e.target.disabled = true;
 
-    setPromiseAmount(userPromise - 1);
-
-    const { data } = await configuredAxios.post(
-      '/meetings',
-      {
+    try {
+      const { data } = await configuredAxios.post('/meetings', {
         selectedMeeting,
-        userId
-      }
-    );
-
-    if (data.result === 'ok') {
+        userId,
+      });
       const { createdMeeting } = data;
       const { _id: meetingId, expiredTime } = createdMeeting;
 
       setSelectedMeeting({
         meetingId,
-        expiredTime
+        expiredTime,
       });
 
-      configuredAxios.put(
-        `/users/${userId}/promise`,
-        {
-          amount: -1
-        }
-      );
+      await configuredAxios.put(`/users/${userId}/promise`, {
+        amount: -1,
+      });
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'MatchWaiting',
-            },
-          ],
-        })
-      );
+      setPromiseAmount(userPromise - 1);
+    } catch (error) {
+      console.warn(error);
     }
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'MatchWaiting',
+          },
+        ],
+      })
+    );
   };
 
-  const handlePressJoinButton = async (e) => {
+  const handlePressJoinButton = async e => {
     e.target.disabled = true;
 
-    setPromiseAmount(userPromise - 1);
-
-    const { data } = await configuredAxios.put(
-      `/meetings/${meetingId}/join`,
-      { userId }
-    );
-
-    if (data.result === 'ok') {
+    try {
+      const { data } = await configuredAxios.put(
+        `/meetings/${meetingId}/join`,
+        { userId }
+      );
       const { updatedMeeting } = data;
+      const { _id, expiredTime } = updatedMeeting;
 
-      const { _id: meetingId, expiredTime } = updatedMeeting;
+      setSelectedMeeting({ meetingId: _id, expiredTime });
 
-      setSelectedMeeting({
-        meetingId,
-        expiredTime
+      await configuredAxios.put(`/users/${userId}/promise`, {
+        amount: -1,
       });
 
-      await configuredAxios.put(
-        `/users/${userId}/promise`,
-        {
-          amount: -1
-        }
-      );
-
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'MatchSuccess',
-            },
-          ],
-        })
-      );
+      setPromiseAmount(userPromise - 1);
+    } catch (error) {
+      console.warn(error);
     }
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'MatchSuccess',
+          },
+        ],
+      })
+    );
   };
 
-  return(
+  return (
     <Container>
       <Header>
         <HeaderText>{restaurantName}</HeaderText>
@@ -164,53 +148,46 @@ const RestaurantDetails = ({
         <PromiseIcon source={require('../../assets/images/promise.png')} />
         <PromiseAmount>{userPromise}개</PromiseAmount>
       </PromiseContainer>
-      {
-        (photoUrls.length > 0) &&
+      {photoUrls.length > 0 && (
         <FlatList
           data={photoUrls}
           renderItem={renderItem}
           keyExtractor={item => item}
           horizontal={true}
         />
-      }
-      {
-        hasCreatedMeeting ?
+      )}
+      {hasCreatedMeeting ? (
         <>
           <DescriptionHeader>{`"${restaurantName}" 에서 같이 밥먹을 사람!`}</DescriptionHeader>
           <Description>
             {`${restaurantName}에서 함께 식사하고 싶어하는  ${partnerNickname}님이 계십니다! 함께 드시겠어요?`}
           </Description>
         </>
-        :
+      ) : (
         <>
           <DescriptionHeader>{`${searchWord} 로 유명한 "${restaurantName}"`}</DescriptionHeader>
           <Description>
             {`${restaurantName}에서 함께 밥먹을 친구를 만나보시겠어요?`}
           </Description>
         </>
-      }
-      {
-        hasCreatedMeeting ?
-        <MeetingButton onPress={handlePressJoinButton}
-        >
+      )}
+      {hasCreatedMeeting ? (
+        <MeetingButton onPress={handlePressJoinButton}>
           <ButtonText>참여하기!</ButtonText>
           <ButtonPromiseContainer>
-            <PromiseIcon
-              source={require('../../assets/images/promise.png')}
-            />
-            <PromiseAmount>-1개</PromiseAmount>
-          </ButtonPromiseContainer>
-        </MeetingButton>:
-        <MeetingButton onPress={handlePressCreateButton}>
-          <ButtonText>생성하기!</ButtonText>
-          <ButtonPromiseContainer>
-            <PromiseIcon
-              source={require('../../assets/images/promise.png')}
-            />
+            <PromiseIcon source={require('../../assets/images/promise.png')} />
             <PromiseAmount>-1개</PromiseAmount>
           </ButtonPromiseContainer>
         </MeetingButton>
-      }
+      ) : (
+        <MeetingButton onPress={handlePressCreateButton}>
+          <ButtonText>생성하기!</ButtonText>
+          <ButtonPromiseContainer>
+            <PromiseIcon source={require('../../assets/images/promise.png')} />
+            <PromiseAmount>-1개</PromiseAmount>
+          </ButtonPromiseContainer>
+        </MeetingButton>
+      )}
     </Container>
   );
 };
@@ -300,8 +277,10 @@ export default connect(
   state => ({
     selectedMeeting: state.meetings.selectedMeeting,
     userId: state.user._id,
-    userPromise: state.user.promise
-  }),{
+    userPromise: state.user.promise,
+  }),
+  {
     setSelectedMeeting,
-    setPromiseAmount
-  })(RestaurantDetails);
+    setPromiseAmount,
+  }
+)(RestaurantDetails);

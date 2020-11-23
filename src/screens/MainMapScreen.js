@@ -12,7 +12,11 @@ import styled from 'styled-components/native';
 import isLocationNear from '../utils/isLocationNear';
 import ReloadImage from '../components/ReloadImage';
 import axiosInstance from '../config/axiosConfig';
-import { setUserLocation, setFilteredMeetings, setSelectedMeeting } from '../actions';
+import {
+  setUserLocation,
+  setFilteredMeetings,
+  setSelectedMeeting,
+} from '../actions';
 import { socketApi } from '../../socket';
 
 const MainMapScreen = ({
@@ -30,22 +34,12 @@ const MainMapScreen = ({
   const [errorMsg, setErrorMsg] = useState(null);
   const isMeetingExisted = !!meetings.length;
 
-  const handleRestaurantSearchButton = () => {
+  const handleSearchButtonClick = () => {
     navigation.navigate('Search');
   };
 
-  const handleRestaurantClick = (
-    meetingId,
-    restaurantId,
-    restaurantName,
-    partnerNickname
-  ) => {
-    setSelectedMeeting({
-      meetingId,
-      restaurantId,
-      restaurantName,
-      partnerNickname,
-    });
+  const handleRestaurantClick = restaurantInfo => {
+    setSelectedMeeting(restaurantInfo);
 
     navigation.navigate('RestaurantDetails');
   };
@@ -53,6 +47,7 @@ const MainMapScreen = ({
   const handleReloadClick = async () => {
     const { data } = await axiosInstance.get('/meetings');
     const { filteredMeetings } = data;
+
     setFilteredMeetings(filteredMeetings);
   };
 
@@ -120,7 +115,7 @@ const MainMapScreen = ({
             meetings.map(meeting => {
               const {
                 _id: meetingId,
-                restaurant: { restaurantId, name, location },
+                restaurant: { restaurantId, name: restaurantName, location },
                 participant: partnerNickname,
                 expiredTime,
               } = meeting;
@@ -134,17 +129,20 @@ const MainMapScreen = ({
               return (
                 <Marker
                   key={meeting['_id']}
-                  title={name}
+                  title={restaurantName}
                   description={`${partnerNickname} 대기중`}
                   coordinate={location}
                   onCalloutPress={() => {
                     if (!isMarkerInRange) return;
-                    handleRestaurantClick(
+
+                    const restaurantInfo = {
                       meetingId,
                       restaurantId,
-                      name,
-                      partnerNickname
-                    );
+                      restaurantName,
+                      partnerNickname,
+                    };
+
+                    handleRestaurantClick(restaurantInfo);
                   }}
                 >
                   {/* {isMarkerInRange && (
@@ -182,7 +180,7 @@ const MainMapScreen = ({
         </OverlayHeader>
         <OverlayFooter>
           <GuidanceText>함께 가고 싶은 맛집을 찾아보아요 ➪ </GuidanceText>
-          <RestaurantSearchButton onPress={handleRestaurantSearchButton}>
+          <RestaurantSearchButton onPress={handleSearchButtonClick}>
             <MaterialCommunityIcons name="rice" size={40} color="black" />
           </RestaurantSearchButton>
         </OverlayFooter>

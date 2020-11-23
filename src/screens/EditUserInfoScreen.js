@@ -9,27 +9,17 @@ import InputSelector from '../components/InputSelector';
 import { setUserInfo } from '../actions/index';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
-
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
-  const {
-    nickname,
-    birthYear,
-    email,
-    gender,
-    occupation,
-    promise
-  } = user;
+  const { nickname, birthYear, email, gender, occupation, promise } = user;
 
   const [isEdited, setIsEdited] = useState(false);
-  const [nicknameInput, setNicknameInput] = useState('');
-  const [occupationInput, setOccupationInput] = useState('');
+  const [nicknameInput, setNicknameInput] = useState(nickname);
+  const [occupationInput, setOccupationInput] = useState(occupation);
 
   useEffect(() => {
     (async () => {
       // 유저 정보 다시 가져와서 리덕스에 세팅 (프로미스 바뀐 경우 반영)
-      const { data: user } = await configuredAxios.get(
-        `/users/${userId}`
-      );
+      const { data: user } = await configuredAxios.get(`/users/${userId}`);
 
       const { promise } = user;
 
@@ -53,7 +43,7 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
 
   const handlePressNicknameRefresher = async () => {
     const {
-      data: { words: randomName }
+      data: { words: randomName },
     } = await configuredAxios.get(
       'https://nickname.hwanmoo.kr/?format=json&count=1'
     );
@@ -62,31 +52,21 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   };
 
   const onPressSubmitButton = async () => {
-    const { data: response } = await configuredAxios.put(
-      `/users/${userId}`,
-      {
-        nickname: nicknameInput,
-        occupation: occupationInput
-      }
-    );
+    try {
+      const { data: updatedUser } = await configuredAxios.put(
+        `/users/${userId}`,
+        {
+          nickname: nicknameInput,
+          occupation: occupationInput,
+        }
+      );
+      const { nickname, occupation } = updatedUser;
 
-    if (response.status === 'ok') {
-      const { nickname, occupation } = response.updatedUser;
-
-      setUserInfo({
-        nickname,
-        occupation
-      });
-
+      setUserInfo({ nickname, occupation });
       alert('업데이트 성공!');
-
       navigation.goBack();
-    }
-
-    if (response.status === 'failure') {
-      alert(response.errMessage);
-
-      navigation.goBack();
+    } catch (error) {
+      console.warn(error);
     }
   };
 
@@ -97,18 +77,27 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
 
         <InputHeader>E-MAIL</InputHeader>
         <InputContainer>
-          <Input value={email} editable={false} style={{ color: 'lightgray' }} />
+          <Input
+            value={email}
+            editable={false}
+            style={{ color: 'lightgray' }}
+          />
         </InputContainer>
 
         <InputHeader>닉네임</InputHeader>
         <InputContainer>
           <Input value={nicknameInput} editable={false} />
-          <TouchableOpacity onPress={handlePressNicknameRefresher} >
+          <TouchableOpacity onPress={handlePressNicknameRefresher}>
             <MaterialIcons
               name="refresh"
               size={30}
               color="white"
-              style={{ width: 30, height: 30, color: '#ff914d', marginRight: 10 }}
+              style={{
+                width: 30,
+                height: 30,
+                color: '#ff914d',
+                marginRight: 10,
+              }}
             />
           </TouchableOpacity>
         </InputContainer>
@@ -125,12 +114,20 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
 
         <InputHeader>성별</InputHeader>
         <InputContainer>
-          <Input value={gender} editable={false} style={{ color: 'lightgray' }} />
+          <Input
+            value={gender}
+            editable={false}
+            style={{ color: 'lightgray' }}
+          />
         </InputContainer>
 
         <InputHeader>나이</InputHeader>
         <InputContainer>
-          <Input value={birthYear} editable={false} style={{ color: 'lightgray' }} />
+          <Input
+            value={birthYear}
+            editable={false}
+            style={{ color: 'lightgray' }}
+          />
         </InputContainer>
 
         <InputHeader>프로미스</InputHeader>
@@ -146,7 +143,9 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
             disabled={isEdited ? false : true}
             onPress={onPressSubmitButton}
           >
-            <Text style={{ color: 'white', textAlign: 'center' }}>수정하기</Text>
+            <Text style={{ color: 'white', textAlign: 'center' }}>
+              수정하기
+            </Text>
           </SubmitButton>
         </Wrapper>
       </Container>
@@ -203,12 +202,15 @@ const SubmitButton = styled.TouchableOpacity`
   padding: 13px 20px;
   margin-top: 5px;
   margin-bottom: 15px;
-  background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
+  background-color: ${props => (props.disabled ? 'gray' : '#ff914d')};
 `;
 
-export default connect(state => ({
-  user: state.user,
-  userId: state.user._id
-}),{
-  setUserInfo
-})(EditUserInfo);
+export default connect(
+  state => ({
+    user: state.user,
+    userId: state.user._id,
+  }),
+  {
+    setUserInfo,
+  }
+)(EditUserInfo);

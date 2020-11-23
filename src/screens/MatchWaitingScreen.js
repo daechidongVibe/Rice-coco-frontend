@@ -27,9 +27,10 @@ const MatchWaiting = ({
         const {
           data: { meetingDetails },
         } = await configuredAxios.get(`/meetings/${meetingId}`);
+
         setSelectedMeeting(meetingDetails);
       } catch (err) {
-        console.error(err);
+        console.warn(err);
       }
     })();
   }, []);
@@ -46,7 +47,7 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
-    if (currentMeeting?.users?.length === 2) {
+    if (currentMeeting.users?.length === 2) {
       (async () => {
         const partnerId = currentMeeting.users.find(user => user !== userId);
         const { data: partner } = await configuredAxios.get(

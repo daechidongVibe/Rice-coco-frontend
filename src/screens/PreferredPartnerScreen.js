@@ -3,7 +3,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Svg, { Polygon } from 'react-native-svg';
-import { useNavigationState } from '@react-navigation/native'
+import { useNavigationState } from '@react-navigation/native';
 
 import axios from '../config/axiosConfig';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
@@ -28,7 +28,7 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
   }, []);
 
   const handleSubmit = async () => {
-    const preferredPartner = {
+    const newPartnerConditions = {
       gender: genderInput,
       birthYear: ageInput,
       occupation: occupationInput,
@@ -36,31 +36,19 @@ const PreferredPartnerScreen = ({ navigation, user, setUserInfo }) => {
 
     try {
       const {
-        data: { result, updatedUser, errMessage },
+        data: { preferredPartner },
       } = await axios.put(
         `/users/${user._id}/preferred-partner`,
-        preferredPartner
+        newPartnerConditions
       );
 
-      if (result === 'ok') {
-        setUserInfo({
-          preferredPartner: updatedUser.preferredPartner,
-        });
-
-        if (navigationState.routes.length >= 2) {
-          navigation.goBack();
-          return;
-        }
-        navigation.navigate('MainMap');
-        return;
-      }
-
-      if (result === 'failure') {
-        console.error(errMessage);
-      }
+      setUserInfo({ preferredPartner });
     } catch (err) {
-      console.error(err);
+      console.warn(err);
     }
+
+    const hasUpdatedInMyPage = navigationState.routes.length >= 2;
+    hasUpdatedInMyPage ? navigation.goBack() : navigation.navigate('MainMap');
   };
 
   const mentMap = {

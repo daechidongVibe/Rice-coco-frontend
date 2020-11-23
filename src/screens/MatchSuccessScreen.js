@@ -122,15 +122,9 @@ const MatchSuccessScreen = ({
     (async () => {
       try {
         const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
-        if (data.result === 'ok') {
-          const { meetingDetails } = data;
+        const { meetingDetails } = data;
 
-          setSelectedMeeting(meetingDetails);
-        }
-
-        if (data.result === 'failure') {
-          console.error(data.errMessage);
-        }
+        setSelectedMeeting(meetingDetails);
       } catch (error) {
         console.error(err);
       }
