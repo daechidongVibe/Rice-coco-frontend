@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';

@@ -33,3 +33,7 @@ export const setCurrentMeeting = meeting => ({
 export const resetMeeting = () => ({
   type: types.RESET_MEETING,
 });
+
+export const resetUserInfo = () => ({
+  type: types.RESET_USER_INFO,
+});
