@@ -12,15 +12,12 @@ import configuredAxios from '../config/axiosConfig';
 const MatchWaiting = ({
   navigation,
   userId,
-  currentMeeting,
   setSelectedMeeting,
   setCurrentMeeting,
   meetingId,
   expiredTime,
   restaurantName,
 }) => {
-  const [isStart, setIsStart] = useState(false);
-
   useEffect(() => {
     (async () => {
       try {
@@ -36,40 +33,37 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
-    socketApi.joinMeeting(meetingId, userId);
+    socketApi.createMeeting(meetingId, userId);
 
-    socket.on('change current meeting', data => {
-      setCurrentMeeting(data);
-      setIsStart(true);
+    socket.on('partner join meeting', async ({ meetingData, partnerId }) => {
+      const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+      const partnerNickname = partner.nickname;
+
+      setSelectedMeeting({ partnerNickname });
+      setCurrentMeeting(meetingData);
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MatchSuccess',
+            },
+          ],
+        })
+      );
     });
 
-    return () => socket.off('change current meeting');
+    return () => socket.off('partner join meeting');
   }, []);
 
-  useEffect(() => {
-    if (currentMeeting.users?.length === 2) {
-      (async () => {
-        const partnerId = currentMeeting.users.find(user => user !== userId);
-        const { data: partner } = await configuredAxios.get(
-          `users/${partnerId}`
-        );
-        const partnerNickname = partner.nickname;
+  // useEffect(() => {
+  //   if (currentMeeting.users?.length !== 2) return;
 
-        setSelectedMeeting({ partnerNickname });
+  //   (async () => {
 
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'MatchSuccess',
-              },
-            ],
-          })
-        );
-      })();
-    }
-  }, [currentMeeting]);
+  //   })();
+  // }, [currentMeeting]);
 
   const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(() => {
@@ -104,10 +98,8 @@ const MatchWaiting = ({
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {!!expiredTime && (
-        <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
-      )}
-      <RotatedIcon start={isStart} />
+      <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+      <RotatedIcon />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title="취소하기" />
     </Container>
