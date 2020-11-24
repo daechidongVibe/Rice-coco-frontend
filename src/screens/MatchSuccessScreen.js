@@ -40,14 +40,10 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(false);
+  const [isArrived, setIsArrived] = useState(true);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
-  const [partnerLocation, setPartnerLocation] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
-  const { latitude, longitude } = partnerLocation;
+  const [partnerLocation, setPartnerLocation] = useState({ latitude: 0, longitude: 0 });
 
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
@@ -57,6 +53,10 @@ const MatchSuccessScreen = ({
     });
 
     socket.on('get partner location', location => {
+      const {longitude, latitude} = location;
+      console.log(`나는 ${userNickname}`);
+      console.log(`파트너는 ${partnerNickname}`);
+      console.log(`파트너의 위치는 ${longitude, latitude}`);
       setPartnerLocation(location);
     });
 
@@ -78,6 +78,8 @@ const MatchSuccessScreen = ({
         { cancelable: false }
       );
     });
+
+    return () => socketApi.removeAllListeners();
   }, []);
 
   useEffect(() => {
@@ -98,9 +100,9 @@ const MatchSuccessScreen = ({
       });
     })();
 
-    return async () =>
-      await Location.stopLocationUpdatesAsync('background-location-task');
-  });
+    return async () => await Location.stopLocationUpdatesAsync('background-location-task');
+  }, []);
+
 
   useEffect(() => {
     (async () => {
@@ -150,8 +152,8 @@ const MatchSuccessScreen = ({
   const handleArrivalButtonClick = async () => {
     if (isArrivalConfirmed) return;
     setIsArrivalConfirmed(true);
-
     setPromiseAmount(userPromise + 1);
+
     await configuredAxios.put(`/users/${userId}/promise`, {
       amount: 1,
     });

@@ -96,10 +96,6 @@ const MainMapScreen = ({
     })();
   }, []);
 
-  useEffect(() => {
-    socketApi.removeAllListeners();
-  })
-
   return fontLoaded ? (
     <>
       <Wrapper>

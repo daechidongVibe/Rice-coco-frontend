@@ -71,7 +71,7 @@ const PaymentScreen = () => {
 
     paymentButton.addEventListener('click', handleClickPaymentButton);
   `;
-  console.log(paymentInfo)
+
   return (
     <Container>
       {
