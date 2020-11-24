@@ -39,8 +39,10 @@ const MainMapScreen = ({
   };
 
   const handleRestaurantClick = restaurantInfo => {
+    const partnerNickname = restaurantInfo.partnerNickname;
+
     setSelectedMeeting(restaurantInfo);
-    navigation.navigate('RestaurantDetails');
+    navigation.navigate('RestaurantDetails', { partnerNickname });
   };
 
   const handleReloadClick = async () => {
