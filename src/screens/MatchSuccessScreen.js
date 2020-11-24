@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-  Text,
-  View,
-  Alert,
-  Button,
-} from 'react-native';
+import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StackActions, CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
 
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
@@ -24,7 +16,6 @@ import configuredAxios from '../config/axiosConfig';
 import {
   setUserLocation,
   setSelectedMeeting,
-  setUserInfo,
   setCurrentMeeting,
   setPromiseAmount,
   resetMeeting,
@@ -49,23 +40,20 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(true);
+  const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
-    latitude: 37.5011548,
-    longitude: 127.0808086,
+    latitude: 0,
+    longitude: 0,
   });
+  const { latitude, longitude } = partnerLocation;
 
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
     socket.on('change current meeting', meetingData => {
       setCurrentMeeting(meetingData);
-
-      if (meetingData.arrivalCount === 2) {
-        socketApi.removeAllListeners();
-      }
     });
 
     socket.on('get partner location', location => {
@@ -92,36 +80,27 @@ const MatchSuccessScreen = ({
     });
   }, []);
 
-  // useEffect(() => {
-  //   isLocationNear(userLocation, restaurantLocation, 100)
-  //     ? setIsArrived(true)
-  //     : setIsArrived(false);
+  useEffect(() => {
+    isLocationNear(userLocation, restaurantLocation, 500)
+      ? setIsArrived(true)
+      : setIsArrived(false);
 
-  //   socketApi.sendLocation(userLocation);
-  // }, [userLocation]);
+    socketApi.sendLocation(userLocation);
+  }, [userLocation]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await Location.startLocationUpdatesAsync('trackLocation', {
-  //       accuracy: Location.Accuracy.Highest,
-  //       timeInterval: 1000,
-  //       distanceInterval: 1,
-  //       howsBackgroundLocationIndicator: true,
-  //     });
+  useEffect(() => {
+    (async () => {
+      await Location.startLocationUpdatesAsync('background-location-task', {
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 1000,
+        distanceInterval: 1,
+        howsBackgroundLocationIndicator: true,
+      });
+    })();
 
-  //     TaskManager.defineTask(
-  //       'trackLocation',
-  //       ({ data: { locations }, error }) => {
-  //         if (error) return;
-  //         const {
-  //           coords: { latitude, longitude },
-  //         } = locations[0];
-  //         setUserLocation({ latitude, longitude });
-  //       }
-  //     );
-  //   })();
-  //   return () => Location.stopLocationUpdatesAsync();
-  // }, []);
+    return async () =>
+      await Location.stopLocationUpdatesAsync('background-location-task');
+  });
 
   useEffect(() => {
     (async () => {
@@ -227,7 +206,7 @@ const MatchSuccessScreen = ({
         </Marker>
         <Circle
           center={restaurantLocation}
-          radius={100}
+          radius={500}
           strokeColor="rgba(0, 0, 255, 0.1)"
           fillColor="rgba(0, 0, 255, 0.1)"
         />
@@ -240,10 +219,7 @@ const MatchSuccessScreen = ({
         <OverlayTitle>R I C E C O C O</OverlayTitle>
         <OverlaySubDesc>매칭 성공! 1시간 내로 도착하세요!</OverlaySubDesc>
         {isArrived && (
-          <ArrivalButton
-            onPress={handleArrivalButtonClick}
-            // opacity={isArrivalConfirmed ? '0.5' : '1'}
-          >
+          <ArrivalButton onPress={handleArrivalButtonClick}>
             <ArrivalText>
               {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
             </ArrivalText>
@@ -343,7 +319,6 @@ const ArrivalButton = styled.TouchableOpacity`
   width: 50%;
   padding: 10px;
   border-radius: 50px;
-  /* opacity: ${props => props.opacity}; */
 `;
 
 const ArrivalText = styled.Text`

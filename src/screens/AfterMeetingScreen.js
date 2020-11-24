@@ -9,28 +9,10 @@ import configuredAxios from '../config/axiosConfig';
 
 const AfterMeetingScreen = ({
   userId,
-  meetingId,
   resetMeeting,
   partnerNickname,
   navigation,
 }) => {
-  // useEffect(() => {
-  //   (async () => {
-  //     // 마운트 되면 해당 미팅을 유저 히스토리로 추가
-  //     const { data } = await configuredAxios.put(`users/${userId}/history`, {
-  //       meetingId,
-  //     });
-
-  //     if (data.result === 'SUCCESS') {
-  //       return;
-  //     }
-
-  //     if (data.result === 'FAILURE') {
-  //       // console.error(data.result.errMessage);
-  //     }
-  //   })();
-  // }, []);
-
   const handleAgreeButtonClick = async () => {
     await configuredAxios.put(`users/${userId}/favorite-partners`, {
       partnerNickname,
