@@ -6,7 +6,7 @@ import { StackActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
 import RotatedIcon from '../components/RotatedIcon';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import configuredAxios from '../config/axiosConfig';
 import resetAction from '../utils/navigation';
 import ALERT from '../constants/alert';

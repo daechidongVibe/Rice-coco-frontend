@@ -5,7 +5,7 @@ import { Input } from 'react-native-elements';
 import MessageBox from '../components/MessageBox';
 import configuredAxios from '../config/axiosConfig';
 import ALERT from '../constants/alert';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import * as Permissions from 'expo-permissions';
 import * as Notifications from 'expo-notifications';
 import Icon from 'react-native-vector-icons/FontAwesome5';

@@ -18,7 +18,7 @@ import {
   setPromiseAmount,
   resetMeeting,
 } from '../actions';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import resetAction from '../utils/navigation';
 import SOCKET_EVENT from '../constants/socket';
 import ALERT from '../constants/alert';
