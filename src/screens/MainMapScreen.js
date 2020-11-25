@@ -32,7 +32,7 @@ const MainMapScreen = ({
 }) => {
   const [fontLoaded] = useFonts({
     Glacial: require( '../../assets/fonts/GlacialIndifference-Bold.otf'),
-  }); 
+  });
   const [errorMsg, setErrorMsg] = useState(null);
   const isMeetingExisted = !!waitingMeetings.length;
 

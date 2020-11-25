@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "Ricecoco",
+    "slug": "Ricecoco",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ricecoco-icon.png",
@@ -26,6 +26,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.ricecoco.ricecoco",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDtbGTcIQFtFBMR7r_nox6LSmfWlvw5Q8w"

@@ -1,10 +1,10 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as TaskManager from 'expo-task-manager';
-
 import HomeStackScreen from './src/screens/HomeStackScreen';
 import MyPageStackScreen from './src/screens/MyPageStackScreen';
 import { setUserLocation } from './src/actions/index';

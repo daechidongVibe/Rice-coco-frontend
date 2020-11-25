@@ -7,7 +7,9 @@ import googleAuth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import { LoginButton, P, Wrapper } from '../shared/index';
-import SCREEN from  '../constants/screen';
+import { logInWithFacebook } from '../utils/authByFacebook';
+
+import SCREEN from '../constants/screen';
 import ALERT from '../constants/alert';
 import { COLOR } from '../constants/assets';
 
@@ -34,10 +36,7 @@ const Login = ({ navigation, setUserInfo }) => {
     event.target.disabled = true;
 
     try {
-      const email = await googleAuth();
-
-      if (!email) return;
-
+      const { email } = await logInWithFacebook();
       const { data } = await configuredAxios.post('users/login', { email });
 
       if (data.result === ALERT.NOT_EXIST) {
@@ -49,13 +48,13 @@ const Login = ({ navigation, setUserInfo }) => {
       const { user, token } = data;
 
       await asyncStorage.setItem('token', token);
-
       setUserInfo(user);
 
       user.preferredPartner
         ? navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP))
         : navigation.dispatch(StackActions.replace(SCREEN.PREFERRED_PARTNER));
     } catch (error) {
+      console.log(111111);
       console.error(error);
     }
   };
@@ -71,10 +70,8 @@ const Login = ({ navigation, setUserInfo }) => {
           bottom: 80,
         }}
       />
-      <LoginButton
-        onPress={handleLoginButtonClick}
-      >
-        <P>Google 로그인</P>
+      <LoginButton onPress={handleLoginButtonClick}>
+        <P>페이스북 로그인</P>
       </LoginButton>
     </Wrapper>
   );
