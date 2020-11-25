@@ -43,7 +43,6 @@ const ReloadImage = ({ onClick }) => {
 const Wrapper = styled.TouchableOpacity`
   display: flex;
   align-items: center;
-  padding: 20px;
 `;
 
 export default ReloadImage;

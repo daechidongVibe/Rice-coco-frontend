@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import styled from 'styled-components';
 import { Picker } from '@react-native-picker/picker';
+import {Container, InputContainer} from '../shared/index';
 
 const PickerInput = ({ content, onChange, contentOptions }) => {
   return (
-    <View style={styles.wrapper}>
+    <View>
       <Picker
         selectedValue={content}
-        style={styles.picker}
         onValueChange={value => onChange(value)}
       >
         {contentOptions.map((option, index) => {
@@ -18,15 +18,5 @@ const PickerInput = ({ content, onChange, contentOptions }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: 'white',
-    marginBottom: 10,
-  },
-  picker: {
-    textAlign: 'center',
-  },
-});
 
 export default PickerInput;

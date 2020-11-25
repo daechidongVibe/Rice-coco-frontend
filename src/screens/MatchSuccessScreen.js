@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Image, Text, View, Alert } from 'react-native';
+import { connect } from 'react-redux';
 import MapView, { PROVIDER_GOOGLE, Marker, Circle } from 'react-native-maps';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { StackActions, CommonActions } from '@react-navigation/native';
+import { StackActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
-import { connect } from 'react-redux';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
@@ -21,6 +20,11 @@ import {
   resetMeeting,
 } from '../actions';
 import { socket, socketApi } from '../../socket';
+import resetAction from '../utils/navigation';
+import SOCKET_EVENT from '../constants/socket';
+import ALERT from '../constants/alert';
+import SCREEN from '../constants/screen';
+import ROUTE from '../constants/route';
 
 const MatchSuccessScreen = ({
   userId,
@@ -48,29 +52,25 @@ const MatchSuccessScreen = ({
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
-    socket.on('change current meeting', meetingData => {
+    socket.on(SOCKET_EVENT.CHANGE_CURRENT_MEETING, meetingData => {
       setCurrentMeeting(meetingData);
     });
 
-    socket.on('get partner location', location => {
-      const {longitude, latitude} = location;
-      console.log(`나는 ${userNickname}`);
-      console.log(`파트너는 ${partnerNickname}`);
-      console.log(`파트너의 위치는 ${longitude, latitude}`);
+    socket.on(SOCKET_EVENT.GET_PARTNER_LOCATION, location => {
       setPartnerLocation(location);
     });
 
-    socket.on('canceled by partner', () => {
+    socket.on(SOCKET_EVENT.CANCELED_BY_PARTNER, () => {
       Alert.alert(
-        '미팅 성사 취소',
-        '안타깝게도 상대방이 미팅을 취소하셨습니다.',
+        ALERT.TIME_OUT_TITLE,
+        ALERT.TIME_OUT_MESSAGE,
         [
           {
-            text: 'OK',
+            text: ALERT.OK,
             onPress: () => {
               socketApi.finishMeeting(() => {
                 resetMeeting();
-                navigation.dispatch(StackActions.replace('MainMap'));
+                navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
               });
             },
           },
@@ -107,12 +107,12 @@ const MatchSuccessScreen = ({
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await configuredAxios.get(`/meetings/${meetingId}`);
+        const { data } = await configuredAxios.get(`${ROUTE.MEETINGS}/${meetingId}`);
         const { meetingDetails } = data;
 
         setSelectedMeeting(meetingDetails);
       } catch (error) {
-        console.error(err);
+        console.error(error);
       }
     })();
   }, []);
@@ -122,39 +122,21 @@ const MatchSuccessScreen = ({
 
     isAllArrived
       ? socketApi.finishMeeting(() => {
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                {
-                  name: 'AfterMeeting',
-                },
-              ],
-            })
-          );
-        })
+        navigation.dispatch(resetAction(0, SCREEN.AFTER_MEETING));
+      })
       : socketApi.cancelMeeting(() => {
-          resetMeeting();
-
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                {
-                  name: 'MainMap',
-                },
-              ],
-            })
-          );
-        });
+        resetMeeting();
+        navigation.dispatch(resetAction(0, SCREEN.MAIN_MAP));
+      });
   };
 
   const handleArrivalButtonClick = async () => {
     if (isArrivalConfirmed) return;
+
     setIsArrivalConfirmed(true);
     setPromiseAmount(userPromise + 1);
 
-    await configuredAxios.put(`/users/${userId}/promise`, {
+    await configuredAxios.put(`${ROUTE.USERS}/${userId}${ROUTE.PROMISE}`, {
       amount: 1,
     });
 
@@ -162,18 +144,18 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    navigation.navigate('ChatRoom', { navigation });
+    navigation.navigate(SCREEN.CHAT_ROOM, { navigation });
   };
 
   const handleBreakupButtonClick = async () => {
-    await configuredAxios.put(`/users/${userId}/promise`, {
+    await configuredAxios.put(`${ROUTE.USERS}/${userId}${ROUTE.PROMISE}`, {
       amount: -1,
     });
-    setPromiseAmount(userPromise - 1);
 
+    setPromiseAmount(userPromise - 1);
     socketApi.breakupMeeting(() => {
       resetMeeting();
-      navigation.dispatch(StackActions.replace('MainMap'));
+      navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
     });
   };
 
@@ -202,15 +184,15 @@ const MatchSuccessScreen = ({
                 width: 24,
                 height: 26,
               }}
-              resizeMode="cover"
+              resizeMode='cover'
             />
           </View>
         </Marker>
         <Circle
           center={restaurantLocation}
           radius={500}
-          strokeColor="rgba(0, 0, 255, 0.1)"
-          fillColor="rgba(0, 0, 255, 0.1)"
+          strokeColor='rgba(0, 0, 255, 0.1)'
+          fillColor='rgba(0, 0, 255, 0.1)'
         />
       </MapView>
       <LinearGradient
@@ -223,7 +205,7 @@ const MatchSuccessScreen = ({
         {isArrived && (
           <ArrivalButton onPress={handleArrivalButtonClick}>
             <ArrivalText>
-              {isArrivalConfirmed ? '도착 완료!' : '도착 확인!'}
+              {isArrivalConfirmed ? ALERT.COMPLATE_ARRIVAL : ALERT.CONFIRM_ARRIVAL}
             </ArrivalText>
           </ArrivalButton>
         )}
@@ -234,19 +216,19 @@ const MatchSuccessScreen = ({
       <OverlayFooter>
         {!isArrived && (
           <ArrivalButton onPress={() => setIsOnVergeofBreaking(true)}>
-            <ArrivalText>{'약속 파토내기'}</ArrivalText>
+            <ArrivalText>{ALERT.CANCEL_PROMISE}</ArrivalText>
           </ArrivalButton>
         )}
         {isOnVergeofBreaking && (
           <FinalQuestion
             modalVisible={isOnVergeofBreaking}
             setModalVisible={setIsOnVergeofBreaking}
-            question={'정말 파토내시겠습니까?'}
+            question={ALERT.CONFIRM_CANCEL_PROMISE}
             onClickYes={handleBreakupButtonClick}
           />
         )}
         <ChatButton onPress={handleChatButtonClick}>
-          <FontAwesome5 name="rocketchat" size={30} color="black" />
+          <FontAwesome5 name='rocketchat' size={30} color='black' />
         </ChatButton>
       </OverlayFooter>
     </Wrapper>

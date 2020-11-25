@@ -1,6 +1,6 @@
 const MY_INFO_OPTIONS = {
-  gender: ['남자', '여자'],
-  occupation: [
+  GENDER: ['남자', '여자'],
+  OCCUPATION: [
     '개발',
     '경영-비즈니스',
     '마케팅-광고',
@@ -21,14 +21,14 @@ const MY_INFO_OPTIONS = {
     '건설-시설',
     '공공-복지',
   ],
-  age: [
+  AGE: [
     '20대',
     '30대',
     '40대',
     '50대'
   ],
-  birthYear: [...Array(40).keys()].map(x => String(x + 1970)),
-  paymentInfo: [
+  BIRTH_YEAR: [...Array(40).keys()].map(x => String(x + 1970)),
+  PAYMENT_INFO: [
     {
       name: '프로미스',
       amount: 10,
