@@ -1,17 +1,11 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
-import styled from 'styled-components/native';
-import {
-  OBJECT,
-  OPEN,
-  CLOSE,
-  IT_IS_CLOSED,
-  FIND_OTHER_RESTAURANT,
-  YES
-} from '../constants/messages';
+import ALERT from '../constants/alert';
+import { Container, P,Label, ItemContainer } from '../shared/index';
+import SCREEN from '../constants/screen';
 
 const RenderItem = ({
   item,
@@ -22,17 +16,17 @@ const RenderItem = ({
   const openingHours = item.openingHours;
   let isOpen = '-';
 
-  if (typeof openingHours === OBJECT) {
-    isOpen = openingHours['open_now'] ? OPEN : CLOSE;
+  if (typeof openingHours === ALERT.OBJECT) {
+    isOpen = openingHours['open_now'] ? ALERT.OPEN : ALERT.CLOSE;
   }
 
   const handlePressRestaurant = () => {
-    if (isOpen === CLOSE) return Alert.alert(
-      IT_IS_CLOSED,
-      FIND_OTHER_RESTAURANT,
+    if (isOpen === ALERT.CLOSE) return Alert.alert(
+      ALERT.IT_IS_CLOSED,
+      ALERT.FIND_OTHER_RESTAURANT,
       [
         {
-          text: YES
+          text: ALERT.YES
         }
       ]
     );
@@ -41,6 +35,7 @@ const RenderItem = ({
       meeting => meeting.restaurant.restaurantId === item.id
     );
     const partnerNickname = hasCreatedMeeting?.partnerNickname;
+
     setSelectedMeeting({
       restaurantId: item.id,
       restaurantName: item.name,
@@ -49,23 +44,17 @@ const RenderItem = ({
         '',
     });
 
-    return navigation.navigate('RestaurantDetails', { partnerNickname });
+    return navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
   };
 
   return (
-    <>
-      <ItemContainer onPress={handlePressRestaurant}>
-        <View>
-          <Rating imageSize={20} startingValue={item.rating} readonly />
-        </View>
-        <View>
-          <NameText>{item.name}</NameText>
-        </View>
-        <View>
-          <DetailText isOpen={isOpen === OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</DetailText>
-        </View>
-      </ItemContainer>
-    </>
+    <ItemContainer onPress={handlePressRestaurant}>
+      <Container>
+        <Label numberOfLines={2} ellipsizeMode='tail'>{item.name}</Label>
+        <P color={isOpen === ALERT.OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</P>
+        <Rating imageSize={14} startingValue={item.rating} readonly />
+      </Container>
+    </ItemContainer>
   );
 };
 
@@ -74,23 +63,3 @@ export default connect(state => ({
 }), {
   setSelectedMeeting
 })(RenderItem);
-
-const ItemContainer = styled.TouchableOpacity`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 180px;
-  border: 2px solid #fbf6f0;
-  border-radius: 8px;
-  margin-bottom: 8px;
-`;
-
-const NameText = styled.Text`
-  font-size: 24px;
-`;
-
-const DetailText = styled.Text`
-  font-size: 36px;
-  color: ${props => props.isOpen}
-`;

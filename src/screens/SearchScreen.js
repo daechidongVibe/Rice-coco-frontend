@@ -1,31 +1,23 @@
 import React, { useState } from 'react';
-import {  Keyboard, ImageBackground } from 'react-native';
-import styled from 'styled-components/native';
-import { Input } from 'react-native-elements';
-
-import RenderItem from '../components/RenderItem';
-import configuredAxios from '../config/axiosConfig';
-import { SHOULD_ENTER_WORD, SHOULD_ENTER_FOOD, SHOULD_INPUT_RESTAURANT} from '../constants/messages';
+import Icon from 'react-native-vector-icons/Feather';
+import BouncingPreloader from 'react-native-bouncing-preloader';
 import getEnvVars from '../../environment';
-import LoadingSpinner from '../components/LoadingSpinner';
-
+import configuredAxios from '../config/axiosConfig';
+import ALERT from '../constants/alert';
+import RenderItem from '../components/RenderItem';
+import { COLOR } from '../constants/assets';
+import { Wrapper, SearchInput, Container, P, StyledFlatList, ListContainer, InputContainer } from '../shared/index';
 const { REACT_NATIVE_GOOGLE_PLACES_URL, REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
 
 const Search = ({ navigation }) => {
   const [searchList, setSearchList] = useState('');
   const [searchWord, setSearchWord] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [placeHolder, setPlaceHolder] = useState(SHOULD_ENTER_FOOD);
 
   const restaurantUrl = `${REACT_NATIVE_GOOGLE_PLACES_URL}&keyword=${searchWord}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`;
 
   const handleSearchWordSubmit = async () => {
     if (isSearching) return;
-
-    if (!searchWord) {
-      setPlaceHolder(SHOULD_ENTER_WORD);
-      return;
-    }
 
     setIsSearching(true);
 
@@ -43,40 +35,44 @@ const Search = ({ navigation }) => {
       );
 
       setSearchList(filteredSearchList);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.warn(error);
     }
-
     setIsSearching(false);
   };
 
   return (
-    <>
-      <Container>
-        <Input
-          placeholder={placeHolder}
-          value={searchWord}
-          onChangeText={setSearchWord}
-          onSubmitEditing={handleSearchWordSubmit}
-        />
-        <ImageBackground
-          style={{
-            width: 160,
-            height: 160,
-            position: 'absolute',
-            bottom: 100,
-            opacity: 0.5
-          }}
-        >
-          <Description>
-            {!searchList && !isSearching ? SHOULD_INPUT_RESTAURANT : ''}
-          </Description>
-        </ImageBackground>
+    <Wrapper>
+      <InputContainer>
+        <Container>
+          <Icon
+            name='search'
+            size={24}
+            color={COLOR.THEME_COLOR}
+          />
+          <SearchInput
+            value={searchWord}
+            onChangeText={setSearchWord}
+            onSubmitEditing={handleSearchWordSubmit}
+          />
+        </Container>
+      </InputContainer>
+      <ListContainer>
+        <P color={COLOR.THEME_COLOR}>
+          {!searchList && !isSearching ? ALERT.SHOULD_INPUT_RESTAURANT : ''}
+        </P>
         {
           isSearching ?
-            <LoadingSpinner/>
+            <BouncingPreloader
+              icons={[require('../../assets/images/ricecoco-icon.png')]}
+              leftRotation='-680deg'
+              rightRotation='360deg'
+              leftDistance={-180}
+              rightDistance={-250}
+              speed={1000}
+            />
             :
-            <RestaurantList
+            <StyledFlatList
               data={searchList}
               renderItem={({ item }) => (
                 <RenderItem
@@ -88,29 +84,9 @@ const Search = ({ navigation }) => {
               keyExtractor={restaurant => restaurant.id}
             />
         }
-      </Container>
-    </>
+      </ListContainer>
+    </Wrapper>
   );
 };
 
-const Container = styled.View`
-  flex: 1;
-  padding-top: 40px;
-  background-color: #ffffff;
-  text-align: center;
-  align-content: center;
-  align-items: center;
-`;
-
-const Description = styled.Text`
-  width: 100%;
-  font-size: 16px;
-  margin: auto;
-`;
-
-const RestaurantList = styled.FlatList`
-  width: 100%;
-  padding: 20px;
-  margin: 0 auto;
-`;
 export default Search;

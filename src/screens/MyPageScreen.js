@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Alert } from 'react-native';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
-import { connect } from 'react-redux';
-import { CommonActions } from '@react-navigation/native';
-import { LOGOUT_MESSAGE, YES, NO } from '../constants/messages';
 import { resetUserInfo, resetMeeting } from '../actions/index';
+import resetAction from '../utils/navigation';
+import ALERT from '../constants/alert';
+import SCREEN from '../constants/screen';
 
 const MyPageScreen = ({
   navigation,
@@ -17,30 +18,19 @@ const MyPageScreen = ({
     if (!userId) return;
 
     return Alert.alert(
-      LOGOUT_MESSAGE,
+      ALERT.LOGOUT_MESSAGE,
       null,
       [{
-        text: YES,
+        text: ALERT.YES,
         onPress: async () => {
           await asyncStorage.removeItem('token');
           resetUserInfo();
           resetMeeting();
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                {
-                  name: 'Home',
-                },
-              ],
-            })
-          );
-        }
-      },
-      {
-        text: NO,
-      }
-      ]
+          navigation.dispatch(resetAction(0, SCREEN.HOME ));
+        }},
+        {
+        text: ALERT.NO,
+      }]
     );
   };
 
@@ -50,7 +40,7 @@ const MyPageScreen = ({
       <Button
         onPress={() => {
           if (!userId) return;
-          navigation.navigate('EditUserInfo');
+          navigation.navigate(SCREEN.EDIT_USER_INFO);
         }}
       >
         <ButtonText>내 정보 수정하기</ButtonText>
@@ -58,7 +48,7 @@ const MyPageScreen = ({
       <Button
         onPress={() => {
           if (!userId) return;
-          navigation.navigate('PreferredPartner');
+          navigation.navigate(SCREEN.PREFERRED_PARTNER);
         }}
       >
         <ButtonText>선호하는 친구</ButtonText>
@@ -66,7 +56,7 @@ const MyPageScreen = ({
       <Button
         onPress={() => {
           if (!userId) return;
-          navigation.navigate('Payment');
+          navigation.navigate(SCREEN.PAYMENT);
         }}
       >
         <ButtonText>결제</ButtonText>

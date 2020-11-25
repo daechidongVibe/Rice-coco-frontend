@@ -1,0 +1,23 @@
+export default ALERT = {
+  OK: 'ok',
+  NO: 'NO',
+  YES: 'YES',
+  TIME_OUT_TITLE: '시간 종료',
+  TIME_OUT_MESSAGE: '다음 약속을 잡아보세요',
+  LOGOUT_MESSAGE: '로그아웃하시겠습니까?',
+  SHOULD_ENTER_MESSAGE: '메세지를 입력해주세요',
+  FIND_OTHER_RESTAURANT: '다른 맛집을 찾아볼까요?',
+  IT_IS_CLOSED: '준비가 되지 않았습니다',
+  SHOULD_INPUT_RESTAURANT: '맛집을 검색해주세요',
+  SHOULD_ENTER_WORD: '검색어를 입력해주세요',
+  CLOSE: 'close',
+  OPEN: 'open',
+  OBJECT: 'object',
+  NOT_EXIST: 'no member information',
+  ERROR_LOCATION_WAS_DENIED: 'Permission to access location was denied',
+  STATUS_GRANTED: 'granted',
+  COMPLATE_ARRIVAL: '도착 완료',
+  CONFIRM_ARRIVAL: '도착 확인',
+  CANCEL_PROMISE: '약속 취소하기',
+  CONFIRM_CANCEL_PROMISE : '정말 취소하시겠습니까?'
+};

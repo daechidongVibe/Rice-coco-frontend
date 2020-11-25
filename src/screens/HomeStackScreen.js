@@ -18,22 +18,19 @@ const HomeStack = createStackNavigator();
 
 const HomeStackScreen = () => {
   return (
-    <HomeStack.Navigator initialRouteName="Login" headerMode="none">
-      <HomeStack.Screen name="Login" component={LoginScreen} />
-      <HomeStack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
-      <HomeStack.Screen name="MainMap" component={MainMapScreen} />
-      <HomeStack.Screen name="UserRegister" component={UserRegisterScreen} />
-      <HomeStack.Screen name="Search" component={SearchScreen} />
-      <HomeStack.Screen name="RestaurantDetails" component={RestaurantDetailsScreen} />
-      <HomeStack.Screen name="MatchWaiting" component={MatchWaitingScreen} />
-      <HomeStack.Screen name="MatchSuccess" component={MatchSuccessScreen} />
-      <HomeStack.Screen name="ChatRoom" component={ChatRoomScreen} />
-      <HomeStack.Screen name="AfterMeeting" component={AfterMeetingScreen} />
+    <HomeStack.Navigator initialRouteName='Login' headerMode='none'>
+      <HomeStack.Screen name='Login' component={LoginScreen} />
+      <HomeStack.Screen name='PreferredPartner' component={PreferredPartnerScreen} />
+      <HomeStack.Screen name='MainMap' component={MainMapScreen} />
+      <HomeStack.Screen name='UserRegister' component={UserRegisterScreen} />
+      <HomeStack.Screen name='Search' component={SearchScreen} />
+      <HomeStack.Screen name='RestaurantDetails' component={RestaurantDetailsScreen} />
+      <HomeStack.Screen name='MatchWaiting' component={MatchWaitingScreen} />
+      <HomeStack.Screen name='MatchSuccess' component={MatchSuccessScreen} />
+      <HomeStack.Screen name='ChatRoom' component={ChatRoomScreen} />
+      <HomeStack.Screen name='AfterMeeting' component={AfterMeetingScreen} />
     </HomeStack.Navigator>
   );
 };
 
-export default connect(
-  null,
-  null
-)(HomeStackScreen);
+export default HomeStackScreen;

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 import axiosInstance from '../config/axiosConfig';
-import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { setUserInfo } from '../actions';
 import PickerInput from '../components/PickerInput';
-import { Title, Wrapper, StyledSubmitButton, Label } from '../styledComponent/index';
+import { Title, Wrapper, StyledButton, P, InputContainer } from '../shared/index';
+import ROUTE from '../constants/route';
+import SCREEN from '../constants/screen';
+import { COLOR } from '../constants/assets';
+import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 
 const PreferredPartnerScreen = ({
   navigation,
@@ -35,45 +37,45 @@ const PreferredPartnerScreen = ({
     };
 
     try {
-      const { data: { preferredPartner }} = await axiosInstance.put(
-        `/users/${userId}/preferred-partner`,
+      const { data: { preferredPartner } } = await axiosInstance.put(
+        `${ROUTE.USERS}/${userId}${ROUTE.PREFERRED_PARTNER}`,
         newPartnerConditions
       );
-
       setUserInfo({ preferredPartner });
     } catch (error) {
       console.warn(error);
     }
 
-    navigation.navigate('MainMap');
+    navigation.navigate(SCREEN.MAIN_MAP);
   };
 
   return (
     <Wrapper>
       <Title>함께 밥을 먹고 싶은 동료는 누구인가요?</Title>
-        <Label>성별</Label>
+      <InputContainer>
         <PickerInput
           content={gender}
           onChange={setGender}
-          contentOptions={MY_INFO_OPTIONS.gender}
+          contentOptions={MY_INFO_OPTIONS.GENDER}
         />
-        <Label>직업군</Label>
+      </InputContainer>
+      <InputContainer>
         <PickerInput
           content={occupation}
           onChange={setOccupation}
-          contentOptions={MY_INFO_OPTIONS.occupation}
+          contentOptions={MY_INFO_OPTIONS.OCCUPATION}
         />
-        <Label>태어난 년도</Label>
+      </InputContainer>
+      <InputContainer>
         <PickerInput
           content={birthYear}
           onChange={setBirthYear}
-          contentOptions={MY_INFO_OPTIONS.age}
+          contentOptions={MY_INFO_OPTIONS.AGE}
         />
-      <StyledSubmitButton onPress={handleSubmit}>
-        <View>
-          <Label>내 정보 등록하기</Label>
-        </View>
-      </StyledSubmitButton>
+      </InputContainer>
+      <StyledButton onPress={handleSubmit}>
+        <P color={COLOR.WHITH}>나의 라이스코코</P>
+      </StyledButton>
     </Wrapper>
   );
 };

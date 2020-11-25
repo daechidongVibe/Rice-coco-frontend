@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
-import { Button, ImageBackground } from 'react-native';
+import { ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
-import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
-
 import googleAuth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
+import { LoginButton, P, Wrapper } from '../shared/index';
+import SCREEN from  '../constants/screen';
+import ALERT from '../constants/alert';
+import { COLOR } from '../constants/assets';
 
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
@@ -23,13 +25,13 @@ const Login = ({ navigation, setUserInfo }) => {
       setUserInfo(user);
 
       user.preferredPartner
-        ? navigation.dispatch(StackActions.replace('MainMap'))
-        : navigation.dispatch(StackActions.replace('PreferredPartner'));
+        ? navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP))
+        : navigation.dispatch(StackActions.replace(SCREEN.PREFERRED_PARTNER));
     })();
   }, []);
 
-  const handleLoginButtonClick = async e => {
-    e.target.disabled = true;
+  const handleLoginButtonClick = async event => {
+    event.target.disabled = true;
 
     try {
       const email = await googleAuth();
@@ -38,8 +40,8 @@ const Login = ({ navigation, setUserInfo }) => {
 
       const { data } = await configuredAxios.post('users/login', { email });
 
-      if (data.result === 'no member information') {
-        navigation.dispatch(StackActions.replace('UserRegister', { email }));
+      if (data.result === ALERT.NOT_EXIST) {
+        navigation.dispatch(StackActions.replace(SCREEN.USER_REGISTER, { email }));
 
         return;
       }
@@ -51,54 +53,31 @@ const Login = ({ navigation, setUserInfo }) => {
       setUserInfo(user);
 
       user.preferredPartner
-        ? navigation.dispatch(StackActions.replace('MainMap'))
-        : navigation.dispatch(StackActions.replace('PreferredPartner'));
+        ? navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP))
+        : navigation.dispatch(StackActions.replace(SCREEN.PREFERRED_PARTNER));
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <Background>
+    <Wrapper color={COLOR.THEME_COLOR}>
       <ImageBackground
         source={require('../../assets/images/ricecoco_splash.png')}
         style={{
           width: '100%',
           height: '100%',
           position: 'absolute',
-          bottom: 100,
+          bottom: 80,
         }}
+      />
+      <LoginButton
+        onPress={handleLoginButtonClick}
       >
-        <LoginButton onPress={handleLoginButtonClick}>
-          <ButtonText>로그인</ButtonText>
-        </LoginButton>
-        <Button
-          title="회원가입 (내 정보 등록)"
-          onPress={() => navigation.navigate('UserRegister')}
-        />
-      </ImageBackground>
-    </Background>
+        <P>Google 로그인</P>
+      </LoginButton>
+    </Wrapper>
   );
 };
-
-const Background = styled.View`
-  background-color: #ff914d;
-  width: 100%;
-  height: 100%;
-`;
-
-const LoginButton = styled.TouchableOpacity`
-  background-color: white;
-  padding: 10px;
-  border-radius: 5px;
-  position: absolute;
-  bottom: 15%;
-  left: 50%;
-  transform: translateX(-25px);
-`;
-
-const ButtonText = styled.Text`
-  color: black;
-`;
 
 export default connect(null, { setUserInfo })(Login);

@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Text, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { StackActions, CommonActions } from '@react-navigation/native';
+import { StackActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
 import RemainingTime from '../components/RemainingTime';
 import RotatedIcon from '../components/RotatedIcon';
 import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
+import resetAction from '../utils/navigation';
+import ALERT from '../constants/alert';
+import SCREEN from '../constants/screen';
+import ROUTE from '../constants/route';
+import SOCKET_EVENT from '../constants/socket';
 
 const MatchWaiting = ({
   navigation,
@@ -26,11 +31,11 @@ const MatchWaiting = ({
       try {
         const {
           data: { meetingDetails },
-        } = await configuredAxios.get(`/meetings/${meetingId}`);
+        } = await configuredAxios.get(`${ROUTE.MEETINGS}/${meetingId}`);
 
         setSelectedMeeting(meetingDetails);
-      } catch (err) {
-        console.warn(err);
+      } catch (error) {
+        console.warn(error);
       }
     })();
   }, []);
@@ -38,81 +43,66 @@ const MatchWaiting = ({
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
 
-    socket.on('change current meeting', data => {
+    socket.on(SOCKET_EVENT.CHANGE_CURRENT_MEETING, data => {
       setCurrentMeeting(data);
       setIsStart(true);
     });
 
-    return () => socket.off('change current meeting');
+    return () => socket.off(SOCKET_EVENT.CHANGE_CURRENT_MEETING);
   }, []);
 
   useEffect(() => {
     if (currentMeeting.users?.length === 2) {
       (async () => {
         const partnerId = currentMeeting.users.find(user => user !== userId);
-        const { data: partner } = await configuredAxios.get(
-          `users/${partnerId}`
-        );
+        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
         const partnerNickname = partner.nickname;
 
         setSelectedMeeting({ partnerNickname });
 
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'MatchSuccess',
-              },
-            ],
-          })
-        );
+        navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
       })();
     }
   }, [currentMeeting]);
 
   const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(() => {
-      navigation.dispatch(StackActions.replace('MainMap'));
+      navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
     });
   };
+
   const handleTimeEnd = async () => {
     socketApi.cancelMeeting(() => {
       Alert.alert(
-        '미팅 성사 시간 종료',
-        '안타깝게도 혼자 드셔야겠네요',
+        ALERT.TIME_OUT_TITLE,
+        ALERT.TIME_OUT_MESSAGE,
         [
           {
-            text: 'OK',
+            text: ALERT.OK,
             onPress: () =>
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'MainMap',
-                    },
-                  ],
-                })
-              ),
+              navigation.dispatch(resetAction(0, MAIN_MAP)),
           },
         ],
         { cancelable: false }
       );
     });
   };
+
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {!!expiredTime && (
-        <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
-      )}
+      {
+        !!expiredTime && (
+          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+        )
+      }
       <RotatedIcon start={isStart} />
       <Text>{restaurantName}</Text>
-      <CancelButton onPress={handlePressCancelButton} title="취소하기" />
+      <CancelButton onPress={handlePressCancelButton} title='취소하기' />
     </Container>
   );
 };
+
 const Container = styled.View`
   display: flex;
   padding: 40px;
@@ -123,6 +113,7 @@ const Container = styled.View`
   align-content: center;
   align-items: center;
 `;
+
 const CancelButton = styled.Button`
   background-color: #ffffff;
   margin: auto;

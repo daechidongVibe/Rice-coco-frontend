@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, Button, Platform } from 'react-native';
-import styled from 'styled-components';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Input } from 'react-native-elements';
 import MessageBox from '../components/MessageBox';
 import configuredAxios from '../config/axiosConfig';
-import { SHOULD_ENTER_MESSAGE } from '../constants/messages';
+import ALERT from '../constants/alert';
 import { socket, socketApi } from '../../socket';
 import * as Permissions from 'expo-permissions';
 import * as Notifications from 'expo-notifications';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-
+import { Wrapper, ListContainer, StyledFlatList } from '../shared/index';
+import SOCKET_EVENT from '../constants/socket';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -29,7 +29,7 @@ const ChatRoom = ({
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [partnerNickname, setPartnerNickname] = useState('');
-  //memo: 현재는 chatroom 컴포넌트 내에서만 상대방메세지 수신 알림 가능. 분리해서 전역에서 알림 가능하게 할 예정입니다
+
   const notificationListener = useRef();
   const responseListener = useRef();
   const messageList = useRef(null);
@@ -94,27 +94,27 @@ const ChatRoom = ({
         const { data: { filteredMessages } } = await configuredAxios.get(`/meetings/${meetingId}/chat`);
         setMessages(filteredMessages);
 
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.warn(error);
       }
     })();
   }, []);
 
   useEffect(() => {
-    socket.on('message', ({ userId, nickname, message }) => {
+    socket.on(SOCKET_EVENT.MESSAGE, ({ userId, nickname, message }) => {
       setPartnerNickname(nickname);
       setMessages(pre => [...pre, { userId, nickname, message }]);
     });
 
-    return () => socket.off('message');
+    return () => socket.off(SOCKET_EVENT.MESSAGE);
   }, []);
 
   useEffect(() => {
-    socket.on('notification recived', async ({ nickname, message }) => {
+    socket.on(SOCKET_EVENT.NOTIFICATION_RECIVED, async ({ nickname, message }) => {
       await messagePushNotification(nickname, message)
     });
 
-    return () => socket.off('notification recived');
+    return () => socket.off(SOCKET_EVENT.NOTIFICATION_RECIVED);
   }, []);
 
   const handleMessageSubmit = async () => {
@@ -125,54 +125,41 @@ const ChatRoom = ({
   };
 
   return (
-    <Container>
-      <Text>ChatRoom</Text>
-      <MessageList
-        ref={messageList}
-        onContentSizeChange={() => {
-          messageList.current.scrollToEnd();
-        }}
-        data={messages}
-        renderItem={({ item }) => (
-          <MessageBox
-            user={item.userId === userId}
-            message={item.message}
-            nickname={item.nickname}
-          />
-        )}
-      />
-      <Input
-        onChangeText={setMessage}
-        value={message}
-        errorMessage={message ? `${partnerNickname}님에게 메세지를 전달하세요` : SHOULD_ENTER_MESSAGE}
-        rightIcon={
-          <Icon
-            name='arrow-alt-circle-up'
-            size={24}
-            onPress={handleMessageSubmit}
-          />
-        }
-      />
-    </Container>
+    <Wrapper>
+      <ListContainer>
+        <StyledFlatList
+          ref={messageList}
+          onContentSizeChange={() => {
+            messageList.current.scrollToEnd();
+          }}
+          data={messages}
+          renderItem={({ item }) => (
+            <MessageBox
+              user={item.userId === userId}
+              message={item.message}
+              nickname={item.nickname}
+            />
+          )}
+        />
+        <Input
+          onChangeText={setMessage}
+          value={message}
+          errorMessage={message ? `${partnerNickname}님에게 메세지를 전달하세요` : ALERT.SHOULD_ENTER_MESSAGE}
+          rightIcon={
+            <Icon
+              name='arrow-alt-circle-up'
+              size={24}
+              onPress={handleMessageSubmit}
+            />
+          }
+        />
+      </ListContainer>
+    </Wrapper>
   );
 };
-
-const Container = styled.View`
-  display: flex;
-  padding: 20px;
-  background-color: #ffffff;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-end;
-`;
-
-const MessageList = styled.FlatList`
-  width: 100%;
-  margin: 0 auto;
-`;
 
 export default connect(state => ({
   userId: state.user._id,
   nickname: state.user.nickname,
-  meetingId: state.meetings.currentMeeting?.meetingId,
+  meetingId: state.meetings.currentMeeting.meetingId,
 }))(ChatRoom);
