@@ -6,9 +6,9 @@ export default SCREEN = {
   USER_REGISTER: 'UserRegister',
   SEARCH: 'Search',
   RESTAURANT_DETAILS: 'RestaurantDetails',
-  AFTER_MEETING :'AfterMeeting',
-  CHAT_ROOM : 'ChatRoom',
+  AFTER_MEETING: 'AfterMeeting',
+  CHAT_ROOM: 'ChatRoom',
   HOME: 'Home',
-  EDIT_USER_INFO :'EditUserInfo',
-  PAYMENT : 'Payment',
+  EDIT_USER_INFO: 'EditUserInfo',
+  PAYMENT: 'Payment',
 };

@@ -70,6 +70,7 @@ const Search = ({ navigation }) => {
               leftDistance={-180}
               rightDistance={-250}
               speed={1000}
+              useNativeDriver={true}
             />
             :
             <StyledFlatList

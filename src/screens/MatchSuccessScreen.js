@@ -7,7 +7,6 @@ import { StackActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import isLocationNear from '../utils/isLocationNear';
