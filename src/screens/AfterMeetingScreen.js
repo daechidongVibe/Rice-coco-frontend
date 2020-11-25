@@ -12,7 +12,6 @@ import { Wrapper, P, StyledView, StyledText, StyledButton } from '../shared/inde
 
 const AfterMeetingScreen = ({
   userId,
-  meetingId,
   resetMeeting,
   partnerNickname,
   navigation,

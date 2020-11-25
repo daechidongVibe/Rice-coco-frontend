@@ -14,7 +14,7 @@ import { COLOR } from '../constants/assets';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      await asyncStorage.clear();
+      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 

@@ -11,6 +11,9 @@ export const socketApi = {
   removeAllListeners: () => {
     socket.removeAllListeners();
   },
+  createMeeting: (meetingId, userId) => {
+    socket.emit('create meeting', { meetingId, userId });
+  },
   joinMeeting: (meetingId, userId) => {
     socket.emit('join meeting', { meetingId, userId });
   },

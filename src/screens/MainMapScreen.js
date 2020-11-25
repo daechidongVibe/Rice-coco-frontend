@@ -17,7 +17,6 @@ import {
   setSelectedMeeting,
 } from '../actions';
 import { RestaurantSearchButton, P, OverlayHeader, OverlayTitle, ReloadButtonContainer, OverlayFooter } from '../shared/index';
-import { FONT, IMAGE_URL } from '../constants/assets';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
 import ALERT from '../constants/alert';

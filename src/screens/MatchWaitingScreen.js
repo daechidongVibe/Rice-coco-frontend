@@ -17,15 +17,12 @@ import SOCKET_EVENT from '../constants/socket';
 const MatchWaiting = ({
   navigation,
   userId,
-  currentMeeting,
   setSelectedMeeting,
   setCurrentMeeting,
   meetingId,
   expiredTime,
   restaurantName,
 }) => {
-  const [isStart, setIsStart] = useState(false);
-
   useEffect(() => {
     (async () => {
       try {
@@ -41,29 +38,20 @@ const MatchWaiting = ({
   }, []);
 
   useEffect(() => {
-    socketApi.joinMeeting(meetingId, userId);
+    socketApi.createMeeting(meetingId, userId);
 
-    socket.on(SOCKET_EVENT.CHANGE_CURRENT_MEETING, data => {
-      setCurrentMeeting(data);
-      setIsStart(true);
+    socket.on(SOCKET_EVENT.PARTNER_JOIN_MEETING, async ({ meetingData, partnerId }) => {
+      const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+      const partnerNickname = partner.nickname;
+
+      setSelectedMeeting({ partnerNickname });
+      setCurrentMeeting(meetingData);
+
+      navigation.dispatch((resetAction(0, SCREEN.MATCH_SUCCESS)));
     });
 
-    return () => socket.off(SOCKET_EVENT.CHANGE_CURRENT_MEETING);
+    return () => socket.off('partner join meeting');
   }, []);
-
-  useEffect(() => {
-    if (currentMeeting.users?.length === 2) {
-      (async () => {
-        const partnerId = currentMeeting.users.find(user => user !== userId);
-        const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
-        const partnerNickname = partner.nickname;
-
-        setSelectedMeeting({ partnerNickname });
-
-        navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
-      })();
-    }
-  }, [currentMeeting]);
 
   const handlePressCancelButton = async () => {
     socketApi.cancelMeeting(() => {
@@ -80,7 +68,7 @@ const MatchWaiting = ({
           {
             text: ALERT.OK,
             onPress: () =>
-              navigation.dispatch(resetAction(0, MAIN_MAP)),
+              navigation.dispatch(resetAction(0, SCREEN.MAIN_MAP)),
           },
         ],
         { cancelable: false }
@@ -91,12 +79,8 @@ const MatchWaiting = ({
   return (
     <Container>
       <Text>MatchWaiting</Text>
-      {
-        !!expiredTime && (
-          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
-        )
-      }
-      <RotatedIcon start={isStart} />
+      <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+      <RotatedIcon />
       <Text>{restaurantName}</Text>
       <CancelButton onPress={handlePressCancelButton} title='취소하기' />
     </Container>
