@@ -4,8 +4,14 @@ import { Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setSelectedMeeting } from '../actions/index';
 import ALERT from '../constants/alert';
-import { Container, P,Label, ItemContainer } from '../shared/index';
 import SCREEN from '../constants/screen';
+import { COLOR } from '../constants/color';
+import {
+  Container,
+  P,
+  Label,
+  ItemContainer
+} from '../shared/index';
 
 const RenderItem = ({
   item,
@@ -24,11 +30,9 @@ const RenderItem = ({
     if (isOpen === ALERT.CLOSE) return Alert.alert(
       ALERT.IT_IS_CLOSED,
       ALERT.FIND_OTHER_RESTAURANT,
-      [
-        {
-          text: ALERT.YES
-        }
-      ]
+      [{
+        text: ALERT.YES
+      }]
     );
 
     const hasCreatedMeeting = waitingMeetings.find(
@@ -48,11 +52,27 @@ const RenderItem = ({
   };
 
   return (
-    <ItemContainer onPress={handlePressRestaurant}>
+    <ItemContainer
+      onPress={handlePressRestaurant}
+    >
       <Container>
-        <Label numberOfLines={2} ellipsizeMode='tail'>{item.name}</Label>
-        <P color={isOpen === ALERT.OPEN ? '#28abb9' : '#99a8b2'}>{isOpen}</P>
-        <Rating imageSize={14} startingValue={item.rating} readonly />
+        <Label
+          numberOfLines={2}
+          ellipsizeMode='tail'
+          width='30%'
+          margin='24px 0px;'
+          size='16px'
+        >{item.name}
+        </Label>
+        <P
+          color={isOpen === ALERT.OPEN ? COLOR.BLUE : COLOR.GRAY}>
+          {isOpen}
+        </P>
+        <Rating
+          tintColor={COLOR.LIGHT_WHITE}
+          imageSize={14}
+          startingValue={item.rating}
+          readonly />
       </Container>
     </ItemContainer>
   );

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import { resetUserInfo, resetMeeting } from '../actions/index';
 import resetAction from '../utils/navigation';
 import ALERT from '../constants/alert';
 import SCREEN from '../constants/screen';
+import { Wrapper, Title, OutlineButton, P } from '../shared/index';
 
 const MyPageScreen = ({
   navigation,
@@ -35,66 +35,40 @@ const MyPageScreen = ({
   };
 
   return (
-    <Container>
-      <Header>내 정보</Header>
-      <Button
+    <Wrapper>
+      <Title>내 정보</Title>
+      <OutlineButton
         onPress={() => {
           if (!userId) return;
           navigation.navigate(SCREEN.EDIT_USER_INFO);
         }}
       >
-        <ButtonText>내 정보 수정하기</ButtonText>
-      </Button>
-      <Button
+        <P>내 정보 수정하기</P>
+      </OutlineButton>
+      <OutlineButton
         onPress={() => {
           if (!userId) return;
           navigation.navigate(SCREEN.PREFERRED_PARTNER);
         }}
       >
-        <ButtonText>선호하는 친구</ButtonText>
-      </Button>
-      <Button
+        <P>선호하는 친구</P>
+      </OutlineButton>
+      <OutlineButton
         onPress={() => {
           if (!userId) return;
           navigation.navigate(SCREEN.PAYMENT);
         }}
       >
-        <ButtonText>결제</ButtonText>
-      </Button>
-      <Button
+        <P>결제</P>
+      </OutlineButton>
+      <OutlineButton
         onPress={logout}
       >
-        <ButtonText>로그아웃</ButtonText>
-      </Button>
-    </Container>
+        <P>로그아웃</P>
+      </OutlineButton>
+    </Wrapper>
   );
 };
-
-const Container = styled.View`
-  height: 100%;
-  padding: 20px;
-`;
-
-const Header = styled.Text`
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-  margin: 20px auto;
-`;
-
-const Button = styled.TouchableOpacity`
-  background-color: #ff914d;
-  width: 100%;
-  margin: 10px auto;
-  padding: 15px;
-  border-radius: 10px;
-`;
-
-const ButtonText = styled.Text`
-  color: white;
-  text-align: center;
-  font-size: 20px;
-`;
 
 export default connect(state => ({
   user: state.user,

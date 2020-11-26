@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { WebView } from 'react-native-webview';
 import asyncStorage from '@react-native-async-storage/async-storage';
-
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import { Wrapper, P, Title, StyledButton, StyledView } from '../shared/index';
 
 const PaymentScreen = () => {
   const [token, setToken] = useState(''); // 웹뷰에서 configuredAxios를 사용할 수 없기 때문에 따로 토큰을 실어주어야 한다
@@ -73,28 +73,29 @@ const PaymentScreen = () => {
   `;
 
   return (
-    <Container>
+    <Wrapper>
       {
         !isPaymentSelected ?
         ( // 결제 선택 컴포넌트
-          <PaymentSelectView>
-            <Header>결제 선택</Header>
-            <SubHeader>약속의 상징 프로미스를 할인된 가격에 구매하세요!</SubHeader>
+          <StyledView>
+            <Title 
+              size='16px'>결제 선택</Title>
+            <Title>약속의 상징 프로미스를 할인된 가격에 구매하세요!</Title>
             {
               MY_INFO_OPTIONS.paymentInfo.map((item, index) => {
                 return (
                   <PaymentItem onPress={() => setPaymentInfo(item)} key={index} disabled={item === paymentInfo ? true : false}>
-                    <Text>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</Text>
+                    <P>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</P>
                   </PaymentItem>
                 );
               })
             }
             <Wrapper>
-              <SelectButton onPress={() => setIsPaymentSelected(true)}>
-                <ButtonText>다음</ButtonText>
-              </SelectButton>
+              <StyledButton onPress={() => setIsPaymentSelected(true)}>
+                <P>다음</P>
+              </StyledButton>
             </Wrapper>
-          </PaymentSelectView>
+          </StyledView>
         ) :
         ( // 결제 요청 컴포넌트
           <WebView
@@ -109,65 +110,11 @@ const PaymentScreen = () => {
           />
         )
       }
-    </Container>
+    </Wrapper>
   );
 };
 
 // 웹뷰에 주입될 html
 const paymentView = '<head><meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"><style> h1 { color: #ff914d; font-size: 32px; font-weight: bold; margin: 32px auto; text-align: center } br { content: ""; display: block; margin: 20px } button { padding: 10px; color: white; background-color: blue; border-radius: 10px; position: absolute; left: 50%; bottom: 10%; transform: translate(-50%) }</style><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script><script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script></head><h1>결제</h1> <h2>결제플로우</h2> <p> <br> 1. 결제정보를 서버에 생성한다 <br> 2. 아임포트에 실제 결제 요청을 보낸다 <br> 3. 두개의 아이디를 서버에 보내어 서버사이드에서 토큰을 생성한다 <br> 4. 해당 토큰으로 결제를 조회한 후 실제 결제 정보와 DB에 저장된 "결제되어야 하는 금액" 을 비교하여 정확하다면 정보를 저장. </p><button id ="paymentButton">결제하기</button>';
-
-const Container = styled.View`
-  height: 100%;
-`;
-
-const Header = styled.Text`
-  color: #ff914d;
-  font-size: 40px;
-  font-weight: bold;
-  margin: 32px auto;
-`;
-
-const SubHeader = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const PaymentSelectView = styled.View`
-  height: 100%;
-`;
-
-const PaymentItem = styled.TouchableOpacity`
-  background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
-  padding: 20px;
-  margin: 5px;
-  border-radius: 5px;
-`;
-
-const Wrapper = styled.View`
-  width: 100%;
-  display: flex;
-  margin-top: 80px;
-`;
-
-const SelectButton = styled.TouchableOpacity`
-  align-self: center;
-  padding: 10px 15px;
-  background-color: #ff914d;
-  border-radius: 5px;
-`;
-
-const Text = styled.Text`
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-`;
-
-const ButtonText = styled.Text`
-  color: white;
-  text-align: center;
-`;
 
 export default PaymentScreen;

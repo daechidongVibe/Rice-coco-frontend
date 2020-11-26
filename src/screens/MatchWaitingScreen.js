@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Text, Alert } from 'react-native';
-import styled from 'styled-components/native';
+import React, { useEffect } from 'react';
+import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
-import { setCurrentMeeting, setSelectedMeeting } from '../actions/index';
-import RemainingTime from '../components/RemainingTime';
-import RotatedIcon from '../components/RotatedIcon';
+import { setCurrentMeeting, setSelectedMeeting, resetMeeting } from '../actions/index';
 import { socket, socketApi } from '../../socket';
 import configuredAxios from '../config/axiosConfig';
 import resetAction from '../utils/navigation';
+import RemainingTime from '../components/RemainingTime';
+import RotatedIcon from '../components/RotatedIcon';
 import ALERT from '../constants/alert';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
 import SOCKET_EVENT from '../constants/socket';
+import { COLOR } from '../constants/color';
+import { Wrapper, StyledButton, P, Title } from '../shared/index';
 
 const MatchWaiting = ({
   navigation,
@@ -21,7 +22,7 @@ const MatchWaiting = ({
   setCurrentMeeting,
   meetingId,
   expiredTime,
-  restaurantName,
+  resetMeeting,
 }) => {
   useEffect(() => {
     (async () => {
@@ -32,7 +33,7 @@ const MatchWaiting = ({
 
         setSelectedMeeting(meetingDetails);
       } catch (error) {
-        console.warn(error);
+        console.warn(error.message);
       }
     })();
   }, []);
@@ -41,7 +42,7 @@ const MatchWaiting = ({
     socketApi.createMeeting(meetingId, userId);
 
     socket.on(SOCKET_EVENT.PARTNER_JOIN_MEETING, async ({ meetingData, partnerId }) => {
-      const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+      const { data: partner } = await configuredAxios.get(`/users/${partnerId}`);
       const partnerNickname = partner.nickname;
 
       setSelectedMeeting({ partnerNickname });
@@ -50,10 +51,11 @@ const MatchWaiting = ({
       navigation.dispatch((resetAction(0, SCREEN.MATCH_SUCCESS)));
     });
 
-    return () => socket.off('partner join meeting');
+    return () => socket.off(SOCKET_EVENT.PARTNER_JOIN_MEETING);
   }, []);
 
   const handlePressCancelButton = async () => {
+    resetMeeting();
     socketApi.cancelMeeting(() => {
       navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
     });
@@ -77,48 +79,35 @@ const MatchWaiting = ({
   };
 
   return (
-    <Container>
-      <Text>MatchWaiting</Text>
-      <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+    <Wrapper>
+      <Title
+        size='30px'>
+        라이스코코 기다리는 중🥱
+      </Title>
+      {
+        !!expiredTime &&
+        <RemainingTime
+          expiredTime={expiredTime}
+          onTimeEnd={handleTimeEnd}
+        />
+      }
       <RotatedIcon />
-      <Text>{restaurantName}</Text>
-      <CancelButton onPress={handlePressCancelButton} title='취소하기' />
-    </Container>
+      <StyledButton
+        onPress={handlePressCancelButton}
+      ><P color={COLOR.WHITH}>취소하기</P>
+      </StyledButton>
+    </Wrapper>
   );
 };
 
-const Container = styled.View`
-  display: flex;
-  padding: 40px;
-  background-color: #ff914d;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-end;
-  align-content: center;
-  align-items: center;
-`;
-
-const CancelButton = styled.Button`
-  background-color: #ffffff;
-  margin: auto;
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  position: absolute;
-  bottom: 15%;
-  left: 50%;
-  transform: translateX(-25px);
-`;
-export default connect(
-  state => ({
-    userId: state.user._id,
-    currentMeeting: state.meetings.currentMeeting,
-    meetingId: state.meetings.selectedMeeting.meetingId,
-    expiredTime: state.meetings.selectedMeeting.expiredTime,
-    restaurantName: state.meetings.selectedMeeting.restaurantName,
-  }),
-  {
-    setCurrentMeeting,
-    setSelectedMeeting,
-  }
-)(MatchWaiting);
+export default connect(state => ({
+  userId: state.user._id,
+  currentMeeting: state.meetings.currentMeeting,
+  meetingId: state.meetings.selectedMeeting.meetingId,
+  expiredTime: state.meetings.selectedMeeting.expiredTime,
+  restaurantName: state.meetings.selectedMeeting.restaurantName,
+}), {
+  setCurrentMeeting,
+  setSelectedMeeting,
+  resetMeeting,
+})(MatchWaiting);

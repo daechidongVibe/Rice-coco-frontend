@@ -2,17 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import configuredAxios from '../config/axiosConfig';
+import { setUserInfo } from '../actions';
 import PickerInput from '../components/PickerInput';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import ReloadImage from '../components/ReloadImage';
-import { setUserInfo } from '../actions';
 import ALERT from '../constants/alert';
 import SCREEN from '../constants/screen';
-import { Title, Wrapper, Label, P, StyledInput, Container, StyledButton, InputContainer } from '../shared/index';
-import getEnvVars from '../../environment';
-import { COLOR } from '../constants/assets';
-
-const {REACT_NATIVE_RANDOM_NICKNAME_API} =  getEnvVars();
+import { COLOR } from '../constants/color';
+import API_URL from '../constants/apiUrl';
+import {
+  Title,
+  Wrapper,
+  Label,
+  P,
+  StyledInput,
+  Container,
+  StyledButton,
+  InputContainer,
+} from '../shared/index';
 
 const UserRegisterScreen = ({
   route,
@@ -29,7 +36,7 @@ const UserRegisterScreen = ({
     (async () => {
       const {
         data: { words: randomName },
-      } = await configuredAxios.get(REACT_NATIVE_RANDOM_NICKNAME_API);
+      } = await configuredAxios.get(API_URL.randomNickname);
  
       setNickname(randomName[0]);
     })();
@@ -39,7 +46,7 @@ const UserRegisterScreen = ({
     event.target.disabled = true;
 
     const userInfo = { nickname, gender, occupation, birthYear, email };
-    const { data: { result, token, user } } = await configuredAxios.post('users/signup',
+    const { data: { result, token, user } } = await configuredAxios.post('/users/signup',
       userInfo,
     );
 
@@ -47,14 +54,14 @@ const UserRegisterScreen = ({
       await asyncStorage.setItem('token', token);
 
       setUserInfo(user);
-      navigation.navigate('PreferredPartner');
+      navigation.navigate(SCREEN.PREFERRED_PARTNER);
     }
   };
 
   const handleCreationButtonClick = async () => {
     const {
       data: { words: randomName },
-    } = await configuredAxios.get(REACT_NATIVE_RANDOM_NICKNAME_API);
+    } = await configuredAxios.get(API_URL.randomNickname);
 
     setNickname(randomName[0]);
   };
@@ -62,7 +69,7 @@ const UserRegisterScreen = ({
   return (
     <Wrapper>
       <Title>내 정보 등록</Title>
-      <Label>닉네임</Label>
+      <Label>nickname</Label>
       <Container>
         <StyledInput
           placeholder='nickname'
@@ -74,6 +81,7 @@ const UserRegisterScreen = ({
           onClick={handleCreationButtonClick}
         />
       </Container>
+      <Label>gender</Label>
       <InputContainer>
         <PickerInput
           content={gender}
@@ -81,6 +89,7 @@ const UserRegisterScreen = ({
           contentOptions={MY_INFO_OPTIONS.GENDER}
         />
       </InputContainer>
+      <Label>occupation</Label>
       <InputContainer>
         <PickerInput
           content={occupation}
@@ -88,6 +97,7 @@ const UserRegisterScreen = ({
           contentOptions={MY_INFO_OPTIONS.OCCUPATION}
         />
       </InputContainer>
+      <Label>age</Label>
       <InputContainer>
         <PickerInput
           content={birthYear}
@@ -96,7 +106,7 @@ const UserRegisterScreen = ({
         />
       </InputContainer>
       <StyledButton onPress={handleSubmit}>
-        <P color={COLOR.WHITH}>내 정보 등록하기</P>
+        <P color={COLOR.WHITE}>내 정보 등록하기</P>
       </StyledButton>
     </Wrapper>
   );

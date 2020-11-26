@@ -1,11 +1,16 @@
 import React from "react";
 import { ActivityIndicator, View } from 'react-native';
+import { ImageContainer } from '../shared/index';
+import { COLOR } from '../constants/color';
 
 const LoadingSpinner = () => {
   return (
-  <View>
-    <ActivityIndicator size="large" color="#ff914d" />
-  </View>
+    <ImageContainer>
+      <ActivityIndicator
+        size='large'
+        color={COLOR.THEME_COLOR}
+         />
+    </ImageContainer>
   );
 };
 
