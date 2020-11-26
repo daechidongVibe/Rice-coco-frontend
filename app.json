@@ -26,7 +26,6 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.ricecoco.ricecoco",
-      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDtbGTcIQFtFBMR7r_nox6LSmfWlvw5Q8w"
