@@ -41,7 +41,7 @@ const MatchWaiting = ({
     socketApi.createMeeting(meetingId, userId);
 
     socket.on(SOCKET_EVENT.PARTNER_JOIN_MEETING, async ({ meetingData, partnerId }) => {
-      const { data: partner } = await configuredAxios.get(`users/${partnerId}`);
+      const { data: partner } = await configuredAxios.get(`/users/${partnerId}`);
       const partnerNickname = partner.nickname;
 
       setSelectedMeeting({ partnerNickname });

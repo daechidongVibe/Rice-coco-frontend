@@ -30,7 +30,7 @@ const UserRegisterScreen = ({
       const {
         data: { words: randomName },
       } = await configuredAxios.get(REACT_NATIVE_RANDOM_NICKNAME_API);
- 
+
       setNickname(randomName[0]);
     })();
   }, []);
@@ -39,7 +39,7 @@ const UserRegisterScreen = ({
     event.target.disabled = true;
 
     const userInfo = { nickname, gender, occupation, birthYear, email };
-    const { data: { result, token, user } } = await configuredAxios.post('users/signup',
+    const { data: { result, token, user } } = await configuredAxios.post('/users/signup',
       userInfo,
     );
 

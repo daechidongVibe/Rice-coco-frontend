@@ -17,7 +17,7 @@ const AfterMeetingScreen = ({
   navigation,
 }) => {
   const handleAgreeButtonClick = async () => {
-    await configuredAxios.put(`users/${userId}${ROUTE.FAVORITE_PARTNERS}`, {
+    await configuredAxios.put(`/users/${userId}${ROUTE.FAVORITE_PARTNERS}`, {
       partnerNickname,
     });
 

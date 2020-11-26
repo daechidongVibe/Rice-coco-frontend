@@ -3,7 +3,6 @@ import { ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
-import googleAuth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import { LoginButton, P, Wrapper } from '../shared/index';
@@ -16,13 +15,12 @@ import { COLOR } from '../constants/assets';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 
       const {
         data: { user },
-      } = await configuredAxios.post('users/login');
+      } = await configuredAxios.post('/users/login');
 
       setUserInfo(user);
 
@@ -37,7 +35,7 @@ const Login = ({ navigation, setUserInfo }) => {
 
     try {
       const { email } = await logInWithFacebook();
-      const { data } = await configuredAxios.post('users/login', { email });
+      const { data } = await configuredAxios.post('/users/login', { email });
 
       if (data.result === ALERT.NOT_EXIST) {
         navigation.dispatch(StackActions.replace(SCREEN.USER_REGISTER, { email }));
@@ -54,7 +52,6 @@ const Login = ({ navigation, setUserInfo }) => {
         ? navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP))
         : navigation.dispatch(StackActions.replace(SCREEN.PREFERRED_PARTNER));
     } catch (error) {
-      console.log(111111);
       console.error(error);
     }
   };
