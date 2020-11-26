@@ -10,6 +10,7 @@ import ALERT from '../constants/alert';
 import SCREEN from '../constants/screen';
 import { COLOR } from '../constants/color';
 import API_URL from '../constants/apiUrl';
+import ROUTE from '../constants/route';
 import {
   Title,
   Wrapper,
@@ -21,11 +22,7 @@ import {
   InputContainer,
 } from '../shared/index';
 
-const UserRegisterScreen = ({
-  route,
-  navigation,
-  setUserInfo
-}) => {
+const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
   const { email } = route.params;
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('남자');
@@ -37,7 +34,7 @@ const UserRegisterScreen = ({
       const {
         data: { words: randomName },
       } = await configuredAxios.get(API_URL.randomNickname);
- 
+
       setNickname(randomName[0]);
     })();
   }, []);
@@ -46,9 +43,9 @@ const UserRegisterScreen = ({
     event.target.disabled = true;
 
     const userInfo = { nickname, gender, occupation, birthYear, email };
-    const { data: { result, token, user } } = await configuredAxios.post('/users/signup',
-      userInfo,
-    );
+    const {
+      data: { result, token, user },
+    } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.SIGNUP}`, userInfo);
 
     if (result === ALERT.OK) {
       await asyncStorage.setItem('token', token);
@@ -72,14 +69,12 @@ const UserRegisterScreen = ({
       <Label>nickname</Label>
       <Container>
         <StyledInput
-          placeholder='nickname'
+          placeholder="nickname"
           value={nickname}
           editable={false}
           selectTextOnFocus={false}
         />
-        <ReloadImage
-          onClick={handleCreationButtonClick}
-        />
+        <ReloadImage onClick={handleCreationButtonClick} />
       </Container>
       <Label>gender</Label>
       <InputContainer>

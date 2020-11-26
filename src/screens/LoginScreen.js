@@ -3,11 +3,12 @@ import { ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
-import googleAuth from '../utils/auth';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import { LoginButton, P, Wrapper } from '../shared/index';
-import SCREEN from  '../constants/screen';
+import { logInWithFacebook } from '../utils/authByFacebook';
+
+import SCREEN from '../constants/screen';
 import ALERT from '../constants/alert';
 import { COLOR } from '../constants/color';
 import ROUTE from '../constants/route';
@@ -15,7 +16,6 @@ import ROUTE from '../constants/route';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
-      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 
@@ -33,7 +33,7 @@ const Login = ({ navigation, setUserInfo }) => {
     event.target.disabled = true;
 
     try {
-      const email = await googleAuth();
+      const { email } = await logInWithFacebook();
       if (!email) return;
 
       const { data } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.LOGIN}`, { email });
@@ -46,7 +46,6 @@ const Login = ({ navigation, setUserInfo }) => {
 
       const { user, token } = data;
       await asyncStorage.setItem('token', token);
-
       setUserInfo(user);
 
       user.preferredPartner
@@ -68,10 +67,8 @@ const Login = ({ navigation, setUserInfo }) => {
           bottom: 80,
         }}
       />
-      <LoginButton
-        onPress={handleLoginButtonClick}
-      >
-        <P>Google 로그인</P>
+      <LoginButton onPress={handleLoginButtonClick}>
+        <P>페이스북 로그인</P>
       </LoginButton>
     </Wrapper>
   );

@@ -19,5 +19,6 @@ export default ALERT = {
   COMPLATE_ARRIVAL: '도착 완료',
   CONFIRM_ARRIVAL: '도착 확인',
   CANCEL_PROMISE: '약속 취소하기',
-  CONFIRM_CANCEL_PROMISE : '정말 취소하시겠습니까?'
+  CONFIRM_CANCEL_PROMISE : '정말 취소하시겠습니까?',
+  INVALID_LOGIN : '유효하지 않는 로그인입니다.'
 };

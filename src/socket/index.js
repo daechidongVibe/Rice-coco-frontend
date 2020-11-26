@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import getEnvVars from './environment';
+import getEnvVars from '../../environment';
 
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
 

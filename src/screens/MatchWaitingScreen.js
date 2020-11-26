@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 import { setCurrentMeeting, setSelectedMeeting, resetMeeting } from '../actions/index';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import configuredAxios from '../config/axiosConfig';
 import resetAction from '../utils/navigation';
 import RemainingTime from '../components/RemainingTime';
@@ -42,7 +42,7 @@ const MatchWaiting = ({
     socketApi.createMeeting(meetingId, userId);
 
     socket.on(SOCKET_EVENT.PARTNER_JOIN_MEETING, async ({ meetingData, partnerId }) => {
-      const { data: partner } = await configuredAxios.get(`/users/${partnerId}`);
+      const { data: partner } = await configuredAxios.get(`${ROUTE.USERS}/${partnerId}`);
       const partnerNickname = partner.nickname;
 
       setSelectedMeeting({ partnerNickname });

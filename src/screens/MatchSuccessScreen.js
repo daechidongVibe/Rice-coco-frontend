@@ -7,7 +7,7 @@ import { StackActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import configuredAxios from '../config/axiosConfig';
 import * as Location from 'expo-location';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import isLocationNear from '../utils/isLocationNear';
 import {
   setUserLocation,
