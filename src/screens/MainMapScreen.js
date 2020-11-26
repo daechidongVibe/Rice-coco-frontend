@@ -156,8 +156,8 @@ const MainMapScreen = ({
                 }
                 <StyledImage
                   source={require('../../assets/images/rice.png')}
-                  width='24px'
-                  height='26px'
+                  width='45px'
+                  height='45px'
                   resizeMode='cover'
                 />
               </Marker>

@@ -16,6 +16,7 @@ import ROUTE from '../constants/route';
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
     (async () => {
+      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 

@@ -198,7 +198,7 @@ export const TimeText = styled.Text`
   font-size: ${prop => prop.size || '100px'};
   background-color: transparent;
   margin: 0 auto;
-  color: ${prop => prop.color || COLOR.BLACK};
+  color: ${prop => prop.color || COLOR.SALMON};
 `;
 
 export const Title = styled.Text`
@@ -278,7 +278,8 @@ export const OutlineButton = styled.TouchableOpacity`
   padding: 6px;
   margin-top: 8px;
   border-width: 3px;
-  border-color : ${COLOR.THEME_COLOR};
+  border-color : ${prop => prop.borderColor || COLOR.THEME_COLOR};
+  background-color: ${prop => prop.backgroundColor || 'transparent'};
   border-radius: 18px;
   justify-content: center;
   align-items: center;

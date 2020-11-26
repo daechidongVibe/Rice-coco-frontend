@@ -56,7 +56,10 @@ const MatchSuccessScreen = ({
   const [isArrived, setIsArrived] = useState(true);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
-  const [partnerLocation, setPartnerLocation] = useState({ latitude: 0, longitude: 0 });
+  const [partnerLocation, setPartnerLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
 
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
@@ -73,16 +76,18 @@ const MatchSuccessScreen = ({
       Alert.alert(
         ALERT.TIME_OUT_TITLE,
         ALERT.TIME_OUT_MESSAGE,
-        [{
-          text: ALERT.OK,
-          onPress: () => {
-            socketApi.finishMeeting(() => {
-              resetMeeting();
-              navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
-            })
-          }
-        }],
-        { cancelable: false },
+        [
+          {
+            text: ALERT.OK,
+            onPress: () => {
+              socketApi.finishMeeting(() => {
+                resetMeeting();
+                navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP));
+              });
+            },
+          },
+        ],
+        { cancelable: false }
       );
     });
 
@@ -107,14 +112,16 @@ const MatchSuccessScreen = ({
       });
     })();
 
-    return async () => await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
+    return async () =>
+      await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
   }, []);
-
 
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await configuredAxios.get(`${ROUTE.MEETINGS}/${meetingId}`);
+        const { data } = await configuredAxios.get(
+          `${ROUTE.MEETINGS}/${meetingId}`
+        );
         const { meetingDetails } = data;
 
         setSelectedMeeting(meetingDetails);
@@ -129,12 +136,12 @@ const MatchSuccessScreen = ({
 
     isAllArrived
       ? socketApi.finishMeeting(() => {
-        navigation.dispatch(resetAction(0, SCREEN.AFTER_MEETING));
-      })
+          navigation.dispatch(resetAction(0, SCREEN.AFTER_MEETING));
+        })
       : socketApi.cancelMeeting(() => {
-        resetMeeting();
-        navigation.dispatch(resetAction(0, SCREEN.MAIN_MAP));
-      });
+          resetMeeting();
+          navigation.dispatch(resetAction(0, SCREEN.MAIN_MAP));
+        });
   };
 
   const handleArrivalButtonClick = async () => {
@@ -180,30 +187,23 @@ const MatchSuccessScreen = ({
         showsMyLocationButton={true}
         showsUserLocation={true}
       >
-        <Marker
-          title={partnerNickname}
-          coordinate={partnerLocation}
-        />
-        <Marker
-          title={restaurantName}
-          coordinate={restaurantLocation}
-        >
-          <View
-            style={styles.view}>
+        <Marker title={partnerNickname} coordinate={partnerLocation} />
+        <Marker title={restaurantName} coordinate={restaurantLocation}>
+          <View style={styles.view}>
             <Text>{restaurantName}</Text>
             <StyledImage
               source={require('../../assets/images/rice.png')}
-              width='24px'
-              height='26px'
-              resizeMode='cover'
+              width="24px"
+              height="26px"
+              resizeMode="cover"
             />
           </View>
         </Marker>
         <Circle
           center={restaurantLocation}
           radius={500}
-          strokeColor='rgba(0, 0, 255, 0.1)'
-          fillColor='rgba(0, 0, 255, 0.1)'
+          strokeColor="rgba(0, 0, 255, 0.1)"
+          fillColor="rgba(0, 0, 255, 0.1)"
         />
       </MapView>
       <LinearGradient
@@ -211,91 +211,71 @@ const MatchSuccessScreen = ({
         style={styles.linearGradient}
       />
       <OverlayHeader>
-        <OverlayText
-          size='30px'
-        >R I C E C O C O
-        </OverlayText>
-        <OverlayText>매칭 성공! 1시간 내로 도착하세요!
-        </OverlayText>
-        {
-          !!expiredTime &&
-          <RemainingTime
-            expiredTime={expiredTime}
-            onTimeEnd={handleTimeEnd}
-          />
-        }
+        <OverlayText size="30px">R I C E C O C O</OverlayText>
+        <OverlayText>매칭 성공! 1시간 내로 도착하세요!</OverlayText>
+        {!!expiredTime && (
+          <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
+        )}
       </OverlayHeader>
-      <OverlayFooter
-        flexDirection='column'
-        alignItems='flex-end'
-      >
-        {
-          isArrived &&
-          <OutlineButton
-            onPress={handleArrivalButtonClick}
-            width='40%'
-          >
-            <P
-              color={COLOR.THEME_COLOR}
-            >{
-                isArrivalConfirmed ?
-                  ALERT.COMPLATE_ARRIVAL :
-                  ALERT.CONFIRM_ARRIVAL
-              }
+      <OverlayFooter flexDirection="column" alignItems="flex-end">
+        {isArrived && (
+          <OutlineButton onPress={handleArrivalButtonClick} width="40%">
+            <P color={COLOR.THEME_COLOR}>
+              {isArrivalConfirmed
+                ? ALERT.COMPLATE_ARRIVAL
+                : ALERT.CONFIRM_ARRIVAL}
             </P>
           </OutlineButton>
-        }
+        )}
         <OutlineButton
-          width='40%'
+          width="40%"
+          borderColor={COLOR.THEME_COLOR}
+          backgroundColor={COLOR.THEME_COLOR}
         >
           <Icon
             name={ICON_NAME.COMMENT}
-            size={48}
-            color={COLOR.THEME_COLOR}
+            size={38}
+            color={COLOR.WHITE}
             onPress={handleChatButtonClick}
           />
         </OutlineButton>
         <OutlineButton
-          width='40%'
+          width="40%"
+          borderColor={COLOR.THEME_COLOR}
+          backgroundColor={COLOR.THEME_COLOR}
         >
-          {
-            !isArrived &&
-            <Icon
-              name={ICON_NAME.COMMENT_SLASH}
-              size={40}
-              color={COLOR.THEME_COLOR}
-              onPress={() => setIsOnVergeofBreaking(true)}
-            />
-          }
+          {!isArrived && <P color={COLOR.WHITE}>CANCEL</P>}
         </OutlineButton>
-        {
-          isOnVergeofBreaking &&
+        {isOnVergeofBreaking && (
           <FinalQuestion
             modalVisible={isOnVergeofBreaking}
             setModalVisible={setIsOnVergeofBreaking}
             question={ALERT.CONFIRM_CANCEL_PROMISE}
             onClickYes={handleBreakupButtonClick}
           />
-        }
+        )}
       </OverlayFooter>
     </MapWrapper>
   );
 };
 
-export default connect(state => ({
-  userId: state.user._id,
-  userNickname: state.user.nickname,
-  userLocation: state.location,
-  partnerNickname: state.meetings.selectedMeeting.partnerNickname,
-  restaurantName: state.meetings.selectedMeeting.restaurantName,
-  restaurantLocation: state.meetings.selectedMeeting.restaurantLocation,
-  expiredTime: state.meetings.selectedMeeting.expiredTime,
-  meetingId: state.meetings.selectedMeeting.meetingId,
-  currentMeeting: state.meetings.currentMeeting,
-}), {
-  setUserLocation,
-  setSelectedMeeting,
-  setCurrentMeeting,
-  setPromiseAmount,
-  resetMeeting,
-})(MatchSuccessScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    userNickname: state.user.nickname,
+    userLocation: state.location,
+    partnerNickname: state.meetings.selectedMeeting.partnerNickname,
+    restaurantName: state.meetings.selectedMeeting.restaurantName,
+    restaurantLocation: state.meetings.selectedMeeting.restaurantLocation,
+    expiredTime: state.meetings.selectedMeeting.expiredTime,
+    meetingId: state.meetings.selectedMeeting.meetingId,
+    currentMeeting: state.meetings.currentMeeting,
+  }),
+  {
+    setUserLocation,
+    setSelectedMeeting,
+    setCurrentMeeting,
+    setPromiseAmount,
+    resetMeeting,
+  }
+)(MatchSuccessScreen);
