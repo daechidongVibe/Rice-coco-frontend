@@ -3,7 +3,7 @@ export default ALERT = {
   NO: 'NO',
   YES: 'YES',
   TIME_OUT_TITLE: '시간 종료',
-  TIME_OUT_MESSAGE: '다음 약속을 잡아보세요',
+  TIME_OUT_MESSAGE: '약속이 취소되었습니다',
   LOGOUT_MESSAGE: '로그아웃하시겠습니까?',
   SHOULD_ENTER_MESSAGE: '메세지를 입력해주세요',
   FIND_OTHER_RESTAURANT: '다른 맛집을 찾아볼까요?',

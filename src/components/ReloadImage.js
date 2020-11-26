@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Animated } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
-import styled from 'styled-components/native';
 import { Easing } from 'react-native-reanimated';
+import { COLOR } from '../constants/color';
+import { IconWrapper } from '../shared/index';
+import ICON_NAME from '../constants/icon';
 
 const ReloadImage = ({ onClick }) => {
   const spinAnim = new Animated.Value(0);
@@ -24,7 +26,7 @@ const ReloadImage = ({ onClick }) => {
   };
 
   return (
-    <Wrapper
+    <IconWrapper
       onPress={handleClick}
       style={{
         transform: [{
@@ -35,14 +37,13 @@ const ReloadImage = ({ onClick }) => {
         }],
       }}
     >
-      <SimpleLineIcons name="reload" size={24} color="black" />
-    </Wrapper>
+      <SimpleLineIcons
+        name={ICON_NAME.RELOAD}
+        size={24}
+        color={COLOR.WHITE}
+      />
+    </IconWrapper>
   );
 };
-
-const Wrapper = styled.TouchableOpacity`
-  display: flex;
-  align-items: center;
-`;
 
 export default ReloadImage;

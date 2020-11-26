@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import styled from 'styled-components';
+import React from 'react';
+import { View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import {Container, InputContainer} from '../shared/index';
 
 const PickerInput = ({ content, onChange, contentOptions }) => {
   return (
@@ -12,7 +10,11 @@ const PickerInput = ({ content, onChange, contentOptions }) => {
         onValueChange={value => onChange(value)}
       >
         {contentOptions.map((option, index) => {
-          return <Picker.Item key={index} label={option} value={option} />;
+          return <Picker.Item
+            key={index}
+            label={option}
+            value={option}
+          />;
         })}
       </Picker>
     </View>

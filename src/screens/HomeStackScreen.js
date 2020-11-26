@@ -1,8 +1,5 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import asyncStorage from '@react-native-async-storage/async-storage';
-
 import LoginScreen from './LoginScreen';
 import UserRegisterScreen from './UserRegisterScreen';
 import PreferredPartnerScreen from './PreferredPartnerScreen';
@@ -13,22 +10,22 @@ import MatchWaitingScreen from './MatchWaitingScreen';
 import MatchSuccessScreen from './MatchSuccessScreen';
 import ChatRoomScreen from './ChatRoomScreen';
 import AfterMeetingScreen from './AfterMeetingScreen';
-
+import SCREEN from '../constants/screen';
 const HomeStack = createStackNavigator();
 
 const HomeStackScreen = () => {
   return (
-    <HomeStack.Navigator initialRouteName='Login' headerMode='none'>
-      <HomeStack.Screen name='Login' component={LoginScreen} />
-      <HomeStack.Screen name='PreferredPartner' component={PreferredPartnerScreen} />
-      <HomeStack.Screen name='MainMap' component={MainMapScreen} />
-      <HomeStack.Screen name='UserRegister' component={UserRegisterScreen} />
-      <HomeStack.Screen name='Search' component={SearchScreen} />
-      <HomeStack.Screen name='RestaurantDetails' component={RestaurantDetailsScreen} />
-      <HomeStack.Screen name='MatchWaiting' component={MatchWaitingScreen} />
-      <HomeStack.Screen name='MatchSuccess' component={MatchSuccessScreen} />
-      <HomeStack.Screen name='ChatRoom' component={ChatRoomScreen} />
-      <HomeStack.Screen name='AfterMeeting' component={AfterMeetingScreen} />
+    <HomeStack.Navigator initialRouteName={SCREEN.LOGIN} headerMode='none'>
+      <HomeStack.Screen name={SCREEN.LOGIN} component={LoginScreen} />
+      <HomeStack.Screen name={SCREEN.PREFERRED_PARTNER} component={PreferredPartnerScreen} />
+      <HomeStack.Screen name={SCREEN.MAIN_MAP} component={MainMapScreen} />
+      <HomeStack.Screen name={SCREEN.USER_REGISTER} component={UserRegisterScreen} />
+      <HomeStack.Screen name={SCREEN.SEARCH} component={SearchScreen} />
+      <HomeStack.Screen name={SCREEN.RESTAURANT_DETAILS} component={RestaurantDetailsScreen} />
+      <HomeStack.Screen name={SCREEN.MATCH_WAITING} component={MatchWaitingScreen} />
+      <HomeStack.Screen name={SCREEN.MATCH_SUCCESS} component={MatchSuccessScreen} />
+      <HomeStack.Screen name={SCREEN.CHAT_ROOM} component={ChatRoomScreen} />
+      <HomeStack.Screen name={SCREEN.AFTER_MEETING} component={AfterMeetingScreen} />
     </HomeStack.Navigator>
   );
 };

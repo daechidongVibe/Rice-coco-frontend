@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
-import getEnvVars from '../../environment';
 import configuredAxios from '../config/axiosConfig';
 import { setSelectedMeeting, setPromiseAmount } from '../actions/index';
 import RenderImage from '../components/RenderImage';
@@ -10,9 +9,9 @@ import { Wrapper, Title, StyledView, P, ImageContainer, StyledButton } from '../
 import resetAction from '../utils/navigation';
 import ROUTE from '../constants/route';
 import SCREEN from '../constants/screen';
-import { COLOR } from '../constants/assets';
+import { COLOR } from '../constants/color';
+import API_URL from '../constants/apiUrl';
 
-const { REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
 const RestaurantDetails = ({
   navigation,
   selectedMeeting,
@@ -27,11 +26,9 @@ const RestaurantDetails = ({
   const [photoUrls, setPhotoUrls] = useState('');
   const [review, setReview] = useState('');
 
-  const restaurantDetailsApi = `https://maps.googleapis.com/maps/api/place/details/json?key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}&place_id=${restaurantId}&language=ko&fields=name,rating,adr_address,photo,geometry,reviews`;
-
   useEffect(() => {
     (async () => {
-      const { data: { result } } = await configuredAxios(restaurantDetailsApi);
+      const { data: { result } } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
       const { lat: latitude, lng: longitude } = result.geometry.location;
 
       setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
@@ -40,8 +37,7 @@ const RestaurantDetails = ({
 
       for (let photo of photos.slice(0, 5)) {
         const { photo_reference } = photo;
-        const restaurantPhotoApi = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo_reference}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`;
-        const photoData = await configuredAxios(restaurantPhotoApi);
+        const photoData = await configuredAxios(API_URL.restaurantPhoto(photo_reference));
 
         setPhotoUrls(prev => [...prev, photoData.config.url]);
       }
@@ -54,8 +50,8 @@ const RestaurantDetails = ({
 
   const handlePress = event => {
     event.target.disabled = true;
-    if (partnerNickname) {
 
+    if (partnerNickname) {
       handlePressJoinButton();
     } else {
       handlePressCreateButton();
@@ -138,20 +134,17 @@ const RestaurantDetails = ({
       }
       <StyledButton
         onPress={handlePress}>
-        <P color={COLOR.WHITH}>라이스코코 만나러가기</P>
+        <P color={COLOR.WHITE}>라이스코코 만나러가기</P>
       </StyledButton>
     </Wrapper>
   );
 };
 
-export default connect(
-  state => ({
+export default connect(state => ({
     selectedMeeting: state.meetings.selectedMeeting,
     userId: state.user._id,
     userPromise: state.user.promise,
-  }),
-  {
+  }),{
     setSelectedMeeting,
     setPromiseAmount,
-  }
-)(RestaurantDetails);
+  })(RestaurantDetails);

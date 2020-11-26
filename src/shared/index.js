@@ -1,4 +1,73 @@
 import styled from 'styled-components/native';
+import { COLOR } from '../constants/color';
+import { StyleSheet, Dimensions } from 'react-native';
+
+export const styles = StyleSheet.create({
+  mapStyle: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  linearGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 200,
+  },
+  view: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'yellow',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 40,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonWrap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  openButton: {
+    backgroundColor: '#F194FF',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginHorizontal: 1,
+    width: 70,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+});
+
+export const StyledView = styled.View`
+  padding: 24px;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const Wrapper = styled.View`
   display: flex;
@@ -7,7 +76,7 @@ export const Wrapper = styled.View`
   padding: 0 8px;
   justify-content: center;
   align-items: center;
-  background-color: ${prop => prop.color ? prop.color : '#ffffff'};
+  background-color: ${prop => prop.color || COLOR.LIGHT_WHITE};
 `;
 
 export const MapWrapper = styled.View`
@@ -15,16 +84,37 @@ export const MapWrapper = styled.View`
   justify-content: center;
 `;
 
-export const StyledView = styled.View`
-  padding: 24px;
-  justify-content: center;
+export const IconWrapper = styled.TouchableOpacity`
+  display: flex;
   align-items: center;
+`;
+
+export const Container = styled.View`
+  width: 95%;
+  margin: 0 auto;
+  justify-content: ${prop => prop.justify || 'center'};
+  align-items: center;
+  flex-direction: row;
 `;
 
 export const ListContainer = styled.View`
   width:100%;
   flex: 0.9;
   align-items: center;
+  `;
+
+export const ItemContainer = styled.TouchableNativeFeedback`
+  width: ${prop => prop.width || '80%'};
+  height: ${prop => prop.height || '90px'};
+  margin-bottom: 8px;
+  align-self: center;
+`;
+
+export const PaymentItem = styled.TouchableOpacity`
+  background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
+  padding: 20px;
+  margin: 5px;
+  border-radius: 5px;
 `;
 
 export const ImageContainer = styled.View`
@@ -32,51 +122,19 @@ export const ImageContainer = styled.View`
   height: 180px;
   margin-bottom: 8px;
   align-self: center;
+  justify-content: center;
 `;
 
-export const Title = styled.Text`
-  flex: 0.2;
-  margin: 0 auto;
-  font-size: ${prop => prop.size || '16px'};
-  font-weight: bold;
-  text-align: center;
-  color: #ff914d;
+export const StyledImage = styled.Image`
+  width: ${prop => prop.width || '250px'};
+  height: ${prop => prop.height || '100%'};
 `;
 
-export const Container = styled.View`
-  width: 95%;
-  margin: 0 auto;
+export const AnimationContainer = styled.View`
+  width: 100%;
+  margin-top: 320px;
   justify-content: center;
   align-items: center;
-  flex-direction: row;
-`;
-
-export const ItemContainer = styled.TouchableNativeFeedback`
-  width: ${prop => prop.width ? prop.width : '80%'};
-  height: ${prop => prop.height ? prop.height : '90px'};
-  margin-bottom: 8px;
-  align-self: center;
-`;
-
-export const Label = styled.Text`
-  width: 30%;
-  margin: 24px 0px;
-  font-size: 16px;
-  text-align: center;
-`;
-
-export const P = styled.Text`
-  margin: ${prop => prop.margin || '0 auto;'};
-  font-size: ${prop => prop.size || '16px'};
-  color: ${prop => prop.color || 'black'};
-  text-align: center;
-`;
-
-export const StyledText = styled.Text`
-  font-size: 20px;
-  color: white;
-  text-align: center;
-  font-weight: bold;
 `;
 
 export const ReloadButtonContainer = styled.View`
@@ -87,7 +145,7 @@ export const ReloadButtonContainer = styled.View`
 
 export const MeesageBoxContainer = styled.View`
   display: flex;
-  flex-direction: ${props => props.direction};
+  flex-direction: ${props => props.direction || 'row'};
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 9px;
@@ -98,10 +156,68 @@ export const MessageContainer = styled.View`
   height: 40px;
   padding: 8px;
   align-items: flex-end;
-  background-color: ${props => props.color};
+  background-color: ${props => props.color || COLOR.LIGHT_WHITE};
   justify-content: center;
   align-items: center;
   border-radius: 18px;
+`;
+
+export const InputContainer = styled.TouchableOpacity`
+  width: ${prop => prop.width || '80%'}
+  margin: 8px auto;
+  text-align: center;
+`;
+
+export const StyledInput = styled.TextInput`
+  width: 80%;
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom-width: 1px;
+  margin: 8px auto;
+  color: ${prop => prop.color || COLOR.BLACK};
+`;
+
+export const PickerContainer = styled.TouchableOpacity`
+  width: 7%
+  margin: 0 -10px 0 0;
+`;
+
+export const StyledText = styled.Text`
+  font-size: 20px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+`;
+
+export const TimeText = styled.Text`
+  text-align: center;
+  font-size: ${prop => prop.size || '100px'};
+  background-color: transparent;
+  margin: 0 auto;
+  color: ${prop => prop.color || COLOR.BLACK};
+`;
+
+export const Title = styled.Text`
+  flex: 0.3;
+  margin: 0 auto;
+  font-size: ${prop => prop.size || '24px'};
+  font-weight: bold;
+  text-align: center;
+  color: #ff914d;
+`;
+
+export const Label = styled.Text`
+  width: 80%;
+  margin: 0 8px;
+  font-size: 12px;
+  color: ${COLOR.BLUE}
+`;
+
+export const P = styled.Text`
+  margin: ${prop => prop.margin || '0 auto;'};
+  font-size: ${prop => prop.size || '16px'};
+  color: ${prop => prop.color || COLOR.BLACK};
+  text-align: center;
 `;
 
 export const UserProfile = styled.View`
@@ -114,46 +230,21 @@ export const UserProfile = styled.View`
   padding-top: 2px;
 `;
 
-export const InputContainer = styled.TouchableOpacity`
-  width: 100%;
-  margin: 8px auto;
-  text-align: center;
-`;
-
-export const PickerContainer = styled.TouchableOpacity`
-  width: 7%
-  margin: 0 -10px 0 0;
-`;
-
-export const StyledInput = styled.TextInput`
-  width: 80%;
-  text-align: center;
-  padding-bottom: 10px;
-  border-bottom-width: 1px;
-  margin: 8px auto;
-  color: ${prop => prop.color || '#ff914d'};
+export const StyledButton = styled.TouchableOpacity`
+  width: 300px;
+  height: 40px;
+  padding-top: 10px;
+  margin: 0 auto;
+  margin-top: ${prop => prop.marginTop || '36px'};
+  align-self: flex-end;
+  border-radius: 18px;
+  background-color: ${prop => prop.color || COLOR.THEME_COLOR};
 `;
 
 export const NameCreationButton = styled.TouchableOpacity`
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: #ff914d;
-`;
-
-export const StyledButton = styled.TouchableOpacity`
-  width: 300px;
-  height: 40px;
-  padding-top: 10px;
-  margin: 0 auto;
-  margin-top: 36px;
-  align-self: flex-end;
-  border-radius: 18px;
-  background-color: ${prop => prop.color || '#ff914d'};
-`;
-
-export const StyledImage = styled.Image`
-  width: 250px;
-  height: 100%;
 `;
 
 export const LoginButton = styled.TouchableOpacity`
@@ -166,15 +257,34 @@ export const LoginButton = styled.TouchableOpacity`
 `;
 
 export const RestaurantSearchButton = styled.TouchableOpacity`
-  padding: 15px;
+  padding: 18px;
+  border-radius: 30px;
+  background-color: ${COLOR.THEME_COLOR};
+`;
+
+export const ArrivalButton = styled.TouchableOpacity`
+  width: 50%;
+  padding: 10px;
   border-radius: 50px;
-  background-color: #ffffff;
+`;
+
+export const OutlineButton = styled.TouchableOpacity`
+  width: 80%;
+  height: 48px;
+  padding: 6px;
+  margin-top: 8px;
+  border-width: 3px;
+  border-color : ${COLOR.THEME_COLOR};
+  border-radius: 18px;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const OverlayHeader = styled.View`
   display: flex;
   position: absolute;
   width: 100%;
+  align-items: center;
   padding: 50px 30px 30px 30px;
   top: 0px;
 `;
@@ -182,18 +292,20 @@ export const OverlayHeader = styled.View`
 export const OverlayFooter = styled.View`
   display: flex;
   position: absolute;
-  flex-direction: row;
-  align-items: center;
+  width: 100%;
+  flex-direction: ${prop => prop.flexDirection || 'row'};
+  align-items: ${prop => prop.alignItems || 'center'};
+  justify-content: flex-end;
   bottom: 50px;
   right: 20px;
 `;
 
-export const OverlayTitle = styled.Text`
+export const OverlayText = styled.Text`
   width: 100%;
   color: #ff914d;
   text-align: center;
-  font-size: ${prop => prop.size ? prop.size : '13px'};
-  font-family: ${prop => prop.font ? prop.font : 'Glacial'};
+  font-size: ${prop => prop.size || '13px'};
+  font-family: ${prop => prop.font || 'sans-serif'};
 `;
 
 export const StyledFlatList = styled.FlatList`

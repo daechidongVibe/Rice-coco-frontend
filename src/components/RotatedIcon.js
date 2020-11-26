@@ -7,7 +7,7 @@ const RotatedIcon = () => {
     spinAnim.setValue(0)
     Animated.timing(spinAnim, {
       toValue: 1,
-      duration: 3000,
+      duration: 1000,
       easing: Easing.linear,
       useNativeDriver: true
     }).start(() => {
@@ -22,6 +22,8 @@ const RotatedIcon = () => {
   return (
     <Animated.Image
       style={{
+        width:100,
+        height:100,
         transform: [{
           rotate: spinAnim.interpolate({
             inputRange: [0, 1],

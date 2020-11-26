@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
-import styled from 'styled-components';
 import { P, MeesageBoxContainer, MessageContainer, UserProfile } from '../shared'
-import { COLOR } from '../constants/assets';
+import { COLOR } from '../constants/color';
 
 const MessageBox = ({
   user,

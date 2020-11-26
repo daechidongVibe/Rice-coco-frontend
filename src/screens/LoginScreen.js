@@ -9,7 +9,8 @@ import { setUserInfo } from '../actions';
 import { LoginButton, P, Wrapper } from '../shared/index';
 import SCREEN from  '../constants/screen';
 import ALERT from '../constants/alert';
-import { COLOR } from '../constants/assets';
+import { COLOR } from '../constants/color';
+import ROUTE from '../constants/route';
 
 const Login = ({ navigation, setUserInfo }) => {
   useEffect(() => {
@@ -18,9 +19,7 @@ const Login = ({ navigation, setUserInfo }) => {
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 
-      const {
-        data: { user },
-      } = await configuredAxios.post('users/login');
+      const {data: { user } } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.LOGIN}`);
 
       setUserInfo(user);
 
@@ -35,10 +34,9 @@ const Login = ({ navigation, setUserInfo }) => {
 
     try {
       const email = await googleAuth();
-
       if (!email) return;
 
-      const { data } = await configuredAxios.post('users/login', { email });
+      const { data } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.LOGIN}`, { email });
 
       if (data.result === ALERT.NOT_EXIST) {
         navigation.dispatch(StackActions.replace(SCREEN.USER_REGISTER, { email }));
@@ -47,7 +45,6 @@ const Login = ({ navigation, setUserInfo }) => {
       }
 
       const { user, token } = data;
-
       await asyncStorage.setItem('token', token);
 
       setUserInfo(user);
@@ -56,7 +53,7 @@ const Login = ({ navigation, setUserInfo }) => {
         ? navigation.dispatch(StackActions.replace(SCREEN.MAIN_MAP))
         : navigation.dispatch(StackActions.replace(SCREEN.PREFERRED_PARTNER));
     } catch (error) {
-      console.error(error);
+      alert(error.message);
     }
   };
 
