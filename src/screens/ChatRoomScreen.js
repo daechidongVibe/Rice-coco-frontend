@@ -47,7 +47,6 @@ const ChatRoom = ({
     if (!message) return;
 
     socketApi.sendMessage(userId, nickname, message, () => setMessage(''));
-    socketApi.sendNotification(nickname, message);
   };
 
   return (

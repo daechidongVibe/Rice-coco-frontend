@@ -23,9 +23,6 @@ export const socketApi = {
   sendMessage: (userId, nickname, message, callback) => {
     socket.emit('send message', { userId, nickname, message }, callback);
   },
-  sendNotification: (nickname, message) => {
-    socket.emit('send notification', { nickname, message });
-  },
   arriveMeeting: () => {
     socket.emit('arrive meeting');
   },
