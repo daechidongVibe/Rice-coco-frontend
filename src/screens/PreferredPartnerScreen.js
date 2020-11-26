@@ -3,11 +3,18 @@ import { connect } from 'react-redux';
 import axiosInstance from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import PickerInput from '../components/PickerInput';
-import { Title, Wrapper, StyledButton, P, InputContainer } from '../shared/index';
 import ROUTE from '../constants/route';
 import SCREEN from '../constants/screen';
-import { COLOR } from '../constants/assets';
+import { COLOR } from '../constants/color';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import {
+  Title,
+  Wrapper,
+  StyledButton,
+  P,
+  InputContainer,
+  Label,
+} from '../shared/index';
 
 const PreferredPartnerScreen = ({
   navigation,
@@ -52,6 +59,7 @@ const PreferredPartnerScreen = ({
   return (
     <Wrapper>
       <Title>함께 밥을 먹고 싶은 동료는 누구인가요?</Title>
+      <Label>gender</Label>
       <InputContainer>
         <PickerInput
           content={gender}
@@ -59,6 +67,7 @@ const PreferredPartnerScreen = ({
           contentOptions={MY_INFO_OPTIONS.GENDER}
         />
       </InputContainer>
+      <Label>occupation</Label>
       <InputContainer>
         <PickerInput
           content={occupation}
@@ -66,6 +75,7 @@ const PreferredPartnerScreen = ({
           contentOptions={MY_INFO_OPTIONS.OCCUPATION}
         />
       </InputContainer>
+      <Label>age</Label>
       <InputContainer>
         <PickerInput
           content={birthYear}
@@ -74,7 +84,7 @@ const PreferredPartnerScreen = ({
         />
       </InputContainer>
       <StyledButton onPress={handleSubmit}>
-        <P color={COLOR.WHITH}>나의 라이스코코</P>
+        <P color={COLOR.WHITE}>나의 라이스코코</P>
       </StyledButton>
     </Wrapper>
   );

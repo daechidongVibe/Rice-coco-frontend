@@ -1,4 +1,4 @@
-function isLocationNear(checkPoint, centerPoint, m) {
+const isLocationNear = (checkPoint, centerPoint, m) => {
   const km = m / 1000;
   const ky = 40000 / 360;
   const kx = Math.cos((Math.PI * centerPoint.latitude) / 180.0) * ky;
@@ -6,6 +6,6 @@ function isLocationNear(checkPoint, centerPoint, m) {
   const dy = Math.abs(centerPoint.latitude - checkPoint.latitude) * ky;
 
   return Math.sqrt(dx * dx + dy * dy) <= km;
-}
+};
 
 export default isLocationNear;

@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import getEnvVars from '../../environment';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import { Wrapper, P, Title, StyledButton, StyledView } from '../shared/index';
 
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
 
@@ -75,104 +76,48 @@ const PaymentScreen = () => {
   `;
 
   return (
-    <Container>
-      {!isPaymentSelected ? (
-        // 결제 선택 컴포넌트
-        <PaymentSelectView>
-          <Header>결제 선택</Header>
-          <SubHeader>
-            약속의 상징 프로미스를 할인된 가격에 구매하세요!
-          </SubHeader>
-          {MY_INFO_OPTIONS.PAYMENT_INFO.map((item, index) => {
-            return (
-              <PaymentItem
-                onPress={() => setPaymentInfo(item)}
-                key={index}
-                disabled={item === paymentInfo ? true : false}
-              >
-                <Text>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</Text>
-              </PaymentItem>
-            );
-          })}
-          <Wrapper>
-            <SelectButton onPress={() => setIsPaymentSelected(true)}>
-              <ButtonText>다음</ButtonText>
-            </SelectButton>
-          </Wrapper>
-        </PaymentSelectView>
-      ) : (
-        // 결제 요청 컴포넌트
-        <WebView
-          originWhitelist={['*']}
-          source={{ html: paymentView }} // 웹뷰에 html 주입
-          style={{ marginHorizontal: 10, marginVertical: 10 }}
-          injectedJavaScript={jsCode} // 웹뷰에 script 주입
-          onMessage={event => {
-            console.log(event.nativeEvent.data);
-          }}
-          autoFocus={true}
-        />
-      )}
-    </Container>
+    <Wrapper>
+      {
+        !isPaymentSelected ?
+        ( // 결제 선택 컴포넌트
+          <StyledView>
+            <Title size='16px'>결제 선택</Title>
+            <Title>약속의 상징 프로미스를 할인된 가격에 구매하세요!</Title>
+            {
+              MY_INFO_OPTIONS.paymentInfo.map((item, index) => {
+                return (
+                  <PaymentItem onPress={() => setPaymentInfo(item)} key={index} disabled={item === paymentInfo ? true : false}>
+                    <P>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</P>
+                  </PaymentItem>
+                );
+              })
+            }
+            <Wrapper>
+              <StyledButton onPress={() => setIsPaymentSelected(true)}>
+                <P>다음</P>
+              </StyledButton>
+            </Wrapper>
+          </StyledView>
+        ) :
+        ( // 결제 요청 컴포넌트
+          <WebView
+            originWhitelist={['*']}
+            source={{ html: paymentView }} // 웹뷰에 html 주입
+            style={{ marginHorizontal: 10, marginVertical: 10 }}
+            injectedJavaScript={jsCode} // 웹뷰에 script 주입
+            onMessage={(event) => {
+              console.log(event.nativeEvent.data);
+            }}
+            autoFocus={true}
+          />
+        )
+      }
+    </Wrapper>
   );
 };
 
 // 웹뷰에 주입될 html
 const paymentView =
   '<head><meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" /><style> div { display: flex; justify-content: center; align-items: center; height: 100%; } button { padding: 20px; color: white; background-color: blue; border-radius: 10px; }</style><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script><script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script></head><div><button id="paymentButton">결제하기</button></div>';
-
-const Container = styled.View`
-  height: 100%;
-`;
-
-const Header = styled.Text`
-  color: #ff914d;
-  font-size: 40px;
-  font-weight: bold;
-  margin: 32px auto;
-`;
-
-const SubHeader = styled.Text`
-  font-size: 15px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const PaymentSelectView = styled.View`
-  height: 100%;
-`;
-
-const PaymentItem = styled.TouchableOpacity`
-  background-color: ${props => (props.disabled ? 'gray' : '#ff914d')};
-  padding: 20px;
-  margin: 5px;
-  border-radius: 5px;
-`;
-
-const Wrapper = styled.View`
-  width: 100%;
-  display: flex;
-  margin-top: 80px;
-`;
-
-const SelectButton = styled.TouchableOpacity`
-  align-self: center;
-  padding: 10px 15px;
-  background-color: #ff914d;
-  border-radius: 5px;
-`;
-
-const Text = styled.Text`
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-`;
-
-const ButtonText = styled.Text`
-  color: white;
-  text-align: center;
-`;
 
 export default PaymentScreen;

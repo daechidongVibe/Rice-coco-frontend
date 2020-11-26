@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
-import styled from 'styled-components';
+import { TimeText, TimeContainer } from '../shared/index';
 
-const RemainingTime = ({ expiredTime, onTimeEnd }) => {
+const RemainingTime = ({
+  expiredTime,
+  onTimeEnd,
+  size,
+}) => {
   const [remainingTime, setRemainingTime] = useState('59:59');
 
   const calculateRemaingTime = () => {
@@ -34,26 +38,12 @@ const RemainingTime = ({ expiredTime, onTimeEnd }) => {
   });
 
   return (
-    <Wrapper>
-      <TimeText>{remainingTime}</TimeText>
-    </Wrapper>
+    <TimeText
+      size={size}
+    >
+      {remainingTime}
+    </TimeText>
   );
 };
-
-const Wrapper = styled.View`
-  display: flex;
-  align-items: center;
-  padding: 10px;
-`;
-
-const TimeText = styled.Text`
-  text-align: center;
-  background-color: black;
-  padding: 10px;
-  width: 40%;
-  color: white;
-  font-weight: bold;
-  border: 2px solid white;
-`;
 
 export default RemainingTime;

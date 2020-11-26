@@ -1,20 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-
-import PickerInput from '../components/PickerInput';
 import configuredAxios from '../config/axiosConfig';
-import InputSelector from '../components/InputSelector';
 import { setUserInfo } from '../actions/index';
-import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import PickerInput from '../components/PickerInput';
 import ROUTE from '../constants/route';
-import { COLOR } from '../constants/assets';
-import { StyledInput, InputContainer, Wrapper, Title, StyledButton, P, Container, PickerContainer } from '../shared/index';
+import API_URL from '../constants/apiUrl';
+import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import { COLOR } from '../constants/color';
+import {
+  StyledInput,
+  InputContainer,
+  Wrapper, Title,
+  StyledButton,
+  P,
+  Container,
+  PickerContainer,
+  Label,
+} from '../shared/index';
 
-import getEnvVars from '../../environment';
-const { REACT_NATIVE_RANDOM_NICKNAME_API } = getEnvVars();
-
-const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
+const EditUserInfo = ({
+  navigation,
+  user,
+  userId,
+  setUserInfo
+}) => {
   const { nickname, birthYear, email, gender, occupation, promise } = user;
   const [nicknameInput, setNicknameInput] = useState(nickname);
   const [occupationInput, setOccupationInput] = useState(occupation);
@@ -23,7 +32,7 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
     const {
       data: { words: randomName },
     } = await configuredAxios.get(
-      REACT_NATIVE_RANDOM_NICKNAME_API,
+      API_URL.randomNickname,
     );
     setNicknameInput(randomName[0]);
   };
@@ -32,7 +41,7 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
     if (nickname === nicknameInput && occupation === occupationInput) return;
 
     try {
-      const { data : {nickname, occupation} }  = await configuredAxios.put(
+      const { data: { nickname, occupation } } = await configuredAxios.put(
         `${ROUTE.USERS}/${userId}`,
         {
           nickname: nicknameInput,
@@ -42,7 +51,7 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
       setUserInfo({ nickname, occupation });
       navigation.goBack();
     } catch (error) {
-      console.warn(error);
+      alert(error.message);
     }
   };
 
@@ -54,10 +63,12 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
         editable={false}
         color={COLOR.LIGHT_GRAY}
       />
+      <Label>occupation</Label>
       <Container>
         <StyledInput
           value={occupationInput}
           editable={false}
+          color={COLOR.THEME_COLOR}
         />
         <PickerContainer>
           <PickerInput
@@ -66,24 +77,30 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
           />
         </PickerContainer>
       </Container>
+      <Label>nickname</Label>
       <InputContainer
         onPress={handlePressNicknameRefresher}
+        width='100%'
       >
         <StyledInput
           value={nicknameInput}
           editable={false}
+          color={COLOR.THEME_COLOR}
         />
       </InputContainer>
+      <Label>gender</Label>
       <StyledInput
         value={gender}
         editable={false}
         color={COLOR.LIGHT_GRAY}
       />
+      <Label>age</Label>
       <StyledInput
         value={birthYear}
         editable={false}
         color={COLOR.LIGHT_GRAY}
       />
+      <Label>my point </Label>
       <StyledInput
         value={`프로미스 ${promise.toString()}개`}
         editable={false}
@@ -91,9 +108,11 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
       />
       <StyledButton
         onPress={onPressSubmitButton}
+        marginTop='8px'
       >
-        <P color={COLOR.WHITH}>
-          수정하기
+        <P
+          color={COLOR.WHITE}
+        >수정하기
         </P>
       </StyledButton>
     </Wrapper>

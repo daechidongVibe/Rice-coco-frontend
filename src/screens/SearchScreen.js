@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import BouncingPreloader from 'react-native-bouncing-preloader';
-import getEnvVars from '../../environment';
 import configuredAxios from '../config/axiosConfig';
 import ALERT from '../constants/alert';
 import RenderItem from '../components/RenderItem';
-import { COLOR } from '../constants/assets';
-import { Wrapper, SearchInput, Container, P, StyledFlatList, ListContainer, InputContainer } from '../shared/index';
-const { REACT_NATIVE_GOOGLE_PLACES_URL, REACT_NATIVE_GOOGLE_PLACES_API_KEY } = getEnvVars();
+import { COLOR } from '../constants/color';
+import API_URL from '../constants/apiUrl';
+import ICON_NAME from '../constants/icon';
+import {
+  Wrapper,
+  SearchInput,
+  Container,
+  P,
+  StyledFlatList,
+  ListContainer,
+  InputContainer,
+  AnimationContainer
+} from '../shared/index';
 
-const Search = ({ navigation }) => {
+const Search = ({ navigation, isWaiting }) => {
   const [searchList, setSearchList] = useState('');
   const [searchWord, setSearchWord] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-
-  const restaurantUrl = `${REACT_NATIVE_GOOGLE_PLACES_URL}&keyword=${searchWord}&key=${REACT_NATIVE_GOOGLE_PLACES_API_KEY}`;
 
   const handleSearchWordSubmit = async () => {
     if (isSearching) return;
@@ -22,7 +30,7 @@ const Search = ({ navigation }) => {
     setIsSearching(true);
 
     try {
-      const { data: { results } } = await configuredAxios.get(restaurantUrl);
+      const { data: { results } } = await configuredAxios.get(API_URL.restaurantList(searchWord));
       const filteredSearchList = results.map(
         result => {
           return {
@@ -36,7 +44,7 @@ const Search = ({ navigation }) => {
 
       setSearchList(filteredSearchList);
     } catch (error) {
-      console.warn(error);
+      alert(error.message);
     }
     setIsSearching(false);
   };
@@ -46,7 +54,7 @@ const Search = ({ navigation }) => {
       <InputContainer>
         <Container>
           <Icon
-            name='search'
+            name={ICON_NAME.SEARCH}
             size={24}
             color={COLOR.THEME_COLOR}
           />
@@ -54,6 +62,7 @@ const Search = ({ navigation }) => {
             value={searchWord}
             onChangeText={setSearchWord}
             onSubmitEditing={handleSearchWordSubmit}
+            editable={!isWaiting}
           />
         </Container>
       </InputContainer>
@@ -62,16 +71,17 @@ const Search = ({ navigation }) => {
           {!searchList && !isSearching ? ALERT.SHOULD_INPUT_RESTAURANT : ''}
         </P>
         {
-          isSearching ?
-            <BouncingPreloader
-              icons={[require('../../assets/images/ricecoco-icon.png')]}
-              leftRotation='-680deg'
-              rightRotation='360deg'
-              leftDistance={-180}
-              rightDistance={-250}
-              speed={1000}
-              useNativeDriver={true}
-            />
+          isSearching || isWaiting ?
+            <AnimationContainer>
+              <BouncingPreloader
+                icons={[require('../../assets/images/rice.png')]}
+                leftRotation='-680deg'
+                rightRotation='360deg'
+                leftDistance={-180}
+                rightDistance={-250}
+                speed={1000}
+              />
+            </AnimationContainer>
             :
             <StyledFlatList
               data={searchList}
@@ -90,4 +100,6 @@ const Search = ({ navigation }) => {
   );
 };
 
-export default Search;
+export default connect(state => ({
+  isWaiting: state.meetings.selectedMeeting.meetingId,
+}))(Search);

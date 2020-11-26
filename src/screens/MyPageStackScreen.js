@@ -4,16 +4,17 @@ import MyPageScreen from './MyPageScreen';
 import EditUserInfoScreen from './EditUserInfoScreen';
 import PreferredPartnerScreen from './PreferredPartnerScreen';
 import PaymentScreen from './PaymentScreen';
+import SCREEN from '../constants/screen';
 
 const MyPageStack = createStackNavigator();
 
 const MyPageStackScreen = () => {
   return (
     <MyPageStack.Navigator>
-      <MyPageStack.Screen name='MyPage' component={MyPageScreen} />
-      <MyPageStack.Screen name="EditUserInfo" component={EditUserInfoScreen} />
-      <MyPageStack.Screen name="PreferredPartner" component={PreferredPartnerScreen} />
-      <MyPageStack.Screen name="Payment" component={PaymentScreen} />
+      <MyPageStack.Screen name={SCREEN.MY_PAGE} component={MyPageScreen} />
+      <MyPageStack.Screen name={SCREEN.EDIT_USER_INFO} component={EditUserInfoScreen} />
+      <MyPageStack.Screen name={SCREEN.PREFERRED_PARTNER} component={PreferredPartnerScreen} />
+      <MyPageStack.Screen name={SCREEN.PAYMENT} component={PaymentScreen} />
     </MyPageStack.Navigator>
   );
 };
