@@ -4,7 +4,14 @@ import { WebView } from 'react-native-webview';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import getEnvVars from '../../environment';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
-import { Wrapper, P, Title, StyledButton, StyledView } from '../shared/index';
+import {
+  Wrapper,
+  P,
+  Title,
+  StyledButton,
+  StyledView,
+  PaymentItem,
+} from '../shared/index';
 
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
 
@@ -76,43 +83,42 @@ const PaymentScreen = () => {
   `;
 
   return (
-    <Wrapper>
-      {
-        !isPaymentSelected ?
-        ( // 결제 선택 컴포넌트
-          <StyledView>
-            <Title size='16px'>결제 선택</Title>
-            <Title>약속의 상징 프로미스를 할인된 가격에 구매하세요!</Title>
-            {
-              MY_INFO_OPTIONS.paymentInfo.map((item, index) => {
-                return (
-                  <PaymentItem onPress={() => setPaymentInfo(item)} key={index} disabled={item === paymentInfo ? true : false}>
-                    <P>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</P>
-                  </PaymentItem>
-                );
-              })
-            }
-            <Wrapper>
-              <StyledButton onPress={() => setIsPaymentSelected(true)}>
-                <P>다음</P>
-              </StyledButton>
-            </Wrapper>
-          </StyledView>
-        ) :
-        ( // 결제 요청 컴포넌트
-          <WebView
-            originWhitelist={['*']}
-            source={{ html: paymentView }} // 웹뷰에 html 주입
-            style={{ marginHorizontal: 10, marginVertical: 10 }}
-            injectedJavaScript={jsCode} // 웹뷰에 script 주입
-            onMessage={(event) => {
-              console.log(event.nativeEvent.data);
-            }}
-            autoFocus={true}
-          />
-        )
-      }
-    </Wrapper>
+    <>
+      {!isPaymentSelected ? (
+        <>
+          <Wrapper>
+            <Title>결제 선택</Title>
+            {MY_INFO_OPTIONS.PAYMENT_INFO.map((item, index) => {
+              return (
+                <PaymentItem
+                  onPress={() => setPaymentInfo(item)}
+                  key={index}
+                  disabled={item === paymentInfo ? true : false}
+                >
+                  <P>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</P>
+                </PaymentItem>
+              );
+            })}
+
+            <StyledButton onPress={() => setIsPaymentSelected(true)}>
+              <P>다음</P>
+            </StyledButton>
+          </Wrapper>
+        </>
+      ) : (
+        // 결제 요청 컴포넌트
+        <WebView
+          originWhitelist={['*']}
+          source={{ html: paymentView }} // 웹뷰에 html 주입
+          style={{ marginHorizontal: 10, marginVertical: 10 }}
+          injectedJavaScript={jsCode} // 웹뷰에 script 주입
+          onMessage={event => {
+            console.log(event.nativeEvent.data);
+          }}
+          autoFocus={true}
+        />
+      )}
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import configuredAxios from '../config/axiosConfig';
 import ALERT from '../constants/alert';
-import { socket, socketApi } from '../../socket';
+import { socket, socketApi } from '../socket';
 import MessageBox from '../components/MessageBox';
 import SOCKET_EVENT from '../constants/socket';
 import ROUTE from '../constants/route';
@@ -41,14 +41,6 @@ const ChatRoom = ({
     });
 
     return () => socket.off(SOCKET_EVENT.MESSAGE);
-  }, []);
-
-  useEffect(() => {
-    socket.on(SOCKET_EVENT.NOTIFICATION_RECIVED, async ({ nickname, message }) => {
-      await messagePushNotification(nickname, message);
-    });
-
-    return () => socket.off(SOCKET_EVENT.NOTIFICATION_RECIVED);
   }, []);
 
   const handleMessageSubmit = async () => {

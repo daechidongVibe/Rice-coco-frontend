@@ -33,15 +33,10 @@ const Login = ({ navigation, setUserInfo }) => {
     event.target.disabled = true;
 
     try {
-<<<<<<< HEAD
       const { email } = await logInWithFacebook();
-      const { data } = await configuredAxios.post('/users/login', { email });
-=======
-      const email = await googleAuth();
       if (!email) return;
 
       const { data } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.LOGIN}`, { email });
->>>>>>> 7f19983329e7787326d7b77a8676c3d02e308fd9
 
       if (data.result === ALERT.NOT_EXIST) {
         navigation.dispatch(StackActions.replace(SCREEN.USER_REGISTER, { email }));

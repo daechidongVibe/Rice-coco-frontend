@@ -57,7 +57,6 @@ const EditUserInfo = ({
 
   return (
     <Wrapper>
-      <Title>내 정보 수정</Title>
       <StyledInput
         value={email}
         editable={false}

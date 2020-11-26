@@ -111,6 +111,7 @@ export const ItemContainer = styled.TouchableNativeFeedback`
 `;
 
 export const PaymentItem = styled.TouchableOpacity`
+  width: 70%;
   background-color: ${props => props.disabled ? 'gray' : COLOR.THEME_COLOR};
   padding: 20px;
   margin: 5px;
