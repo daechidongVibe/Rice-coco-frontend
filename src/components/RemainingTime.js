@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
-import { TimeText, StyledView } from '../shared/index';
+import { TimeText, TimeContainer } from '../shared/index';
 
 const RemainingTime = ({
   expiredTime,
@@ -38,12 +38,11 @@ const RemainingTime = ({
   });
 
   return (
-    <StyledView>
-      <TimeText
-        size={size}>
-        {remainingTime}
-      </TimeText>
-    </StyledView>
+    <TimeText
+      size={size}
+    >
+      {remainingTime}
+    </TimeText>
   );
 };
 

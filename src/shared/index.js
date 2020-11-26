@@ -105,13 +105,13 @@ export const ListContainer = styled.View`
 
 export const ItemContainer = styled.TouchableNativeFeedback`
   width: ${prop => prop.width || '80%'};
-  height: ${prop => prop.height || '90px'};
-  margin-bottom: 8px;
+  height: ${prop => prop.height || '180px'};
+  margin-bottom: px;
   align-self: center;
 `;
 
 export const PaymentItem = styled.TouchableOpacity`
-  background-color: ${props => props.disabled ? 'gray' : '#ff914d'};
+  background-color: ${props => props.disabled ? 'gray' : COLOR.THEME_COLOR};
   padding: 20px;
   margin: 5px;
   border-radius: 5px;
@@ -128,6 +128,8 @@ export const ImageContainer = styled.View`
 export const StyledImage = styled.Image`
   width: ${prop => prop.width || '250px'};
   height: ${prop => prop.height || '100%'};
+  border-radius: 24px;
+  margin-right: 10px;
 `;
 
 export const AnimationContainer = styled.View`
@@ -163,7 +165,7 @@ export const MessageContainer = styled.View`
 `;
 
 export const InputContainer = styled.TouchableOpacity`
-  width: ${prop => prop.width || '80%'}
+  width: ${prop => prop.width || '80%'};
   margin: 8px auto;
   text-align: center;
 `;
@@ -172,18 +174,19 @@ export const StyledInput = styled.TextInput`
   width: 80%;
   text-align: center;
   padding-bottom: 4px;
-  border-bottom-width: 1px;
+  border-bottom-width: 0.2px;
+  border-color: ${COLOR.LIGHT_GRAY};
   margin: 8px auto;
-  color: ${prop => prop.color || COLOR.BLACK};
+  color: ${prop => prop.color || COLOR.THEME_COLOR};
 `;
 
 export const PickerContainer = styled.TouchableOpacity`
-  width: 7%
+  width: 7%;
   margin: 0 -10px 0 0;
 `;
 
 export const StyledText = styled.Text`
-  font-size: 20px;
+  font-size: 30px;
   color: white;
   text-align: center;
   font-weight: bold;
@@ -203,14 +206,14 @@ export const Title = styled.Text`
   font-size: ${prop => prop.size || '24px'};
   font-weight: bold;
   text-align: center;
-  color: #ff914d;
+  color: ${COLOR.THEME_COLOR};
 `;
 
 export const Label = styled.Text`
-  width: 80%;
-  margin: 0 8px;
-  font-size: 12px;
-  color: ${COLOR.BLUE}
+  width: ${prop => prop.width || '80%'};
+  margin: ${prop => prop.margin || '0 8px;'};
+  font-size: ${prop => prop.size || '12px' };
+  color: ${COLOR.GRAY}
 `;
 
 export const P = styled.Text`
@@ -223,7 +226,7 @@ export const P = styled.Text`
 export const UserProfile = styled.View`
   width: 24px;
   height: 24px;
-  background-color: #d6d2c4;
+  background-color: ${COLOR.BEIGE};
   border-radius: 100px;
   margin: 0 3px;
   padding-left: 6px;
@@ -233,7 +236,7 @@ export const UserProfile = styled.View`
 export const StyledButton = styled.TouchableOpacity`
   width: 300px;
   height: 40px;
-  padding-top: 10px;
+  padding-top: 10px;margin-right: 10px;
   margin: 0 auto;
   margin-top: ${prop => prop.marginTop || '36px'};
   align-self: flex-end;
@@ -244,7 +247,7 @@ export const StyledButton = styled.TouchableOpacity`
 export const NameCreationButton = styled.TouchableOpacity`
   padding-top: 10px;
   padding-bottom: 10px;
-  background-color: #ff914d;
+  background-color: ${COLOR.THEME_COLOR};
 `;
 
 export const LoginButton = styled.TouchableOpacity`
@@ -259,7 +262,7 @@ export const LoginButton = styled.TouchableOpacity`
 export const RestaurantSearchButton = styled.TouchableOpacity`
   padding: 18px;
   border-radius: 30px;
-  background-color: ${COLOR.THEME_COLOR};
+  background-color: ${COLOR.WHITE};
 `;
 
 export const ArrivalButton = styled.TouchableOpacity`
@@ -269,7 +272,7 @@ export const ArrivalButton = styled.TouchableOpacity`
 `;
 
 export const OutlineButton = styled.TouchableOpacity`
-  width: 80%;
+  width: ${prop => prop.width || '80%'};
   height: 48px;
   padding: 6px;
   margin-top: 8px;
@@ -302,7 +305,7 @@ export const OverlayFooter = styled.View`
 
 export const OverlayText = styled.Text`
   width: 100%;
-  color: #ff914d;
+  color: ${COLOR.THEME_COLOR};
   text-align: center;
   font-size: ${prop => prop.size || '13px'};
   font-family: ${prop => prop.font || 'sans-serif'};
@@ -319,5 +322,5 @@ export const SearchInput = styled.TextInput`
   padding: 8px;
   margin: 40px 0;
   border-bottom-width: 1px;
-  border-bottom-color: #ff914d;
+  border-bottom-color: ${COLOR.THEME_COLOR};
 `;

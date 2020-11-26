@@ -33,7 +33,7 @@ const MatchWaiting = ({
 
         setSelectedMeeting(meetingDetails);
       } catch (error) {
-        alert(error.message);
+        console.warn(error.message);
       }
     })();
   }, []);
@@ -81,7 +81,7 @@ const MatchWaiting = ({
   return (
     <Wrapper>
       <Title
-        size={30}>
+        size='30px'>
         라이스코코 기다리는 중🥱
       </Title>
       {

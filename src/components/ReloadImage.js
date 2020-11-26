@@ -40,7 +40,7 @@ const ReloadImage = ({ onClick }) => {
       <SimpleLineIcons
         name={ICON_NAME.RELOAD}
         size={24}
-        color={COLOR.WHITE}
+        color={COLOR.THEME_COLOR}
       />
     </IconWrapper>
   );

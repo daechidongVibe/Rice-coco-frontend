@@ -11,14 +11,13 @@ import ALERT from '../constants/alert';
 const FinalQuestion = ({
   modalVisible,
   setModalVisible,
-  question,
   onClickYes,
 }) => {
   return (
     <Modal animationType='slide' transparent={true} visible={modalVisible}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>{ALERT.YES}</Text>
+          <Text style={styles.modalText}>{ALERT.CONFIRM_CANCEL_PROMISE}</Text>
           <View style={styles.buttonWrap}>
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: COLOR.LIGHT_BLUE }}
@@ -27,7 +26,7 @@ const FinalQuestion = ({
                 setModalVisible(!modalVisible);
               }}
             >
-              <Text style={styles.textStyle}>{}</Text>
+              <Text style={styles.textStyle}>{ALERT.YES}</Text>
             </TouchableHighlight>
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: COLOR.LIGHT_BLUE }}
@@ -35,7 +34,7 @@ const FinalQuestion = ({
                 setModalVisible(!modalVisible);
               }}
             >
-              <Text style={styles.textStyle}>아니요</Text>
+              <Text style={styles.textStyle}>{ALERT.NO}</Text>
             </TouchableHighlight>
           </View>
         </View>

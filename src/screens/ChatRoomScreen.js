@@ -29,7 +29,7 @@ const ChatRoom = ({
         const { data: { filteredMessages } } = await configuredAxios.get(`${ROUTE.MEETINGS}/${meetingId}${ROUTE.CHAT}`);
         setMessages(filteredMessages);
       } catch (error) {
-        alert(error.message);
+        console.warn(error.message);
       }
     })();
   }, []);
@@ -74,6 +74,7 @@ const ChatRoom = ({
               nickname={item.nickname}
             />
           )}
+            keyExtractor={(item, index) => index}
         />
         <Input
           onChangeText={setMessage}

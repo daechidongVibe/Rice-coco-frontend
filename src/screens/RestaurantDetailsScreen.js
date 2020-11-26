@@ -75,7 +75,7 @@ const RestaurantDetails = ({
 
       setPromiseAmount(userPromise - 1);
     } catch (error) {
-      console.warn(error);
+      alert(error.message);
     }
 
     navigation.dispatch(resetAction(0, SCREEN.MATCH_WAITING));
@@ -134,7 +134,8 @@ const RestaurantDetails = ({
       }
       <StyledButton
         onPress={handlePress}>
-        <P color={COLOR.WHITE}>라이스코코 만나러가기</P>
+        <P 
+          color={COLOR.WHITE}>라이스코코 만나러가기</P>
       </StyledButton>
     </Wrapper>
   );

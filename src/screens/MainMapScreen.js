@@ -151,6 +151,7 @@ const MainMapScreen = ({
                   isMarkerInRange &&
                   <RemainingTime
                     expiredTime={expiredTime}
+                    size='12px'
                   />
                 }
                 <StyledImage

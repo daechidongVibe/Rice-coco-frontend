@@ -230,9 +230,10 @@ const MatchSuccessScreen = ({
         alignItems='flex-end'
       >
         {
-          !isArrived &&
+          isArrived &&
           <OutlineButton
             onPress={handleArrivalButtonClick}
+            width='40%'
           >
             <P
               color={COLOR.THEME_COLOR}
@@ -244,7 +245,9 @@ const MatchSuccessScreen = ({
             </P>
           </OutlineButton>
         }
-        <OutlineButton>
+        <OutlineButton
+          width='40%'
+        >
           <Icon
             name={ICON_NAME.COMMENT}
             size={48}
@@ -252,11 +255,13 @@ const MatchSuccessScreen = ({
             onPress={handleChatButtonClick}
           />
         </OutlineButton>
-        <OutlineButton>
+        <OutlineButton
+          width='40%'
+        >
           {
             !isArrived &&
             <Icon
-              name={ICON_NAME.COMMENT}
+              name={ICON_NAME.COMMENT_SLASH}
               size={40}
               color={COLOR.THEME_COLOR}
               onPress={() => setIsOnVergeofBreaking(true)}

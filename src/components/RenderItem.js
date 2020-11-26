@@ -53,11 +53,17 @@ const RenderItem = ({
 
   return (
     <ItemContainer
-      onPress={handlePressRestaurant}>
+      onPress={handlePressRestaurant}
+    >
       <Container>
         <Label
           numberOfLines={2}
-          ellipsizeMode='tail'>{item.name}</Label>
+          ellipsizeMode='tail'
+          width='30%'
+          margin='24px 0px;'
+          size='16px'
+        >{item.name}
+        </Label>
         <P
           color={isOpen === ALERT.OPEN ? COLOR.BLUE : COLOR.GRAY}>
           {isOpen}
