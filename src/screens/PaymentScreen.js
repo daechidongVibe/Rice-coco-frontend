@@ -119,7 +119,7 @@ const PaymentScreen = () => {
 
 // 웹뷰에 주입될 html
 const paymentView =
-  '<head><meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"><style> h1 { color: #ff914d; font-size: 32px; font-weight: bold; margin: 32px auto; text-align: center } br { content: ""; display: block; margin: 20px } button { padding: 10px; color: white; background-color: blue; border-radius: 10px; position: absolute; left: 50%; bottom: 10%; transform: translate(-50%) }</style><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script><script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script></head><h1>결제</h1> <h2>결제플로우</h2> <p> <br> 1. 결제정보를 서버에 생성한다 <br> 2. 아임포트에 실제 결제 요청을 보낸다 <br> 3. 두개의 아이디를 서버에 보내어 서버사이드에서 토큰을 생성한다 <br> 4. 해당 토큰으로 결제를 조회한 후 실제 결제 정보와 DB에 저장된 "결제되어야 하는 금액" 을 비교하여 정확하다면 정보를 저장. </p><button id ="paymentButton">결제하기</button>';
+  '<head><meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" /><style> div { display: flex; justify-content: center; align-items: center; height: 100%; } button { padding: 20px; color: white; background-color: blue; border-radius: 10px; }</style><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script><script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script></head><div><button id="paymentButton">결제하기</button></div>';
 
 const Container = styled.View`
   height: 100%;
