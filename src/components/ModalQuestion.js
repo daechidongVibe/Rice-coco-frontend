@@ -4,7 +4,7 @@ import { styles } from '../shared/index';
 import { COLOR } from '../constants/color';
 import MESSAGE from '../constants/message';
 
-const FinalQuestion = ({ modalVisible, setModalVisible, onClickYes }) => {
+const ModalQuestion = ({ modalVisible, setModalVisible, onClickYes }) => {
   return (
     <Modal animationType='slide' transparent={true} visible={modalVisible}>
       <View style={styles.centeredView}>
@@ -41,4 +41,4 @@ const FinalQuestion = ({ modalVisible, setModalVisible, onClickYes }) => {
   );
 };
 
-export default FinalQuestion;
+export default ModalQuestion;

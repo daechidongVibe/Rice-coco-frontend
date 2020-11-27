@@ -15,29 +15,24 @@ import {
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
 
 const PaymentScreen = () => {
-  const [token, setToken] = useState(''); // 웹뷰에서 configuredAxios를 사용할 수 없기 때문에 따로 토큰을 실어주어야 한다
-  const [paymentInfo, setPaymentInfo] = useState({}); // RN 뷰에서 사용자가 선택하고 결제요청 시 실어 보내줄 결제정보
-  const [isPaymentSelected, setIsPaymentSelected] = useState(false); // 컴포넌트 분기처리 (RN 결제선택 => 웹뷰)
+  const [token, setToken] = useState('');
+  const [paymentInfo, setPaymentInfo] = useState({});
+  const [isPaymentSelected, setIsPaymentSelected] = useState(false);
 
   useEffect(() => {
     (async () => {
-      // 마운트 시 토큰 정보 가져와 리덕스에 세팅
       const token = await asyncStorage.getItem('token');
 
       setToken(token);
-
-      // paymentInfo 초깃값 세팅
       setPaymentInfo(MY_INFO_OPTIONS.PAYMENT_INFO[0]);
     })();
   }, []);
 
-  // 웹뷰에서 사용될 script
-  const jsCode = `
+  const jsCodeForPayment = `
     const handleClickPaymentButton = (e) => {
       e.target.disabled = true;
       e.target.style.backgroundColor = 'gray';
 
-      // 먼저 Rice Coco 서버의 DB에 주문정보를 생성한다
       fetch('${REACT_NATIVE_ANDROID_SERVER_URL}/payment?authToken=${token}', {
         method: 'POST',
         headers: {
@@ -55,11 +50,7 @@ const PaymentScreen = () => {
       .then(data => {
         const { _id: merchant_uid, buyer, amount, productInfo } = data;
 
-        // merchant_uid는 미리 생성한 주문정보의 id이다.
-
-        // 아임포트에 결제 요청
         IMP.init('imp42855025');
-
         IMP.request_pay({
           pg: "html5_inicis",
           pay_method: "card",
@@ -105,15 +96,11 @@ const PaymentScreen = () => {
           </Wrapper>
         </>
       ) : (
-        // 결제 요청 컴포넌트
         <WebView
           originWhitelist={['*']}
-          source={{ html: paymentView }} // 웹뷰에 html 주입
+          source={{ html: paymentView }}
           style={{ marginHorizontal: 10, marginVertical: 10 }}
-          injectedJavaScript={jsCode} // 웹뷰에 script 주입
-          onMessage={event => {
-            console.log(event.nativeEvent.data);
-          }}
+          injectedJavaScript={jsCodeForPayment}
           autoFocus={true}
         />
       )}
@@ -121,7 +108,6 @@ const PaymentScreen = () => {
   );
 };
 
-// 웹뷰에 주입될 html
 const paymentView =
   '<head><meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" /><style> div { display: flex; justify-content: center; align-items: center; height: 100%; } button { padding: 20px; color: white; background-color: blue; border-radius: 10px; }</style><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script><script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script></head><div><button id="paymentButton">결제하기</button></div>';
 

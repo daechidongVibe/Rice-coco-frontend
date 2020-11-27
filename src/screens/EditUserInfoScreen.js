@@ -21,6 +21,7 @@ import {
 
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   const { nickname, birthYear, email, gender, occupation, promise } = user;
+  console.log(promise);
   const [nicknameInput, setNicknameInput] = useState(nickname);
   const [occupationInput, setOccupationInput] = useState(occupation);
 

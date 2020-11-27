@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import configuredAxios from '../config/axiosConfig';
 import * as Location from 'expo-location';
 import { socket, socketApi } from '../socket';
-import isLocationNear from '../utils/isLocationNear';
+import checkTargetIsInDistance from '../utils/checkTargetIsInDistance';
 import {
   setUserLocation,
   setSelectedMeeting,
@@ -18,7 +18,7 @@ import {
 } from '../actions';
 import resetAction from '../utils/resetAction';
 import RemainingTime from '../components/RemainingTime';
-import FinalQuestion from '../components/FinalQuestion';
+import ModalQuestion from '../components/ModalQuestion';
 import SOCKET_EVENT from '../constants/socket';
 import MESSAGE from '../constants/message';
 import SCREEN from '../constants/screen';
@@ -106,7 +106,7 @@ const MatchSuccessScreen = ({
   }, []);
 
   useEffect(() => {
-    isLocationNear(userLocation, restaurantLocation, 500)
+    checkTargetIsInDistance(userLocation, restaurantLocation, 50)
       ? setIsArrived(true)
       : setIsArrived(false);
 
@@ -201,7 +201,7 @@ const MatchSuccessScreen = ({
         </Marker>
         <Circle
           center={restaurantLocation}
-          radius={500}
+          radius={50}
           strokeColor='rgba(0, 0, 255, 0.1)'
           fillColor='rgba(0, 0, 255, 0.1)'
         />
@@ -253,7 +253,7 @@ const MatchSuccessScreen = ({
           <StyledText color={COLOR.WHITE}>CANCEL</StyledText>
         </OutlineButton>
         {isOnVergeofBreaking && (
-          <FinalQuestion
+          <ModalQuestion
             modalVisible={isOnVergeofBreaking}
             setModalVisible={setIsOnVergeofBreaking}
             question={MESSAGE.CONFIRM_CANCEL_PROMISE}

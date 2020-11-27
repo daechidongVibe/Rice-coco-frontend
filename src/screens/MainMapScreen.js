@@ -6,7 +6,7 @@ import * as Location from 'expo-location';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import axiosInstance from '../config/axiosConfig';
-import isLocationNear from '../utils/isLocationNear';
+import checkTargetIsInDistance from '../utils/checkTargetIsInDistance';
 import ReloadImage from '../components/ReloadImage';
 import RemainingTime from '../components/RemainingTime';
 import {
@@ -36,6 +36,7 @@ const MainMapScreen = ({
   setSelectedMeeting,
   navigation,
 }) => {
+  console.log(userLocation);
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
@@ -65,6 +66,7 @@ const MainMapScreen = ({
       const { coords } = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
 
+      console.log(latitude, longitude);
       setUserLocation({ latitude, longitude });
     } catch (error) {
       alert(MESSAGE.ERROR_LOCATION_WAS_DENIED);
@@ -97,9 +99,6 @@ const MainMapScreen = ({
 
   useEffect(() => {
     getUserPermissionAndLocation();
-  }, []);
-
-  useEffect(() => {
     getActiveMeetingAndRouting();
   }, []);
 
@@ -126,7 +125,7 @@ const MainMapScreen = ({
             expiredTime,
           } = meeting;
 
-          const isMarkerInRange = isLocationNear(location, userLocation, 3000);
+          const isRestaurantInDistance = checkTargetIsInDistance(location, userLocation, 3000);
 
           return (
             <Marker
@@ -135,7 +134,7 @@ const MainMapScreen = ({
               description={`${partnerNickname} 대기중`}
               coordinate={location}
               onCalloutPress={() => {
-                if (!isMarkerInRange) return;
+                if (!isRestaurantInDistance) return;
 
                 const restaurantInfo = {
                   meetingId,
@@ -147,7 +146,7 @@ const MainMapScreen = ({
                 handleRestaurantClick(restaurantInfo);
               }}
             >
-              {isMarkerInRange && (
+              {isRestaurantInDistance && (
                 <RemainingTime expiredTime={expiredTime} size='12px' />
               )}
               <StyledImage

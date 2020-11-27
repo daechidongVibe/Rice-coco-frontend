@@ -22,8 +22,8 @@ const RenderItem = ({
   }
 
   const handlePressRestaurant = () => {
-    if (isOpen === MESSAGE.CLOSE)
-      return Alert.MESSAGE(
+    if (isOpen === MESSAGE.CLOSE) {
+      return Alert.alert(
         MESSAGE.IT_IS_CLOSED,
         MESSAGE.FIND_OTHER_RESTAURANT,
         [
@@ -32,6 +32,7 @@ const RenderItem = ({
           },
         ]
       );
+    }
 
     const hasCreatedMeeting = waitingMeetings.find(
       meeting => meeting.restaurant.restaurantId === item.id
