@@ -16,11 +16,11 @@ import {
   setPromiseAmount,
   resetMeeting,
 } from '../actions';
-import resetAction from '../utils/navigation';
+import resetAction from '../utils/resetAction';
 import RemainingTime from '../components/RemainingTime';
 import FinalQuestion from '../components/FinalQuestion';
 import SOCKET_EVENT from '../constants/socket';
-import ALERT from '../constants/alert';
+import MESSAGE from '../constants/message';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
 import ICON_NAME from '../constants/icon';
@@ -32,9 +32,9 @@ import {
   OverlayText,
   OverlayFooter,
   OutlineButton,
-  P,
   StyledImage,
   styles,
+  StyledText,
 } from '../shared/index';
 
 const MatchSuccessScreen = ({
@@ -53,13 +53,24 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(true);
+  const [isArrived, setIsArrived] = useState(false);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
+
+  const getCurrentMeeting = async () => {
+    try {
+      const { data } = await configuredAxios.get(
+        `${ROUTE.MEETINGS}/${meetingId}`
+      );
+      setSelectedMeeting(data.meetingDetails);
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
+    }
+  };
 
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
@@ -74,11 +85,11 @@ const MatchSuccessScreen = ({
 
     socket.on(SOCKET_EVENT.CANCELED_BY_PARTNER, () => {
       Alert.alert(
-        ALERT.TIME_OUT_TITLE,
-        ALERT.TIME_OUT_MESSAGE,
+        MESSAGE.CANCEL_TITLE,
+        MESSAGE.CANCEL_MESSAGE,
         [
           {
-            text: ALERT.OK,
+            text: MESSAGE.OK,
             onPress: () => {
               socketApi.finishMeeting(() => {
                 resetMeeting();
@@ -117,18 +128,7 @@ const MatchSuccessScreen = ({
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await configuredAxios.get(
-          `${ROUTE.MEETINGS}/${meetingId}`
-        );
-        const { meetingDetails } = data;
-
-        setSelectedMeeting(meetingDetails);
-      } catch (error) {
-        alert(error.message);
-      }
-    })();
+    getCurrentMeeting();
   }, []);
 
   const handleTimeEnd = () => {
@@ -158,7 +158,7 @@ const MatchSuccessScreen = ({
   };
 
   const handleChatButtonClick = () => {
-    navigation.navigate(SCREEN.CHAT_ROOM, { navigation });
+    navigation.navigate(SCREEN.CHAT_ROOM);
   };
 
   const handleBreakupButtonClick = async () => {
@@ -193,17 +193,17 @@ const MatchSuccessScreen = ({
             <Text>{restaurantName}</Text>
             <StyledImage
               source={require('../../assets/images/rice.png')}
-              width="24px"
-              height="26px"
-              resizeMode="cover"
+              width='24px'
+              height='26px'
+              resizeMode='cover'
             />
           </View>
         </Marker>
         <Circle
           center={restaurantLocation}
           radius={500}
-          strokeColor="rgba(0, 0, 255, 0.1)"
-          fillColor="rgba(0, 0, 255, 0.1)"
+          strokeColor='rgba(0, 0, 255, 0.1)'
+          fillColor='rgba(0, 0, 255, 0.1)'
         />
       </MapView>
       <LinearGradient
@@ -211,24 +211,29 @@ const MatchSuccessScreen = ({
         style={styles.linearGradient}
       />
       <OverlayHeader>
-        <OverlayText size="30px">R I C E C O C O</OverlayText>
+        <OverlayText size='30px'>R I C E C O C O</OverlayText>
         <OverlayText>매칭 성공! 1시간 내로 도착하세요!</OverlayText>
         {!!expiredTime && (
           <RemainingTime expiredTime={expiredTime} onTimeEnd={handleTimeEnd} />
         )}
       </OverlayHeader>
-      <OverlayFooter flexDirection="column" alignItems="flex-end">
+      <OverlayFooter flexDirection='column' alignItems='flex-end'>
         {isArrived && (
-          <OutlineButton onPress={handleArrivalButtonClick} width="40%">
-            <P color={COLOR.THEME_COLOR}>
+          <OutlineButton
+            borderColor={COLOR.THEME_COLOR}
+            backgroundColor={COLOR.THEME_COLOR}
+            onPress={handleArrivalButtonClick}
+            width='40%'
+          >
+            <StyledText color={COLOR.WHITE}>
               {isArrivalConfirmed
-                ? ALERT.COMPLATE_ARRIVAL
-                : ALERT.CONFIRM_ARRIVAL}
-            </P>
+                ? MESSAGE.COMPLATE_ARRIVAL
+                : MESSAGE.CONFIRM_ARRIVAL}
+            </StyledText>
           </OutlineButton>
         )}
         <OutlineButton
-          width="40%"
+          width='40%'
           borderColor={COLOR.THEME_COLOR}
           backgroundColor={COLOR.THEME_COLOR}
         >
@@ -240,17 +245,18 @@ const MatchSuccessScreen = ({
           />
         </OutlineButton>
         <OutlineButton
-          width="40%"
+          width='40%'
           borderColor={COLOR.THEME_COLOR}
           backgroundColor={COLOR.THEME_COLOR}
+          onPress={() => setIsOnVergeofBreaking(true)}
         >
-          {!isArrived && <P color={COLOR.WHITE}>CANCEL</P>}
+          <StyledText color={COLOR.WHITE}>CANCEL</StyledText>
         </OutlineButton>
         {isOnVergeofBreaking && (
           <FinalQuestion
             modalVisible={isOnVergeofBreaking}
             setModalVisible={setIsOnVergeofBreaking}
-            question={ALERT.CONFIRM_CANCEL_PROMISE}
+            question={MESSAGE.CONFIRM_CANCEL_PROMISE}
             onClickYes={handleBreakupButtonClick}
           />
         )}

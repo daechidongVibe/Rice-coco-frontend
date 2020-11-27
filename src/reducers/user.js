@@ -12,9 +12,9 @@ const initialState = {
     _id: '',
     birthYear: '',
     gender: '',
-    occupation: ''
+    occupation: '',
   },
-  promise: 0
+  promise: 0,
 };
 
 export const user = (state = initialState, action) => {
@@ -22,12 +22,12 @@ export const user = (state = initialState, action) => {
     case types.SET_USER_INFO:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case types.SET_USER_PROMISE:
       return {
         ...state,
-        promise: action.promise
+        promise: action.promise,
       };
     case types.RESET_USER_INFO:
       return initialState;

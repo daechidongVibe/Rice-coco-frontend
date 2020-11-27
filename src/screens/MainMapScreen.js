@@ -16,7 +16,7 @@ import {
 } from '../actions';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
-import ALERT from '../constants/alert';
+import MESSAGE from '../constants/message';
 import {
   MapWrapper,
   OverlayHeader,
@@ -39,7 +39,7 @@ const MainMapScreen = ({
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-  const isMeetingExisted = !!waitingMeetings.length;
+
   const handleRestaurantClick = restaurantInfo => {
     const partnerNickname = restaurantInfo.partnerNickname;
 
@@ -47,54 +47,60 @@ const MainMapScreen = ({
     navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
   };
 
-  const handleReloadClick = async () => {
+  const getWaitingMeetings = async () => {
     const { data } = await axiosInstance.get(ROUTE.MEETINGS);
     const { filteredMeetings } = data;
 
     setWaitingMeetings(filteredMeetings);
   };
 
-  useEffect(() => {
-    (async () => {
+  const getUserPermissionAndLocation = async () => {
+    try {
       const { status } = await Location.requestPermissionsAsync();
 
-      if (status !== ALERT.STATUS_GRANTED) {
-        return alert(ALERT.ERROR_LOCATION_WAS_DENIED);
+      if (status !== MESSAGE.STATUS_GRANTED) {
+        return alert(MESSAGE.ERROR_LOCATION_WAS_DENIED);
       }
 
-      const {
-        coords: { latitude, longitude },
-      } = await Location.getCurrentPositionAsync({});
+      const { coords } = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = coords;
+
       setUserLocation({ latitude, longitude });
-    })();
+    } catch (error) {
+      alert(MESSAGE.ERROR_LOCATION_WAS_DENIED);
+    }
+  };
+
+  const getActiveMeetingAndRouting = async () => {
+    try {
+      const {
+        data: { activeMeeting },
+      } = await axiosInstance.get(`${ROUTE.MEETINGS}${ROUTE.USERS}/${userId}`);
+
+      if (activeMeeting) {
+        const { _id: meetingId } = activeMeeting;
+
+        setSelectedMeeting({ meetingId });
+
+        activeMeeting.isMatched
+          ? navigation.dispatch(StackActions.replace(SCREEN.MATCH_SUCCESS))
+          : navigation.dispatch(StackActions.replace(SCREEN.MATCH_WAITING));
+
+        return;
+      }
+
+      getWaitingMeetings();
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
+    }
+  };
+
+  useEffect(() => {
+    getUserPermissionAndLocation();
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const {
-          data: { activeMeeting },
-        } = await axiosInstance.get(`${ROUTE.MEETINGS}${ROUTE.USERS}/${userId}`);
-
-        if (activeMeeting) {
-          const { _id: meetingId } = activeMeeting;
-          setSelectedMeeting({ meetingId });
-
-          activeMeeting.isMatched
-            ? navigation.dispatch(StackActions.replace(SCREEN.MATCH_SUCCESS))
-            : navigation.dispatch(StackActions.replace(SCREEN.MATCH_WAITING));
-
-          return;
-        }
-
-        const { data } = await axiosInstance.get(ROUTE.MEETINGS);
-        const { filteredMeetings } = data;
-
-        setWaitingMeetings(filteredMeetings);
-      } catch (error) {
-        alert(error.message);
-      }
-    })();
+    getActiveMeetingAndRouting();
   }, []);
 
   return fontLoaded ? (
@@ -112,60 +118,50 @@ const MainMapScreen = ({
         showsMyLocationButton={true}
         showsUserLocation={true}
       >
-        {
-          isMeetingExisted &&
-          waitingMeetings.map(meeting => {
-            const {
-              meetingId,
-              restaurant: { restaurantId, name: restaurantName, location },
-              partnerNickname,
-              expiredTime,
-            } = meeting;
+        {waitingMeetings.map(meeting => {
+          const {
+            meetingId,
+            restaurant: { restaurantId, name: restaurantName, location },
+            partnerNickname,
+            expiredTime,
+          } = meeting;
 
-            const isMarkerInRange = isLocationNear(
-              location,
-              userLocation,
-              5000,
-            );
+          const isMarkerInRange = isLocationNear(location, userLocation, 3000);
 
-            return (
-              <Marker
-                key={meetingId}
-                title={restaurantName}
-                description={`${partnerNickname} 대기중`}
-                coordinate={location}
-                onCalloutPress={() => {
-                  if (!isMarkerInRange) return;
+          return (
+            <Marker
+              key={meetingId}
+              title={restaurantName}
+              description={`${partnerNickname} 대기중`}
+              coordinate={location}
+              onCalloutPress={() => {
+                if (!isMarkerInRange) return;
 
-                  const restaurantInfo = {
-                    meetingId,
-                    restaurantId,
-                    restaurantName,
-                    partnerNickname,
-                  };
+                const restaurantInfo = {
+                  meetingId,
+                  restaurantId,
+                  restaurantName,
+                  partnerNickname,
+                };
 
-                  handleRestaurantClick(restaurantInfo);
-                }}
-              >
-                {
-                  isMarkerInRange &&
-                  <RemainingTime
-                    expiredTime={expiredTime}
-                    size='12px'
-                  />
-                }
-                <StyledImage
-                  source={require('../../assets/images/rice.png')}
-                  width='45px'
-                  height='45px'
-                  resizeMode='cover'
-                />
-              </Marker>
-            );
-          })}
+                handleRestaurantClick(restaurantInfo);
+              }}
+            >
+              {isMarkerInRange && (
+                <RemainingTime expiredTime={expiredTime} size='12px' />
+              )}
+              <StyledImage
+                source={require('../../assets/images/rice.png')}
+                width='45px'
+                height='45px'
+                resizeMode='cover'
+              />
+            </Marker>
+          );
+        })}
         <Circle
           center={userLocation}
-          radius={5000}
+          radius={3000}
           strokeColor='rgba(0, 0, 255, 0.1)'
           fillColor='rgba(0, 0, 255, 0.1)'
         />
@@ -175,28 +171,29 @@ const MainMapScreen = ({
         style={styles.linearGradient}
       />
       <OverlayHeader>
-        <OverlayText font='Glacial' size='30px'>R I C E C O C O
+        <OverlayText font='Glacial' size='30px'>
+          R I C E C O C O
         </OverlayText>
-        <OverlayText>코코들이 당신을 기다리고 있어요!
-        </OverlayText>
+        <OverlayText>코코들이 당신을 기다리고 있어요!</OverlayText>
       </OverlayHeader>
       <OverlayFooter>
         <RestaurantSearchButton>
-          <ReloadImage
-            onClick={handleReloadClick}
-          />
+          <ReloadImage onClick={getWaitingMeetings} />
         </RestaurantSearchButton>
       </OverlayFooter>
     </MapWrapper>
   ) : null;
 };
 
-export default connect(state => ({
-  userId: state.user._id,
-  userLocation: state.location,
-  waitingMeetings: state.meetings.waitingMeetings,
-}), {
-  setUserLocation,
-  setWaitingMeetings,
-  setSelectedMeeting,
-})(MainMapScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+    userLocation: state.location,
+    waitingMeetings: state.meetings.waitingMeetings,
+  }),
+  {
+    setUserLocation,
+    setWaitingMeetings,
+    setSelectedMeeting,
+  }
+)(MainMapScreen);

@@ -8,16 +8,16 @@ const initialState = {
     restaurantName: '',
     restaurantLocation: {
       latitude: 0,
-      longitude: 0
+      longitude: 0,
     },
     partnerNickname: '',
     expiredTime: '',
   },
   currentMeeting: {
-    meetingId : '',
+    meetingId: '',
     users: [],
     arrivalCount: 0,
-  }
+  },
 };
 
 export const meetings = (state = initialState, action) => {
@@ -25,21 +25,21 @@ export const meetings = (state = initialState, action) => {
     case types.SET_WAITING_MEETINGS:
       return {
         ...state,
-        waitingMeetings: [ ...action.payload ],
+        waitingMeetings: [...action.payload],
       };
     case types.SET_SELECTED_MEETING:
       return {
         ...state,
         selectedMeeting: {
           ...state.selectedMeeting,
-          ...action.payload
+          ...action.payload,
         },
       };
     case types.SET_CURRENT_MEETING:
       return {
         ...state,
-        currentMeeting: action.payload
-      }
+        currentMeeting: action.payload,
+      };
     case types.RESET_MEETING:
       return initialState;
     default:

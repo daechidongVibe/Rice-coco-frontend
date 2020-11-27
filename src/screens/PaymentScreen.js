@@ -6,11 +6,10 @@ import getEnvVars from '../../environment';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import {
   Wrapper,
-  P,
   Title,
   StyledButton,
-  StyledView,
   PaymentItem,
+  StyledText,
 } from '../shared/index';
 
 const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
@@ -95,13 +94,13 @@ const PaymentScreen = () => {
                   key={index}
                   disabled={item === paymentInfo ? true : false}
                 >
-                  <P>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</P>
+                  <StyledText>{`${item.name} ${item.amount}개  -  ₩${item.price}`}</StyledText>
                 </PaymentItem>
               );
             })}
 
             <StyledButton onPress={() => setIsPaymentSelected(true)}>
-              <P>다음</P>
+              <StyledText>다음</StyledText>
             </StyledButton>
           </Wrapper>
         </>

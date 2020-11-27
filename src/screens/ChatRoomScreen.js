@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import configuredAxios from '../config/axiosConfig';
-import ALERT from '../constants/alert';
+import MESSAGE from '../constants/message';
 import { socket, socketApi } from '../socket';
 import MessageBox from '../components/MessageBox';
 import SOCKET_EVENT from '../constants/socket';
@@ -11,11 +11,7 @@ import ROUTE from '../constants/route';
 import ICON_NAME from '../constants/icon';
 import { Wrapper, ListContainer, StyledFlatList } from '../shared/index';
 
-const ChatRoom = ({
-  userId,
-  nickname,
-  meetingId,
-}) => {
+const ChatRoom = ({ userId, nickname, meetingId }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [partnerNickname, setPartnerNickname] = useState('');
@@ -25,8 +21,13 @@ const ChatRoom = ({
     if (!messages) return;
 
     (async () => {
+      console.log(nickname, meetingId);
       try {
-        const { data: { filteredMessages } } = await configuredAxios.get(`${ROUTE.MEETINGS}/${meetingId}${ROUTE.CHAT}`);
+        const {
+          data: { filteredMessages },
+        } = await configuredAxios.get(
+          `${ROUTE.MEETINGS}/${meetingId}${ROUTE.CHAT}`
+        );
         setMessages(filteredMessages);
       } catch (error) {
         console.warn(error.message);
@@ -54,9 +55,7 @@ const ChatRoom = ({
       <ListContainer>
         <StyledFlatList
           ref={messageList}
-          onContentSizeChange={() =>
-            messageList.current.scrollToEnd()
-          }
+          onContentSizeChange={() => messageList.current.scrollToEnd()}
           data={messages}
           renderItem={({ item }) => (
             <MessageBox
@@ -65,21 +64,25 @@ const ChatRoom = ({
               nickname={item.nickname}
             />
           )}
-            keyExtractor={(item, index) => index}
-        />
-        <Input
-          onChangeText={setMessage}
-          value={message}
-          errorMessage={message ? `${partnerNickname}님에게 메세지를 전달하세요` : ALERT.SHOULD_ENTER_MESSAGE}
-          rightIcon={
-            <Icon
-              name={ICON_NAME.ARROW}
-              size={24}
-              onPress={handleMessageSubmit}
-            />
-          }
+          keyExtractor={(item, index) => index}
         />
       </ListContainer>
+      <Input
+        onChangeText={setMessage}
+        value={message}
+        errorMessage={
+          message
+            ? `${partnerNickname}님에게 메세지를 전달하세요`
+            : MESSAGE.SHOULD_ENTER
+        }
+        rightIcon={
+          <Icon
+            name={ICON_NAME.ARROW}
+            size={24}
+            onPress={handleMessageSubmit}
+          />
+        }
+      />
     </Wrapper>
   );
 };
@@ -87,5 +90,5 @@ const ChatRoom = ({
 export default connect(state => ({
   userId: state.user._id,
   nickname: state.user.nickname,
-  meetingId: state.meetings.currentMeeting.meetingId,
+  meetingId: state.meetings.selectedMeeting.meetingId,
 }))(ChatRoom);

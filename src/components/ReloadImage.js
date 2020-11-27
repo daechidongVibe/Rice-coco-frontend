@@ -2,8 +2,8 @@ import React from 'react';
 import { Animated } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Easing } from 'react-native-reanimated';
-import { COLOR } from '../constants/color';
 import { IconWrapper } from '../shared/index';
+import { COLOR } from '../constants/color';
 import ICON_NAME from '../constants/icon';
 
 const ReloadImage = ({ onClick }) => {
@@ -29,12 +29,14 @@ const ReloadImage = ({ onClick }) => {
     <IconWrapper
       onPress={handleClick}
       style={{
-        transform: [{
-          rotate: spinAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['360deg', '0deg'],
-          }),
-        }],
+        transform: [
+          {
+            rotate: spinAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['360deg', '0deg'],
+            }),
+          },
+        ],
       }}
     >
       <SimpleLineIcons
