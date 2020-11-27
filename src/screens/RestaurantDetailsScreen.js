@@ -5,12 +5,20 @@ import configuredAxios from '../config/axiosConfig';
 import { setSelectedMeeting, setPromiseAmount } from '../actions/index';
 import RenderImage from '../components/RenderImage';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { Wrapper, Title, StyledView, P, ImageContainer, StyledButton } from '../shared/index';
-import resetAction from '../utils/navigation';
+import {
+  Wrapper,
+  Title,
+  StyledView,
+  StyledText,
+  ImageContainer,
+  StyledButton,
+} from '../shared/index';
+import resetAction from '../utils/resetAction';
 import ROUTE from '../constants/route';
 import SCREEN from '../constants/screen';
 import { COLOR } from '../constants/color';
 import API_URL from '../constants/apiUrl';
+import MESSAGE from '../constants/message';
 
 const RestaurantDetails = ({
   navigation,
@@ -21,49 +29,48 @@ const RestaurantDetails = ({
   setPromiseAmount,
   route,
 }) => {
-  const partnerNickname = route.params.partnerNickname;
-  const { meetingId, restaurantId, restaurantName } = selectedMeeting;
   const [photoUrls, setPhotoUrls] = useState('');
   const [review, setReview] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
+  const partnerNickname = route.params.partnerNickname;
+  const { meetingId, restaurantId, restaurantName } = selectedMeeting;
 
-  useEffect(() => {
-    (async () => {
-      const { data: { result } } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
-      const { lat: latitude, lng: longitude } = result.geometry.location;
+  const initializeState = async () => {
+    const {
+      data: { result },
+    } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
+    const { photos, reviews } = result;
+    const { lat: latitude, lng: longitude } = result.geometry.location;
 
-      setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
+    setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
 
-      const { photos, reviews } = result;
+    for (let photo of photos.slice(0, 5)) {
+      const { photo_reference } = photo;
+      const photoData = await configuredAxios(
+        API_URL.restaurantPhoto(photo_reference)
+      );
 
-      for (let photo of photos.slice(0, 5)) {
-        const { photo_reference } = photo;
-        const photoData = await configuredAxios(API_URL.restaurantPhoto(photo_reference));
+      setPhotoUrls(prev => [...prev, photoData.config.url]);
+    }
 
-        setPhotoUrls(prev => [...prev, photoData.config.url]);
-      }
-
-      for (let review of reviews.slice(0, 2)) {
-        setReview(review.text);
-      }
-    })();
-  }, []);
-
-  const handlePress = event => {
-    event.target.disabled = true;
-
-    if (partnerNickname) {
-      handlePressJoinButton();
-    } else {
-      handlePressCreateButton();
+    for (let review of reviews.slice(0, 2)) {
+      setReview(review.text);
     }
   };
 
-  const handlePressCreateButton = async () => {
+  const handleButtonClick = () => {
+    if (isClicked) return;
+    setIsClicked(true);
+
+    partnerNickname ? handleJoinButtonClick() : handleCreateButtonClick();
+  };
+
+  const handleCreateButtonClick = async () => {
     try {
       const { data } = await configuredAxios.post(ROUTE.MEETINGS, {
-          selectedMeeting,
-          userId,
-        });
+        selectedMeeting,
+        userId,
+      });
       const { createdMeeting } = data;
       const { _id: meetingId, expiredTime } = createdMeeting;
 
@@ -75,15 +82,18 @@ const RestaurantDetails = ({
 
       setPromiseAmount(userPromise - 1);
     } catch (error) {
-      alert(error.message);
+      alert(MESSAGE.UNKNWON_ERROR);
+      setIsClicked(false);
     }
 
     navigation.dispatch(resetAction(0, SCREEN.MATCH_WAITING));
   };
 
-  const handlePressJoinButton = async () => {
+  const handleJoinButtonClick = async () => {
     try {
-      const { data } = await configuredAxios.put(
+      const {
+        data,
+      } = await configuredAxios.put(
         `${ROUTE.MEETINGS}/${meetingId}${ROUTE.JOIN}`,
         { userId }
       );
@@ -98,54 +108,61 @@ const RestaurantDetails = ({
 
       setPromiseAmount(userPromise - 1);
     } catch (error) {
-      console.warn(error);
+      alert(MESSAGE.UNKNWON_ERROR);
+      setIsClicked(false);
     }
+
     navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
   };
+
+  useEffect(() => {
+    initializeState();
+  }, []);
 
   return (
     <Wrapper>
       <Title size='24px'>{restaurantName}</Title>
       <ImageContainer>
-        {
-          !photoUrls ?
-            <LoadingSpinner />
-            :
-            <FlatList
-              data={photoUrls}
-              renderItem={RenderImage}
-              keyExtractor={item => item}
-              horizontal={true}
-            />
-        }
+        {!photoUrls ? (
+          <LoadingSpinner />
+        ) : (
+          <FlatList
+            data={photoUrls}
+            renderItem={RenderImage}
+            keyExtractor={item => item}
+            horizontal={true}
+          />
+        )}
       </ImageContainer>
       <StyledView>
-        <P
+        <StyledText
           numberOfLines={2}
           ellipsizeMode='tail'
-          color={COLOR.LIGHT_GRAY}>{review}
-        </P>
+          color={COLOR.LIGHT_GRAY}
+        >
+          {review}
+        </StyledText>
       </StyledView>
-      {
-        partnerNickname ?
-          <P>{`${restaurantName}에서 함께 식사하고 싶어하는  ${partnerNickname}님이 계십니다! 함께 드시겠어요?`}</P>
-          :
-          <P>{`${restaurantName}에서 라이스 코코와 즐거운 한끼 어떠세요?`}</P>
-      }
-      <StyledButton
-        onPress={handlePress}>
-        <P 
-          color={COLOR.WHITE}>라이스코코 만나러가기</P>
+      {partnerNickname ? (
+        <StyledText>{`${restaurantName}에서 함께 식사하고 싶어하는  ${partnerNickname}님이 계십니다! 함께 드시겠어요?`}</StyledText>
+      ) : (
+        <StyledText>{`${restaurantName}에서 라이스 코코와 즐거운 한끼 어떠세요?`}</StyledText>
+      )}
+      <StyledButton onPress={handleButtonClick}>
+        <StyledText color={COLOR.WHITE}>라이스코코 만나러가기</StyledText>
       </StyledButton>
     </Wrapper>
   );
 };
 
-export default connect(state => ({
+export default connect(
+  state => ({
     selectedMeeting: state.meetings.selectedMeeting,
     userId: state.user._id,
     userPromise: state.user.promise,
-  }),{
+  }),
+  {
     setSelectedMeeting,
     setPromiseAmount,
-  })(RestaurantDetails);
+  }
+)(RestaurantDetails);

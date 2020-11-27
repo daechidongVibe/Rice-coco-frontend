@@ -11,40 +11,23 @@ import {
   Title,
   Wrapper,
   StyledButton,
-  P,
+  StyledText,
   InputContainer,
   Label,
 } from '../shared/index';
 
-const PreferredPartnerScreen = ({
-  navigation,
-  userGender,
-  userOccupation,
-  userBirthYear,
-  setUserInfo,
-  userId,
-}) => {
+const PreferredPartnerScreen = ({ navigation, userId, setUserInfo }) => {
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');
   const [birthYear, setBirthYear] = useState('20대');
 
-  useEffect(() => {
-    if (userGender) {
-      setGender(userGender);
-      setOccupation(userOccupation);
-      setBirthYear(userBirthYear);
-    }
-  }, []);
-
   const handleSubmit = async () => {
-    const newPartnerConditions = {
-      gender,
-      birthYear,
-      occupation,
-    };
+    const newPartnerConditions = { gender, occupation, birthYear };
 
     try {
-      const { data: { preferredPartner } } = await axiosInstance.put(
+      const {
+        data: { preferredPartner },
+      } = await axiosInstance.put(
         `${ROUTE.USERS}/${userId}${ROUTE.PREFERRED_PARTNER}`,
         newPartnerConditions
       );
@@ -84,17 +67,17 @@ const PreferredPartnerScreen = ({
         />
       </InputContainer>
       <StyledButton onPress={handleSubmit}>
-        <P color={COLOR.WHITE}>나의 라이스코코</P>
+        <StyledText color={COLOR.WHITE}>나의 라이스코코</StyledText>
       </StyledButton>
     </Wrapper>
   );
 };
 
-export default connect(state => ({
-  userId: state.user._id,
-  userGender: state.user.preferredPartner.gender,
-  userOccupation: state.user.preferredPartner.occupation,
-  userBirthYear: state.user.preferredPartner.birthYear,
-}), {
-  setUserInfo
-})(PreferredPartnerScreen);
+export default connect(
+  state => ({
+    userId: state.user._id,
+  }),
+  {
+    setUserInfo,
+  }
+)(PreferredPartnerScreen);

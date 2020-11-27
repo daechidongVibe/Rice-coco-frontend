@@ -14,10 +14,15 @@ export const styles = StyleSheet.create({
     top: 0,
     height: 200,
   },
+  imageBackground: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    bottom: 80,
+  },
   view: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: 'yellow',
   },
   centeredView: {
     flex: 1,
@@ -98,10 +103,10 @@ export const Container = styled.View`
 `;
 
 export const ListContainer = styled.View`
-  width:100%;
+  width: 100%;
   flex: 0.9;
   align-items: center;
-  `;
+`;
 
 export const ItemContainer = styled.TouchableNativeFeedback`
   width: ${prop => prop.width || '80%'};
@@ -112,7 +117,7 @@ export const ItemContainer = styled.TouchableNativeFeedback`
 
 export const PaymentItem = styled.TouchableOpacity`
   width: 70%;
-  background-color: ${props => props.disabled ? 'gray' : COLOR.THEME_COLOR};
+  background-color: ${props => (props.disabled ? 'gray' : COLOR.THEME_COLOR)};
   padding: 20px;
   margin: 5px;
   border-radius: 5px;
@@ -163,6 +168,7 @@ export const MessageContainer = styled.View`
   justify-content: center;
   align-items: center;
   border-radius: 18px;
+  margin-bottom: 11px;
 `;
 
 export const InputContainer = styled.TouchableOpacity`
@@ -186,7 +192,7 @@ export const PickerContainer = styled.TouchableOpacity`
   margin: 0 -10px 0 0;
 `;
 
-export const StyledText = styled.Text`
+export const WhiteText = styled.Text`
   font-size: 30px;
   color: white;
   text-align: center;
@@ -198,7 +204,7 @@ export const TimeText = styled.Text`
   font-size: ${prop => prop.size || '100px'};
   background-color: transparent;
   margin: 0 auto;
-  color: ${prop => prop.color || COLOR.BLACK};
+  color: ${prop => prop.color || COLOR.SALMON};
 `;
 
 export const Title = styled.Text`
@@ -213,15 +219,16 @@ export const Title = styled.Text`
 export const Label = styled.Text`
   width: ${prop => prop.width || '80%'};
   margin: ${prop => prop.margin || '0 8px;'};
-  font-size: ${prop => prop.size || '12px' };
-  color: ${COLOR.GRAY}
+  font-size: ${prop => prop.size || '12px'};
+  color: ${COLOR.GRAY};
 `;
 
-export const P = styled.Text`
+export const StyledText = styled.Text`
   margin: ${prop => prop.margin || '0 auto;'};
   font-size: ${prop => prop.size || '16px'};
   color: ${prop => prop.color || COLOR.BLACK};
   text-align: center;
+  font-weight: bold;
 `;
 
 export const UserProfile = styled.View`
@@ -232,12 +239,14 @@ export const UserProfile = styled.View`
   margin: 0 3px;
   padding-left: 6px;
   padding-top: 2px;
+  margin-bottom: 11px;
 `;
 
 export const StyledButton = styled.TouchableOpacity`
   width: 300px;
   height: 40px;
-  padding-top: 10px;margin-right: 10px;
+  padding-top: 10px;
+  margin-right: 10px;
   margin: 0 auto;
   margin-top: ${prop => prop.marginTop || '36px'};
   align-self: flex-end;
@@ -252,11 +261,13 @@ export const NameCreationButton = styled.TouchableOpacity`
 `;
 
 export const LoginButton = styled.TouchableOpacity`
-  width: 300px;
-  height: 40px;
-  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90px;
   margin-top: 70%;
-  border-radius: 18px;
+  padding: 10px;
+  border-radius: 50px;
   background-color: white;
 `;
 
@@ -278,7 +289,8 @@ export const OutlineButton = styled.TouchableOpacity`
   padding: 6px;
   margin-top: 8px;
   border-width: 3px;
-  border-color : ${COLOR.THEME_COLOR};
+  border-color: ${prop => prop.borderColor || COLOR.THEME_COLOR};
+  background-color: ${prop => prop.backgroundColor || 'transparent'};
   border-radius: 18px;
   justify-content: center;
   align-items: center;
@@ -319,7 +331,7 @@ export const StyledFlatList = styled.FlatList`
 `;
 
 export const SearchInput = styled.TextInput`
-  width:90%;
+  width: 90%;
   padding: 8px;
   margin: 40px 0;
   border-bottom-width: 1px;

@@ -5,25 +5,21 @@ import { setUserInfo } from '../actions/index';
 import PickerInput from '../components/PickerInput';
 import ROUTE from '../constants/route';
 import API_URL from '../constants/apiUrl';
+import MESSAGE from '../constants/message';
 import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import { COLOR } from '../constants/color';
 import {
   StyledInput,
   InputContainer,
-  Wrapper, Title,
+  Wrapper,
   StyledButton,
-  P,
+  StyledText,
   Container,
   PickerContainer,
   Label,
 } from '../shared/index';
 
-const EditUserInfo = ({
-  navigation,
-  user,
-  userId,
-  setUserInfo
-}) => {
+const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   const { nickname, birthYear, email, gender, occupation, promise } = user;
   const [nicknameInput, setNicknameInput] = useState(nickname);
   const [occupationInput, setOccupationInput] = useState(occupation);
@@ -31,9 +27,7 @@ const EditUserInfo = ({
   const handlePressNicknameRefresher = async () => {
     const {
       data: { words: randomName },
-    } = await configuredAxios.get(
-      API_URL.randomNickname,
-    );
+    } = await configuredAxios.get(API_URL.randomNickname);
     setNicknameInput(randomName[0]);
   };
 
@@ -41,27 +35,23 @@ const EditUserInfo = ({
     if (nickname === nicknameInput && occupation === occupationInput) return;
 
     try {
-      const { data: { nickname, occupation } } = await configuredAxios.put(
-        `${ROUTE.USERS}/${userId}`,
-        {
-          nickname: nicknameInput,
-          occupation: occupationInput,
-        }
-      );
+      const {
+        data: { nickname, occupation },
+      } = await configuredAxios.put(`${ROUTE.USERS}/${userId}`, {
+        nickname: nicknameInput,
+        occupation: occupationInput,
+      });
+
       setUserInfo({ nickname, occupation });
       navigation.goBack();
     } catch (error) {
-      alert(error.message);
+      alert(MESSAGE.UNKNWON_ERROR);
     }
   };
 
   return (
     <Wrapper>
-      <StyledInput
-        value={email}
-        editable={false}
-        color={COLOR.LIGHT_GRAY}
-      />
+      <StyledInput value={email} editable={false} color={COLOR.LIGHT_GRAY} />
       <Label>occupation</Label>
       <Container>
         <StyledInput
@@ -77,10 +67,7 @@ const EditUserInfo = ({
         </PickerContainer>
       </Container>
       <Label>nickname</Label>
-      <InputContainer
-        onPress={handlePressNicknameRefresher}
-        width='100%'
-      >
+      <InputContainer onPress={handlePressNicknameRefresher} width='100%'>
         <StyledInput
           value={nicknameInput}
           editable={false}
@@ -88,11 +75,7 @@ const EditUserInfo = ({
         />
       </InputContainer>
       <Label>gender</Label>
-      <StyledInput
-        value={gender}
-        editable={false}
-        color={COLOR.LIGHT_GRAY}
-      />
+      <StyledInput value={gender} editable={false} color={COLOR.LIGHT_GRAY} />
       <Label>age</Label>
       <StyledInput
         value={birthYear}
@@ -105,23 +88,19 @@ const EditUserInfo = ({
         editable={false}
         color={COLOR.LIGHT_GRAY}
       />
-      <StyledButton
-        onPress={onPressSubmitButton}
-        marginTop='8px'
-      >
-        <P
-          color={COLOR.WHITE}
-        >수정하기
-        </P>
+      <StyledButton onPress={onPressSubmitButton} marginTop='8px'>
+        <StyledText color={COLOR.WHITE}>수정하기</StyledText>
       </StyledButton>
     </Wrapper>
   );
 };
 
-export default connect(state => ({
-  user: state.user,
-  userId: state.user._id,
-}), {
-  setUserInfo,
-}
+export default connect(
+  state => ({
+    user: state.user,
+    userId: state.user._id,
+  }),
+  {
+    setUserInfo,
+  }
 )(EditUserInfo);

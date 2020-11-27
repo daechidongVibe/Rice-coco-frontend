@@ -4,9 +4,9 @@ import asyncStorage from '@react-native-async-storage/async-storage';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import PickerInput from '../components/PickerInput';
-import MY_INFO_OPTIONS from '../constants/myInfoOptions';
 import ReloadImage from '../components/ReloadImage';
-import ALERT from '../constants/alert';
+import MY_INFO_OPTIONS from '../constants/myInfoOptions';
+import MESSAGE from '../constants/message';
 import SCREEN from '../constants/screen';
 import { COLOR } from '../constants/color';
 import API_URL from '../constants/apiUrl';
@@ -15,7 +15,7 @@ import {
   Title,
   Wrapper,
   Label,
-  P,
+  StyledText,
   StyledInput,
   Container,
   StyledButton,
@@ -23,45 +23,48 @@ import {
 } from '../shared/index';
 
 const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
-  const { email } = route.params;
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('남자');
   const [occupation, setOccupation] = useState('개발');
   const [birthYear, setBirthYear] = useState('20대');
+  const [hasSubmit, setHasSubmit] = useState(false);
+  const { email } = route.params;
 
-  useEffect(() => {
-    (async () => {
-      const {
-        data: { words: randomName },
-      } = await configuredAxios.get(API_URL.randomNickname);
+  const generateNickname = async () => {
+    try {
+      const { data } = await configuredAxios.get(API_URL.randomNickname);
+      const generatedNickname = data.words[0];
 
-      setNickname(randomName[0]);
-    })();
-  }, []);
-
-  const handleSubmit = async event => {
-    event.target.disabled = true;
-
-    const userInfo = { nickname, gender, occupation, birthYear, email };
-    const {
-      data: { result, token, user },
-    } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.SIGNUP}`, userInfo);
-
-    if (result === ALERT.OK) {
-      await asyncStorage.setItem('token', token);
-
-      setUserInfo(user);
-      navigation.navigate(SCREEN.PREFERRED_PARTNER);
+      setNickname(generatedNickname);
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
     }
   };
 
-  const handleCreationButtonClick = async () => {
-    const {
-      data: { words: randomName },
-    } = await configuredAxios.get(API_URL.randomNickname);
+  const handleSubmit = async () => {
+    if (hasSubmit) return;
+    setHasSubmit(true);
 
-    setNickname(randomName[0]);
+    try {
+      const userInfo = { nickname, gender, occupation, birthYear, email };
+      const { data } = await configuredAxios.post(
+        `${ROUTE.USERS}${ROUTE.SIGNUP}`,
+        userInfo
+      );
+      const { token, user } = data;
+
+      setUserInfo(user);
+      await asyncStorage.setItem('token', token);
+      navigation.navigate(SCREEN.PREFERRED_PARTNER);
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
+      setHasSubmit(false);
+    }
   };
+
+  useEffect(() => {
+    generateNickname();
+  }, []);
 
   return (
     <Wrapper>
@@ -69,12 +72,12 @@ const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
       <Label>nickname</Label>
       <Container>
         <StyledInput
-          placeholder="nickname"
+          placeholder='nickname'
           value={nickname}
           editable={false}
           selectTextOnFocus={false}
         />
-        <ReloadImage onClick={handleCreationButtonClick} />
+        <ReloadImage onClick={generateNickname} />
       </Container>
       <Label>gender</Label>
       <InputContainer>
@@ -101,7 +104,7 @@ const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
         />
       </InputContainer>
       <StyledButton onPress={handleSubmit}>
-        <P color={COLOR.WHITE}>내 정보 등록하기</P>
+        <StyledText color={COLOR.WHITE}>내 정보 등록하기</StyledText>
       </StyledButton>
     </Wrapper>
   );

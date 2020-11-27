@@ -3,35 +3,29 @@ import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import { resetUserInfo, resetMeeting } from '../actions/index';
-import resetAction from '../utils/navigation';
-import ALERT from '../constants/alert';
+import resetAction from '../utils/resetAction';
+import MESSAGE from '../constants/message';
 import SCREEN from '../constants/screen';
-import { Wrapper, Title, OutlineButton, P } from '../shared/index';
+import { Wrapper, Title, OutlineButton, StyledText } from '../shared/index';
 
-const MyPageScreen = ({
-  navigation,
-  userId,
-  resetUserInfo,
-  resetMeeting
-}) => {
+const MyPageScreen = ({ navigation, userId, resetUserInfo, resetMeeting }) => {
   const logout = () => {
     if (!userId) return;
 
-    return Alert.alert(
-      ALERT.LOGOUT_MESSAGE,
-      null,
-      [{
-        text: ALERT.YES,
+    return Alert.alert(MESSAGE.LOGOUT, null, [
+      {
+        text: MESSAGE.YES,
         onPress: async () => {
           await asyncStorage.removeItem('token');
           resetUserInfo();
           resetMeeting();
-          navigation.dispatch(resetAction(0, SCREEN.HOME ));
-        }},
-        {
-        text: ALERT.NO,
-      }]
-    );
+          navigation.dispatch(resetAction(0, SCREEN.HOME));
+        },
+      },
+      {
+        text: MESSAGE.NO,
+      },
+    ]);
   };
 
   return (
@@ -43,7 +37,7 @@ const MyPageScreen = ({
           navigation.navigate(SCREEN.EDIT_USER_INFO);
         }}
       >
-        <P>내 정보 수정하기</P>
+        <StyledText>내 정보 수정하기</StyledText>
       </OutlineButton>
       <OutlineButton
         onPress={() => {
@@ -51,7 +45,7 @@ const MyPageScreen = ({
           navigation.navigate(SCREEN.PREFERRED_PARTNER);
         }}
       >
-        <P>선호하는 친구</P>
+        <StyledText>선호하는 친구</StyledText>
       </OutlineButton>
       <OutlineButton
         onPress={() => {
@@ -59,21 +53,22 @@ const MyPageScreen = ({
           navigation.navigate(SCREEN.PAYMENT);
         }}
       >
-        <P>결제</P>
+        <StyledText>결제</StyledText>
       </OutlineButton>
-      <OutlineButton
-        onPress={logout}
-      >
-        <P>로그아웃</P>
+      <OutlineButton onPress={logout}>
+        <StyledText>로그아웃</StyledText>
       </OutlineButton>
     </Wrapper>
   );
 };
 
-export default connect(state => ({
-  user: state.user,
-  userId: state.user._id,
-}), {
-  resetUserInfo,
-  resetMeeting,
-})(MyPageScreen);
+export default connect(
+  state => ({
+    user: state.user,
+    userId: state.user._id,
+  }),
+  {
+    resetUserInfo,
+    resetMeeting,
+  }
+)(MyPageScreen);
