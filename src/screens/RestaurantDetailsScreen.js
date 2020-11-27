@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { FlatList } from 'react-native';
+import { Alert, FlatList } from 'react-native';
 import configuredAxios from '../config/axiosConfig';
 import { setSelectedMeeting, setPromiseAmount } from '../actions/index';
 import RenderImage from '../components/RenderImage';
@@ -12,6 +12,8 @@ import {
   StyledText,
   ImageContainer,
   StyledButton,
+  LabelContainer,
+  Label,
 } from '../shared/index';
 import resetAction from '../utils/resetAction';
 import ROUTE from '../constants/route';
@@ -19,6 +21,7 @@ import SCREEN from '../constants/screen';
 import { COLOR } from '../constants/color';
 import API_URL from '../constants/apiUrl';
 import MESSAGE from '../constants/message';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const RestaurantDetails = ({
   navigation,
@@ -36,36 +39,59 @@ const RestaurantDetails = ({
   const { meetingId, restaurantId, restaurantName } = selectedMeeting;
 
   const initializeState = async () => {
-    const {
-      data: { result },
-    } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
-    const { photos, reviews } = result;
-    const { lat: latitude, lng: longitude } = result.geometry.location;
+    // const {
+    //   data: { result },
+    // } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
+    // const { photos, reviews } = result;
+    // const { lat: latitude, lng: longitude } = result.geometry.location;
 
-    setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
+    // setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
 
-    for (let photo of photos.slice(0, 5)) {
-      const { photo_reference } = photo;
-      const photoData = await configuredAxios(
-        API_URL.restaurantPhoto(photo_reference)
-      );
+    // for (let photo of photos.slice(0, 5)) {
+    //   const { photo_reference } = photo;
+    //   const photoData = await configuredAxios(
+    //     API_URL.restaurantPhoto(photo_reference)
+    //   );
 
-      setPhotoUrls(prev => [...prev, photoData.config.url]);
-    }
+    //   setPhotoUrls(prev => [...prev, photoData.config.url]);
+    // }
 
-    for (let review of reviews.slice(0, 2)) {
-      setReview(review.text);
-    }
+    // for (let review of reviews.slice(0, 2)) {
+    //   setReview(review.text);
+    // }
   };
 
   const handleButtonClick = () => {
     if (isClicked) return;
     setIsClicked(true);
 
-    partnerNickname ? handleJoinButtonClick() : handleCreateButtonClick();
+    if (!userPromise) {
+      alert('프로미스가 부족합니다 결제해주세요!');
+
+      return;
+    }
+
+    Alert.alert(
+      '라이스코코 만나러가기',
+      '프로미스가 차감됩니다',
+      [
+        {
+          text: MESSAGE.OK,
+          onPress: () =>
+            partnerNickname
+              ? JoinMeeting()
+              : CreateMeeting(),
+        },
+        {
+          text: MESSAGE.NO,
+        },
+      ],
+      { cancelable: false }
+    );
+    setIsClicked(false);
   };
 
-  const handleCreateButtonClick = async () => {
+  const CreateMeeting = async () => {
     try {
       const { data } = await configuredAxios.post(ROUTE.MEETINGS, {
         selectedMeeting,
@@ -89,7 +115,7 @@ const RestaurantDetails = ({
     navigation.dispatch(resetAction(0, SCREEN.MATCH_WAITING));
   };
 
-  const handleJoinButtonClick = async () => {
+  const JoinMeeting = async () => {
     try {
       const {
         data,
@@ -121,6 +147,12 @@ const RestaurantDetails = ({
 
   return (
     <Wrapper>
+      <LabelContainer>
+        <Icon name='coins' size={20} color={COLOR.WHITE} />
+        <Label width='50%' margin='0 auto' color={COLOR.WHITE}>
+          {userPromise}개
+        </Label>
+      </LabelContainer>
       <Title size='24px'>{restaurantName}</Title>
       <ImageContainer>
         {!photoUrls ? (

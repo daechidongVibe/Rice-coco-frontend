@@ -30,7 +30,7 @@ const MyPageScreen = ({ navigation, userId, resetUserInfo, resetMeeting }) => {
 
   return (
     <Wrapper>
-      <Title>내 정보</Title>
+      <Title>My Page</Title>
       <OutlineButton
         onPress={() => {
           if (!userId) return;

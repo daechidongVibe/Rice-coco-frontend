@@ -20,7 +20,6 @@ const Login = ({ navigation, setUserInfo }) => {
 
   const checkTokenAndRouting = async () => {
     try {
-      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 
