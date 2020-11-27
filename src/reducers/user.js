@@ -27,7 +27,7 @@ export const user = (state = initialState, action) => {
     case types.SET_USER_PROMISE:
       return {
         ...state,
-        promise: action.promise,
+        promise: action.payload,
       };
     case types.RESET_USER_INFO:
       return initialState;

@@ -6,12 +6,12 @@ export const setUserInfo = userInfo => ({
 });
 
 export const setPromiseAmount = amount => ({
-  type: types.SET_USER_INFO,
-  promise: amount,
+  type: types.SET_USER_PROMISE,
+  payload: amount,
 });
 
 export const setUserLocation = location => ({
-  type: types.UPDATE_LOCATION,
+  type: types.SET_LOCATION,
   payload: location,
 });
 
