@@ -14,6 +14,7 @@ import {
   setWaitingMeetings,
   setSelectedMeeting,
 } from '../actions';
+import { DEFAULT_RADIUS } from '../constants/index';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
 import MESSAGE from '../constants/message';
@@ -125,7 +126,11 @@ const MainMapScreen = ({
             expiredTime,
           } = meeting;
 
-          const isRestaurantInDistance = checkTargetIsInDistance(location, userLocation, 3000);
+          const isRestaurantInDistance = checkTargetIsInDistance(
+            location,
+            userLocation,
+            DEFAULT_RADIUS
+          );
 
           return (
             <Marker
@@ -160,7 +165,7 @@ const MainMapScreen = ({
         })}
         <Circle
           center={userLocation}
-          radius={3000}
+          radius={DEFAULT_RADIUS}
           strokeColor='rgba(0, 0, 255, 0.1)'
           fillColor='rgba(0, 0, 255, 0.1)'
         />

@@ -39,26 +39,26 @@ const RestaurantDetails = ({
   const { meetingId, restaurantId, restaurantName } = selectedMeeting;
 
   const initializeState = async () => {
-    // const {
-    //   data: { result },
-    // } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
-    // const { photos, reviews } = result;
-    // const { lat: latitude, lng: longitude } = result.geometry.location;
+    const {
+      data: { result },
+    } = await configuredAxios(API_URL.restaurantDetails(restaurantId));
+    const { photos, reviews } = result;
+    const { lat: latitude, lng: longitude } = result.geometry.location;
 
-    // setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
+    setSelectedMeeting({ restaurantLocation: { latitude, longitude } });
 
-    // for (let photo of photos.slice(0, 5)) {
-    //   const { photo_reference } = photo;
-    //   const photoData = await configuredAxios(
-    //     API_URL.restaurantPhoto(photo_reference)
-    //   );
+    for (let photo of photos.slice(0, 5)) {
+      const { photo_reference } = photo;
+      const photoData = await configuredAxios(
+        API_URL.restaurantPhoto(photo_reference)
+      );
 
-    //   setPhotoUrls(prev => [...prev, photoData.config.url]);
-    // }
+      setPhotoUrls(prev => [...prev, photoData.config.url]);
+    }
 
-    // for (let review of reviews.slice(0, 2)) {
-    //   setReview(review.text);
-    // }
+    for (let review of reviews.slice(0, 2)) {
+      setReview(review.text);
+    }
   };
 
   const handleButtonClick = () => {

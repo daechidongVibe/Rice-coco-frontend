@@ -19,7 +19,7 @@ import {
   AnimationContainer,
 } from '../shared/index';
 
-const Search = ({ navigation, isWaiting }) => {
+const Search = ({ userLocation, isWaiting, navigation }) => {
   const [searchList, setSearchList] = useState('');
   const [searchWord, setSearchWord] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -29,9 +29,12 @@ const Search = ({ navigation, isWaiting }) => {
     setIsSearching(true);
 
     try {
+      const { latitude, longitude } = userLocation;
       const {
         data: { results },
-      } = await configuredAxios.get(API_URL.restaurantList(searchWord));
+      } = await configuredAxios.get(
+        API_URL.restaurantList(latitude, longitude, searchWord)
+      );
 
       const filteredSearchList = results.map(result => ({
         id: result.place_id,
@@ -94,5 +97,6 @@ const Search = ({ navigation, isWaiting }) => {
 };
 
 export default connect(state => ({
+  userLocation: state.location,
   isWaiting: state.meetings.selectedMeeting.meetingId,
 }))(Search);
