@@ -14,6 +14,7 @@ import {
   setWaitingMeetings,
   setSelectedMeeting,
 } from '../actions';
+import { DEFAULT_RADIUS } from '../constants/index';
 import SCREEN from '../constants/screen';
 import ROUTE from '../constants/route';
 import MESSAGE from '../constants/message';
@@ -36,17 +37,9 @@ const MainMapScreen = ({
   setSelectedMeeting,
   navigation,
 }) => {
-  console.log(userLocation);
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-
-  const handleRestaurantClick = restaurantInfo => {
-    const partnerNickname = restaurantInfo.partnerNickname;
-
-    setSelectedMeeting(restaurantInfo);
-    navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
-  };
 
   const getWaitingMeetings = async () => {
     const { data } = await axiosInstance.get(ROUTE.MEETINGS);
@@ -66,7 +59,6 @@ const MainMapScreen = ({
       const { coords } = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
 
-      console.log(latitude, longitude);
       setUserLocation({ latitude, longitude });
     } catch (error) {
       alert(MESSAGE.ERROR_LOCATION_WAS_DENIED);
@@ -102,6 +94,13 @@ const MainMapScreen = ({
     getActiveMeetingAndRouting();
   }, []);
 
+  const handleRestaurantClick = restaurantInfo => {
+    const partnerNickname = restaurantInfo.partnerNickname;
+
+    setSelectedMeeting(restaurantInfo);
+    navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
+  };
+
   return fontLoaded ? (
     <MapWrapper>
       <MapView
@@ -125,7 +124,11 @@ const MainMapScreen = ({
             expiredTime,
           } = meeting;
 
-          const isRestaurantInDistance = checkTargetIsInDistance(location, userLocation, 3000);
+          const isRestaurantInDistance = checkTargetIsInDistance(
+            location,
+            userLocation,
+            DEFAULT_RADIUS
+          );
 
           return (
             <Marker
@@ -160,7 +163,7 @@ const MainMapScreen = ({
         })}
         <Circle
           center={userLocation}
-          radius={3000}
+          radius={DEFAULT_RADIUS}
           strokeColor='rgba(0, 0, 255, 0.1)'
           fillColor='rgba(0, 0, 255, 0.1)'
         />

@@ -41,6 +41,10 @@ const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
     }
   };
 
+  useEffect(() => {
+    generateNickname();
+  }, []);
+
   const handleSubmit = async () => {
     if (hasSubmit) return;
     setHasSubmit(true);
@@ -61,10 +65,6 @@ const UserRegisterScreen = ({ route, navigation, setUserInfo }) => {
       setHasSubmit(false);
     }
   };
-
-  useEffect(() => {
-    generateNickname();
-  }, []);
 
   return (
     <Wrapper>

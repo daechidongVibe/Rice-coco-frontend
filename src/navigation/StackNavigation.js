@@ -1,6 +1,5 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import LoginScreen from '../screens/LoginScreen';
 import UserRegisterScreen from '../screens/UserRegisterScreen';
 import MainMapScreen from '../screens/MainMapScreen';
@@ -39,7 +38,7 @@ const MyPage = createStackNavigator();
 
 export const MyPageStack = () => {
   return (
-    <MyPage.Navigator>
+    <MyPage.Navigator headerMode='none'>
       <MyPage.Screen name={SCREEN.MY_PAGE} component={MyPageScreen} />
       <MyPage.Screen name={SCREEN.EDIT_USER_INFO} component={EditUserInfoScreen} />
       <MyPage.Screen name={SCREEN.PREFERRED_PARTNER} component={PreferredPartnerScreen} />

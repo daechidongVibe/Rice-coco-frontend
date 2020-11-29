@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions/index';
@@ -17,13 +17,29 @@ import {
   Container,
   PickerContainer,
   Label,
+  Title,
 } from '../shared/index';
 
 const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
   const { nickname, birthYear, email, gender, occupation, promise } = user;
-  console.log(promise);
   const [nicknameInput, setNicknameInput] = useState(nickname);
   const [occupationInput, setOccupationInput] = useState(occupation);
+
+  const getUpdateUser = async () => {
+    try {
+      const {
+        data: { user },
+      } = await configuredAxios.get(`${ROUTE.USERS}/${userId}`);
+
+      setUserInfo(user);
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
+    }
+  };
+
+  useEffect(() => {
+    getUpdateUser();
+  }, []);
 
   const handlePressNicknameRefresher = async () => {
     const {
@@ -52,6 +68,7 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
 
   return (
     <Wrapper>
+      <Title>내 정보 수정하기</Title>
       <StyledInput value={email} editable={false} color={COLOR.LIGHT_GRAY} />
       <Label>occupation</Label>
       <Container>

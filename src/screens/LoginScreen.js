@@ -4,12 +4,10 @@ import { connect } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from '@expo/vector-icons';
-
 import configuredAxios from '../config/axiosConfig';
 import { setUserInfo } from '../actions';
 import { LoginButton, StyledText, Wrapper, styles } from '../shared/index';
 import { logInWithFacebook } from '../utils/api';
-
 import SCREEN from '../constants/screen';
 import MESSAGE from '../constants/message';
 import { COLOR } from '../constants/color';
@@ -20,7 +18,6 @@ const Login = ({ navigation, setUserInfo }) => {
 
   const checkTokenAndRouting = async () => {
     try {
-      asyncStorage.clear();
       const token = await asyncStorage.getItem('token');
       if (!token) return;
 
@@ -40,6 +37,10 @@ const Login = ({ navigation, setUserInfo }) => {
     }
   };
 
+  useEffect(() => {
+    checkTokenAndRouting();
+  }, []);
+
   const handleLoginButtonClick = async () => {
     if (isLoginInProcess) return;
     setIsLoginInProcess(true);
@@ -47,7 +48,7 @@ const Login = ({ navigation, setUserInfo }) => {
     try {
       const { email } = await logInWithFacebook();
       if (!email) return;
-      console.log(email);
+
       const {
         data,
       } = await configuredAxios.post(`${ROUTE.USERS}${ROUTE.LOGIN}`, { email });
@@ -72,10 +73,6 @@ const Login = ({ navigation, setUserInfo }) => {
       setIsLoginInProcess(false);
     }
   };
-
-  useEffect(() => {
-    checkTokenAndRouting();
-  }, []);
 
   return (
     <Wrapper color={COLOR.THEME_COLOR}>

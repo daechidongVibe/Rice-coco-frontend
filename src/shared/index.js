@@ -216,6 +216,19 @@ export const Title = styled.Text`
   color: ${COLOR.THEME_COLOR};
 `;
 
+export const LabelContainer = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  left: 85%;
+  top: 40px;
+  border-radius: 50px;
+  background-color:${COLOR.THEME_COLOR};
+`;
+
 export const Label = styled.Text`
   width: ${prop => prop.width || '80%'};
   margin: ${prop => prop.margin || '0 8px;'};

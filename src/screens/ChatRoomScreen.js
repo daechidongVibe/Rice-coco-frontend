@@ -21,7 +21,6 @@ const ChatRoom = ({ userId, nickname, meetingId }) => {
     if (!messages) return;
 
     (async () => {
-      console.log(nickname, meetingId);
       try {
         const {
           data: { filteredMessages },
