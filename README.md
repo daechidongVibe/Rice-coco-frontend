@@ -2,27 +2,14 @@
 
 ## Table Contents
 
-- [Rice Coco](#rice-coco)
-  - [Table Contents](#table-contents)
 - [Introduction](#introduction)
 - [Features](#features)
 - [Tech](#tech)
-  - [Frontend](#frontend)
-  - [Backend](#backend)
 - [Requirements](#requirements)
 - [Installation](#installation)
-  - [Client](#client)
-  - [Server](#server)
 - [Deploy](#deploy)
-  - [Client](#client-1)
-  - [Server](#server-1)
 - [Project Process](#project-process)
-  - [1주차](#1주차)
-  - [2주차](#2주차)
-  - [3주차](#3주차)
 - [Collaboration principle](#collaboration-principle)
-  - [Principle](#principle)
-  - [Evaluation after project by ⭕️, 🔺, ❌](#evaluation-after-project-by-️--)
 - [Challenges(수정 예정)](#challenges수정-예정)
 - [Things to do](#things-to-do)
 
