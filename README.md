@@ -109,7 +109,7 @@ npm run dev
 # Deploy
 
 ## Client
-  - Download apk
+ - [Download apk](https://drive.google.com/file/d/1nb26VUUPT02Y3cHzAUnVt52UB0BVLjAP/view?usp=sharing)
 
 ## Server
  - AWS Elastic Beanstalk (EB)
