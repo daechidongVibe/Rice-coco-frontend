@@ -27,10 +27,12 @@
     - [협업적 측면](#협업적-측면)
 - [Things to do](#things-to-do)
 
+- [Things to do](#things-to-do)
+
 # Introduction
  - Rice coco는 내 주변 익명의 사람들과의 식사 약속 기능을 제공하는, 위치기반 실시간 소셜 네트워크 앱 서비스입니다.
  - Rice coco는 Rice와 동료를 의미하는 co의 합성어 입니다.
- - 해당 프로젝트는 1주간 Idea Brainstorming & Planning, 2주간의 Development 기간을 걸쳐 총 3명의 인원으로 진행되었습니다.(1명은 일신 상의 사유로 2주차에 중도 하차 하였습니다.)
+ - 해당 프로젝트는 1주간 Idea Brainstorming & Planning, 2주간의 Development 기간을 걸쳐 총 3명의 인원으로 진행되었습니다.(1명은 취업으로 인해 2주차에 중도 하차 하였습니다.)
 
 # Features
 - Facebook 소셜 로그인 및 회원가입 기능을 제공합니다.

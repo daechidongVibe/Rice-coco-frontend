@@ -98,5 +98,5 @@ const Search = ({ userLocation, isWaiting, navigation }) => {
 
 export default connect(state => ({
   userLocation: state.location,
-  isWaiting: state.meetings.selectedMeeting.meetingId,
+  isWaiting: state.meetings.currentMeeting.meetingId,
 }))(Search);

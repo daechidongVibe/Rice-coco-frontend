@@ -37,6 +37,10 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
     }
   };
 
+  useEffect(() => {
+    getUpdateUser();
+  }, []);
+
   const handlePressNicknameRefresher = async () => {
     const {
       data: { words: randomName },
@@ -62,9 +66,6 @@ const EditUserInfo = ({ navigation, user, userId, setUserInfo }) => {
     }
   };
 
-  useEffect(() => {
-    getUpdateUser();
-  }, []);
   return (
     <Wrapper>
       <Title>내 정보 수정하기</Title>

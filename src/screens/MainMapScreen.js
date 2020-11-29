@@ -37,17 +37,9 @@ const MainMapScreen = ({
   setSelectedMeeting,
   navigation,
 }) => {
-  console.log(userLocation);
   const [fontLoaded] = useFonts({
     Glacial: require('../../assets/fonts/GlacialIndifference-Bold.otf'),
   });
-
-  const handleRestaurantClick = restaurantInfo => {
-    const partnerNickname = restaurantInfo.partnerNickname;
-
-    setSelectedMeeting(restaurantInfo);
-    navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
-  };
 
   const getWaitingMeetings = async () => {
     const { data } = await axiosInstance.get(ROUTE.MEETINGS);
@@ -67,7 +59,6 @@ const MainMapScreen = ({
       const { coords } = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
 
-      console.log(latitude, longitude);
       setUserLocation({ latitude, longitude });
     } catch (error) {
       alert(MESSAGE.ERROR_LOCATION_WAS_DENIED);
@@ -102,6 +93,13 @@ const MainMapScreen = ({
     getUserPermissionAndLocation();
     getActiveMeetingAndRouting();
   }, []);
+
+  const handleRestaurantClick = restaurantInfo => {
+    const partnerNickname = restaurantInfo.partnerNickname;
+
+    setSelectedMeeting(restaurantInfo);
+    navigation.navigate(SCREEN.RESTAURANT_DETAILS, { partnerNickname });
+  };
 
   return fontLoaded ? (
     <MapWrapper>

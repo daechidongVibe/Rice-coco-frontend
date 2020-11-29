@@ -22,7 +22,6 @@ const MY_INFO_OPTIONS = {
     '공공-복지',
   ],
   AGE: ['20대', '30대', '40대', '50대'],
-  BIRTH_YEAR: [...Array(40).keys()].map(x => String(x + 1970)),
   PAYMENT_INFO: [
     {
       name: '프로미스',

@@ -28,6 +28,27 @@ const MatchWaiting = ({
   expiredTime,
   resetMeeting,
 }) => {
+  useEffect(() => {
+    socketApi.createMeeting(meetingId, userId);
+
+    socket.on(
+      SOCKET_EVENT.PARTNER_JOIN_MEETING,
+      async ({ meetingData, partnerId }) => {
+        const { data: partner } = await configuredAxios.get(
+          `${ROUTE.USERS}/${partnerId}`
+        );
+        const partnerNickname = partner.nickname;
+
+        setSelectedMeeting({ partnerNickname });
+        setCurrentMeeting(meetingData);
+
+        navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
+      }
+    );
+
+    return () => socket.off(SOCKET_EVENT.PARTNER_JOIN_MEETING);
+  }, []);
+
   const getCurrentMeeting = async () => {
     try {
       const { data } = await configuredAxios.get(
@@ -38,6 +59,10 @@ const MatchWaiting = ({
       alert(MESSAGE.UNKNWON_ERROR);
     }
   };
+
+  useEffect(() => {
+    getCurrentMeeting();
+  }, []);
 
   const handlePressCancelButton = async () => {
     resetMeeting();
@@ -61,31 +86,6 @@ const MatchWaiting = ({
       );
     });
   };
-
-  useEffect(() => {
-    getCurrentMeeting();
-  }, []);
-
-  useEffect(() => {
-    socketApi.createMeeting(meetingId, userId);
-
-    socket.on(
-      SOCKET_EVENT.PARTNER_JOIN_MEETING,
-      async ({ meetingData, partnerId }) => {
-        const { data: partner } = await configuredAxios.get(
-          `${ROUTE.USERS}/${partnerId}`
-        );
-        const partnerNickname = partner.nickname;
-
-        setSelectedMeeting({ partnerNickname });
-        setCurrentMeeting(meetingData);
-
-        navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
-      }
-    );
-
-    return () => socket.off(SOCKET_EVENT.PARTNER_JOIN_MEETING);
-  }, []);
 
   return (
     <Wrapper>

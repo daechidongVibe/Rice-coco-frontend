@@ -53,24 +53,13 @@ const MatchSuccessScreen = ({
   resetMeeting,
   navigation,
 }) => {
-  const [isArrived, setIsArrived] = useState(false);
+  const [isArrived, setIsArrived] = useState(true);
   const [isArrivalConfirmed, setIsArrivalConfirmed] = useState(false);
   const [isOnVergeofBreaking, setIsOnVergeofBreaking] = useState(false);
   const [partnerLocation, setPartnerLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
-
-  const getCurrentMeeting = async () => {
-    try {
-      const { data } = await configuredAxios.get(
-        `${ROUTE.MEETINGS}/${meetingId}`
-      );
-      setSelectedMeeting(data.meetingDetails);
-    } catch (error) {
-      alert(MESSAGE.UNKNWON_ERROR);
-    }
-  };
 
   useEffect(() => {
     socketApi.joinMeeting(meetingId, userId);
@@ -105,13 +94,13 @@ const MatchSuccessScreen = ({
     return () => socketApi.removeAllListeners();
   }, []);
 
-  useEffect(() => {
-    checkTargetIsInDistance(userLocation, restaurantLocation, 50)
-      ? setIsArrived(true)
-      : setIsArrived(false);
+  // useEffect(() => {
+  //   checkTargetIsInDistance(userLocation, restaurantLocation, 50)
+  //     ? setIsArrived(true)
+  //     : setIsArrived(false);
 
-    socketApi.sendLocation(userLocation);
-  }, [userLocation]);
+  //   socketApi.sendLocation(userLocation);
+  // }, [userLocation]);
 
   useEffect(() => {
     (async () => {
@@ -126,6 +115,17 @@ const MatchSuccessScreen = ({
     return async () =>
       await Location.stopLocationUpdatesAsync(BACKGROUND_LOCATION_TASK);
   }, []);
+
+  const getCurrentMeeting = async () => {
+    try {
+      const { data } = await configuredAxios.get(
+        `${ROUTE.MEETINGS}/${meetingId}`
+      );
+      setSelectedMeeting(data.meetingDetails);
+    } catch (error) {
+      alert(MESSAGE.UNKNWON_ERROR);
+    }
+  };
 
   useEffect(() => {
     getCurrentMeeting();

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/native';
 import { WebView } from 'react-native-webview';
 import asyncStorage from '@react-native-async-storage/async-storage';
 import getEnvVars from '../../environment';

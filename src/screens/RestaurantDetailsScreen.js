@@ -61,6 +61,10 @@ const RestaurantDetails = ({
     }
   };
 
+  useEffect(() => {
+    initializeState();
+  }, []);
+
   const handleButtonClick = () => {
     if (isClicked) return;
     setIsClicked(true);
@@ -140,10 +144,6 @@ const RestaurantDetails = ({
 
     navigation.dispatch(resetAction(0, SCREEN.MATCH_SUCCESS));
   };
-
-  useEffect(() => {
-    initializeState();
-  }, []);
 
   return (
     <Wrapper>

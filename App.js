@@ -3,7 +3,6 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import * as TaskManager from 'expo-task-manager';
 import { NavigationContainer } from '@react-navigation/native';
-
 import store from './src/store/';
 import { setUserLocation } from './src/actions/index';
 import MainNavigation from './src/navigation/TabNavigation';
