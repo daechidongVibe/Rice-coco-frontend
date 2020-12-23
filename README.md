@@ -8,6 +8,7 @@
 ![https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif](https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif)
 ![https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif](https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif)
 
+<<<<<<< HEAD
 # Table Contents
 - [Features](#💡-Features)
 - [Tech Stack](#🛠-Tech-Stack)
@@ -21,6 +22,23 @@
 
 # 💡 Features
 - Facebook 소셜 로그인 후, 사용자는 5개의 포인트가 부여됩니디.
+=======
+
+## Table Contents
+- [Features](#features)
+- [Tech](#tech)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Deploy](#deploy)
+- [Project Process](#project-process)
+- [Collaboration principle](#collaboration-principle)
+- [Challenges(수정 예정)](#challenges수정-예정)
+- [Things to do](#things-to-do)
+
+# Features
+- Facebook 소셜 로그인을 해야합니다.
+- 사용자는 가입시 5개의 포인트가 부여되며 상황에 따라 증가 혹은 감소하게 됩니다.(하단에 추가 설명 있음)
+>>>>>>> f44ab265b58b2510a9366e907ed67af9c1cefa26
 - 만남을 희망하고자하는 상대방의 직업군, 나이, 성별을 설정을 통해 필터링을 할 수 있습니다.(사용자도 마찬가지로 상대방의 조건에 따라 필터링 됩니다.)
 - 설정 완료 후, 내 위치 기준 주변 3km 이내에 필터링된 유저들이 신청해놓은 음식점들의 위치가 밥 모양으로 표시됩니다.
 - 지도 우측 하단에 새로고침을 버튼을 누르면, 해당 시점을 기준으로 신청되어있는 음식점들이 업데이트 됩니다.
@@ -126,8 +144,13 @@ npm run dev
 ```
 # 🌐 Deploy
 
+<<<<<<< HEAD
 ### Client
   - Download apk
+=======
+## Client
+ - [Download apk](https://drive.google.com/file/d/1nb26VUUPT02Y3cHzAUnVt52UB0BVLjAP/view?usp=sharing)
+>>>>>>> f44ab265b58b2510a9366e907ed67af9c1cefa26
 
 ### Server
  - AWS Elastic Beanstalk (EB)
@@ -189,8 +212,17 @@ npm run dev
 
 # 🚀 Things to do
   - 만남 성사 도중 해당 음식점의 메뉴 추천 기능, 만남 성사 이후 친구와의 재만남 기능 등 더 다채로운 기능을 추가하고자 합니다.
+<<<<<<< HEAD
   - 사용자가 어플레케이션 종료&실행을 통해 소켓에 재연결되었을 때, 지속적으로 증가하는 server instance 문제에 대한 대응 방법을 RedisDB 등을 통해 구현해보고 싶습니다,
   - 현재 코드에서 재사용 가능성이 많은 component가 있음에도 불구하고, 미쳐 재사용하지 못한 부분을 다시 리팩토링하고자 합니다.
   - 특정 화면으로의 진입 후 현재 유저의 상태에 따라 navigate되는 분기처리 로직으로 인해 분리하지 못했던 비동기 api 로직들을 컴포넌트 혹은 screen에서 따로 분리하고자 합니다.
   - 전반적인 UI&UX 개선을 통해 더 완성도 있는 어플리케이션으로 개선하고 싶습니다.
     (login 및 signup까지 탭 네비게이션 제거, 한번 만남이 성사되었던 유저는 다른 UI로 지도에 표시되는 기능, 음식점을 검색하였을 때 해당 음식점의 위치가 바로 표시되는 기능 등)
+=======
+  - 사용자가 어플레케이션 종료&실행을 통해 소켓에 재연결되었을 때, 지속적으로 증가하는 server instance 문제에 대한 대응 로직을 구현해보고 싶습니다,
+  - 코드 전체 Refactoring
+    - 현재 코드에서 재사용 가능성이 많은 component가 있음에도 불구하고, 미쳐 재사용하지 못한 부분을 다시 리팩토링하고자 합니다.
+    - 특정 화면으로의 진입 후 현재 유저의 상태에 따라 navigate되는 분기처리 로직으로 인해 분리하지 못했던 비동기 api 로직들을 컴포넌트 혹은 screen에서 따로 분리하고자 합니다.
+    - 전반적인 UI&UX 개선을 통해 더 완성도 있는 어플리케이션으로 개선하고 싶습니다.
+    (login 및 signup까지 탭 네비게이션 제거, 한번 만남이 성사되었던 유저는 다른 UI로 지도에 표시되는 기능, 음식점을 검색하였을 때 해당 음식점의 위치가 바로 표시되는 기능 등)
+>>>>>>> f44ab265b58b2510a9366e907ed67af9c1cefa26
