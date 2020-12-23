@@ -6,6 +6,7 @@
 ![https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif](https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif)
 ![https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif](https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif)
 
+
 ## Table Contents
 - [Features](#features)
 - [Tech](#tech)
@@ -125,7 +126,7 @@ npm run dev
 # Deploy
 
 ## Client
-  - Download apk
+ - [Download apk](https://drive.google.com/file/d/1nb26VUUPT02Y3cHzAUnVt52UB0BVLjAP/view?usp=sharing)
 
 ## Server
  - AWS Elastic Beanstalk (EB)
