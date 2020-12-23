@@ -1,9 +1,9 @@
 import io from 'socket.io-client';
 import getEnvVars from '../../environment';
 
-const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
+const { REACT_NATIVE_ANDROID_SERVER_BASE_URL } = getEnvVars();
 
-export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_URL, {
+export const socket = io.connect(REACT_NATIVE_ANDROID_SERVER_BASE_URL, {
   transports: ['websocket'],
 });
 

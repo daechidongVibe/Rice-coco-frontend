@@ -94,13 +94,13 @@ const MatchSuccessScreen = ({
     return () => socketApi.removeAllListeners();
   }, []);
 
-  // useEffect(() => {
-  //   checkTargetIsInDistance(userLocation, restaurantLocation, 50)
-  //     ? setIsArrived(true)
-  //     : setIsArrived(false);
+  useEffect(() => {
+    checkTargetIsInDistance(userLocation, restaurantLocation, 50)
+      ? setIsArrived(true)
+      : setIsArrived(false);
 
-  //   socketApi.sendLocation(userLocation);
-  // }, [userLocation]);
+    socketApi.sendLocation(userLocation);
+  }, [userLocation]);
 
   useEffect(() => {
     (async () => {

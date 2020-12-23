@@ -11,7 +11,7 @@ import {
   StyledText,
 } from '../shared/index';
 
-const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
+const { REACT_NATIVE_ANDROID_SERVER_BASE_URL } = getEnvVars();
 
 const PaymentScreen = () => {
   const [token, setToken] = useState('');
@@ -32,7 +32,7 @@ const PaymentScreen = () => {
       e.target.disabled = true;
       e.target.style.backgroundColor = 'gray';
 
-      fetch('${REACT_NATIVE_ANDROID_SERVER_URL}/payment?authToken=${token}', {
+      fetch('${REACT_NATIVE_ANDROID_SERVER_BASE_URL}/payment?authToken=${token}', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const PaymentScreen = () => {
           buyer_email: "coin46@naver.com",
           buyer_name: "김찬중",
           buyer_tel: "010-5056-6756",
-          m_redirect_url: "${REACT_NATIVE_ANDROID_SERVER_URL}/payment?authToken=${token}"
+          m_redirect_url: "${REACT_NATIVE_ANDROID_SERVER_BASE_URL}/payment?authToken=${token}"
         });
       })
       .catch(err => alert(err));
