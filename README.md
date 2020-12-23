@@ -1,9 +1,12 @@
-# Rice Coco #
-![https://ifh.cc/g/1cF6Vu.png](https://ifh.cc/g/1cF6Vu.png)
-## Table Contents
+# Rice Coco
+ - Rice coco는 내 주변 익명의 사람들과의 식사 약속 기능을 제공하는, 위치기반 실시간 소셜 네트워크 앱 서비스입니다.
+ - Rice coco는 Rice와 동료를 의미하는 co의 합성어 입니다.
+ - 해당 프로젝트는 1주간 Idea Brainstorming & Planning, 2주간의 Development 기간을 걸쳐 총 3명의 인원(이동규, 이윤아, 김찬중)으로 진행되었습니다.(이동규 팀원은 취업으로 인해 2주차에 중도 하차 하였습니다.)
 
-- [Rice Coco](#rice-coco)
-- [Introduction](#introduction)
+![https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif](https://media.giphy.com/media/tB5mJXpAqzs4BVkU3C/giphy.gif)
+![https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif](https://media.giphy.com/media/fK63SyS8LVpsnOzsMx/giphy.gif)
+
+## Table Contents
 - [Features](#features)
 - [Tech](#tech)
 - [Requirements](#requirements)
@@ -13,11 +16,6 @@
 - [Collaboration principle](#collaboration-principle)
 - [Challenges(수정 예정)](#challenges수정-예정)
 - [Things to do](#things-to-do)
-
-# Introduction
- - Rice coco는 내 주변 익명의 사람들과의 식사 약속 기능을 제공하는, 위치기반 실시간 소셜 네트워크 앱 서비스입니다.
- - Rice coco는 Rice와 동료를 의미하는 co의 합성어 입니다.
- - 해당 프로젝트는 1주간 Idea Brainstorming & Planning, 2주간의 Development 기간을 걸쳐 총 3명의 인원(이동규, 이윤아, 김찬중)으로 진행되었습니다.(이동규 팀원은 취업으로 인해 2주차에 중도 하차 하였습니다.)
 
 # Features
 - Facebook 소셜 로그인을 해야합니다.
