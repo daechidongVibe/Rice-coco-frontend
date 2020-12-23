@@ -5,7 +5,7 @@ import { TimeText } from '../shared/index';
 
 describe('RemainingTime', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('modern');
   });
 
   afterEach(() => {
@@ -18,7 +18,7 @@ describe('RemainingTime', () => {
     const wrapper = shallow(<RemainingTime expiredTime={FAKE_EXPIED_TIME} />);
     const timeText = wrapper.find(TimeText);
 
-    jest.runTimersToTime(1000);
+    jest.advanceTimersByTime(1000);
 
     expect(timeText.text()).toEqual('59:59');
   });

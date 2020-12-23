@@ -2,10 +2,10 @@ import axios from 'axios';
 import getEnvVars from '../../environment';
 import asyncStorage from '@react-native-async-storage/async-storage';
 
-const { REACT_NATIVE_ANDROID_SERVER_URL } = getEnvVars();
+const { REACT_NATIVE_ANDROID_SERVER_BASE_URL } = getEnvVars();
 
 const defaultOptions = {
-  baseURL: REACT_NATIVE_ANDROID_SERVER_URL,
+  baseURL: REACT_NATIVE_ANDROID_SERVER_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
