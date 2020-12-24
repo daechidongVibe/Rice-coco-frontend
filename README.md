@@ -19,7 +19,7 @@
 - [Challenges](#🥊-challenges)
 - [Things to do](#🚀-things-to-do)
 
-## 💡 Features
+# 💡 Features
 - Facebook 소셜 로그인 후, 사용자는 5개의 포인트가 부여됩니다.
 - 만남을 희망하고자하는 상대방의 직업군, 나이, 성별을 설정을 통해 필터링을 할 수 있습니다.(사용자도 마찬가지로 상대방의 조건에 따라 필터링 됩니다.)
 - 설정 완료 후, 내 위치 기준 주변 3km 이내에 필터링된 유저들이 신청해놓은 음식점들의 위치가 밥 모양으로 표시됩니다.
@@ -36,7 +36,7 @@
 - 내 정보 창에서 나의 닉네임과 직업을 다시 설정할 수 있고, 선호하는 상대방의 조건을 재설정 할 수 있습니다. 메인 지도에는 해당 재설정한 조건을 기준으로 필터링됩니다.
 - 포인트가 0개가 되면 더 이상 만남을 생성하거나 만남에 참여할 수 없게 됩니다. 마이페이지 결제 정보창을 통해 포인트를 구매할 수 있습니다.(현재는 네이버페이만 지원됩니다.)
 
-## 🛠 Tech Stack
+# 🛠 Tech Stack
 
 ### Frontend
 - ES2015+
@@ -56,10 +56,10 @@
 - Socket.io
 - Chai / Sinon for unit-test
 
-## 📌 Requirements
+# 📌 Requirements
  - Android 환경에서 사용이 가능합니다.
 
-## 📀 Installation
+# 📀 Installation
 
 Local 환경에서 실행을 위해 환경 변수 설정이 필요합니다.
 
@@ -124,16 +124,16 @@ cd Rice-coco-backend
 npm install
 npm run dev
 ```
-## 🌐 Deploy
+# 🌐 Deploy
 
-## Client
+### Client
  - [Download apk](https://drive.google.com/file/d/1nb26VUUPT02Y3cHzAUnVt52UB0BVLjAP/view?usp=sharing)
 
 ### Server
  - AWS Elastic Beanstalk (EB)
  - AWS Code Pipeline for Deployment automation
 
-## 🗓 Project Process
+# 🗓 Project Process
   ### 1주차
   - 아이디어 결정 + 기술 스택 검토
   - [Figma를 통한 Mockup 작업](https://www.figma.com/file/BkVHNeKMDqsV0hDMkFkC1E/%EB%9D%BC%EC%9D%B4%EC%8A%A4-%EC%BD%94%EC%BD%94-Mock-up?node-id=0%3A1)
@@ -153,7 +153,7 @@ npm run dev
   - AWS Elastic Beanstalk를 활용한 백엔드 서버 배포
   - Front & Backend Test code 작성
 
-## 🤝 Collaboration principle
+# 🤝 Collaboration principle
  ### Principle
   1. 깃 커밋 메시지 통일하기 [(커밋 메시지 Reference)](https://blog.ull.im/engineering/2019/03/10/logs-on-git.html)
   2. 하나의 커밋 메시지에는 하나의 변경 사항만 추가하여 커밋하기
@@ -172,7 +172,7 @@ npm run dev
  6. (❌) 기능 구현에만 초점을 맞추는 것이 아니라, 코드 리뷰를 통해 서로의 코드 스타일과 구현한 로직을  이해하고 피드백하면서 넘어가자라는 취지로 많은 원칙이었지만, 5번 원칙과의 연장선으로 해당 부분은 프로젝트 초중반 이후로 지켜지지 못하였습니다. 하지만 프로젝트 초반 잠깐 pull request에 대해 코드 리뷰해주는 경험 자체는 배우는 점이 많았다는 것이 팀원의 평가입니다.
  7. (🔺) 초반에는 잘 지켜지지 않았지만, 중반 이후부터는 최대한 console과 주석을 지우고자 팀원들 모두가 노력했습니다. 종종 콘솔과 주석이 merge되는 실수가 있긴하였지만 점점 해당 원칙에 대해서는 팀원 모두가 개선되는 모습을 보여 세모로 평가하였습니다. 혼자서 개발을 할 때에는 크게 신경쓰지 않았던 부분이지만, 나의 지우지 않은 콘솔이 가끔 팀원의 디버깅을 방해할 수도 있고, 앱 전체에 영향을 줄 수도 있기 때문에 반드시 불필요한 부분은 지우고 merge를 해야한다는 점을 깨달았습니다.
 
-## 🥊 Challenges
+# 🥊 Challenges
  ### react native의 navigation
    MatchWaitingScreen에서 상대방을 기다릴 때 가동되는 Timer가, 만남 성사 이후 MatchSucceessScreen으로 화면이 전환되어 가동되는 Timer의 종료시간(00:00)과 동시에 종료 이벤트가 발생되는 현상이 있었습니다. 디버깅을 지속적으로 한 결과, react native는 web와 달리 해당 페이지에서 다른 페이지로 넘어갈 때, Screen이 Stack으로 쌓이는 구조인 것을 간과했다는 점을 깨달았습니다. 이를 해결하기 위해 대기 화면에서 미팅 성사 화면으로 넘어갈 때 스택을 쌓고 navigate 하는 형태가 아닌 그 전에 있었던 모든 화면 Stack을 리셋하고 화면 전환하는 형태로 navigate 메소드를 변경하였습니다. 추가적으로 다시 뒤로가기가 활성화되면 안되는 상황(대기화면에서 취소버튼이 아닌 휴대폰 뒤로가기 버튼을 눌러 홈 화면으로 돌아가는 상황)에도 이를 적용하여 Navigation 오류 edge case들을 해결하였습니다.
 
@@ -187,7 +187,7 @@ npm run dev
  ### App build 과정
 앱을 완성시키고 bulid하여 apk를 만드는 과정 자체는 쉬웠으나, apk파일을 실행하자 splash 화면만 나오고 바로 앱이 종료되는 현상이 발생하였습니다. 어떠한 에러 메세지도 받지 못하고 디버깅하지 못하는 상황에서 stackoverflow나 여러 블로그에서 제시하는 방법을 적용보았지만 해결되지 않았습니다. 결국  공식문서를 통해 build할 때 environment.js파일에서 설정해놓은 releaseChannel를 설정해주어야한다는 점을 알게 되었고(ex. expo build:android --release-channel staging, expo build:android --release-channel prod) 해당 부분을 수정하여 앱 Build에 성공할 수 있었습니다.
 
-## 🚀 Things to do
+# 🚀 Things to do
   - 만남 성사 도중 해당 음식점의 메뉴 추천 기능, 만남 성사 이후 친구와의 재만남 기능 등 더 다채로운 기능을 추가하고자 합니다.
   - 사용자가 어플레케이션 종료&실행을 통해 소켓에 재연결되었을 때, 지속적으로 증가하는 server instance 문제에 대한 대응 방법을 구현해보고 싶습니다,
   - 현재 코드에서 재사용 가능성이 많은 component가 있음에도 불구하고, 미쳐 재사용하지 못한 부분을 다시 리팩토링하고자 합니다.
