@@ -25,7 +25,7 @@
 - 원하는 상대 조건 설정 및 필터링 기능 구현
 - Google Map Marker를 이용한 내 위치 반경 3km 내 대기중인 미팅 표시 가능
 - Google Place API를 이용한 반경 3km 내 음식점 검색 기능
-- Socket.io를 통해 선택한 음식점에서 원하는 조건의 상대방 실시간 대기 기능
+- Socket.io를 통한 선택한 음식점에서 원하는 조건의 상대방 실시간 대기 기능
 - 대기방 생성 후 1시간 동안 상대방과의 미팅이 성사되지 않을 경우, 방이 삭제되는 타임아웃 기능
 - 매칭 성사 후, 실시간으로 상대방의 위치 확인 및 채팅 기능
 - 매칭 종료 후, 친구 추가 기능
@@ -38,7 +38,7 @@
 - ES2015+
 - React Native for component-based-architecture
 - Redux for state management
-- Styled Componenㅅ
+- Styled Component
 - Socket.io for real-time communication
 - Jest for unit-test
 - Enzyme for component-test
