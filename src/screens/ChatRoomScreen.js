@@ -27,6 +27,7 @@ const ChatRoom = ({ userId, nickname, meetingId }) => {
         } = await configuredAxios.get(
           `${ROUTE.MEETINGS}/${meetingId}${ROUTE.CHAT}`
         );
+
         setMessages(filteredMessages);
       } catch (error) {
         console.warn(error.message);
