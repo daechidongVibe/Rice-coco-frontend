@@ -44,8 +44,6 @@ const ChatRoom = ({ userId, nickname, meetingId }) => {
   }, []);
 
   const handleMessageSubmit = async () => {
-    if (!message) return;
-
     socketApi.sendMessage(userId, nickname, message, () => setMessage(''));
   };
 
