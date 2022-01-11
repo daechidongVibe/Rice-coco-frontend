@@ -1,5 +1,4 @@
 # Rice Coco
-![https://ifh.cc/g/1cF6Vu.png](https://ifh.cc/g/1cF6Vu.png)
  - **Rice coco**는 내 주변 익명의 사람들과의 식사 약속 기능을 제공하는, 위치기반 실시간 소셜 네트워크 앱 서비스입니다.
  - **Rice coco**는 **Rice**와 동료를 의미하는 **co**의 합성어 입니다.
  - 본 프로젝트는 <U>**총 3주간**</U>(1주-Idea Brainstorming & Planning, 2주-Development) <U>**3명의 인원**</U>(이동규, 이윤아, 김찬중)이 진행하였습니다.(*이동규 팀원은 취업으로 인해 2주차에 중도 하차 하였습니다.*)
